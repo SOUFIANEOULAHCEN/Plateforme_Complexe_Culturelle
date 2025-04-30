@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import DashboardLayout from "../components/DashboardLayout"
-import SummaryCards from "../components/SummaryCards"
-import ReservationsTable from "../components/ReservationsTable"
-import EventsTable from "../components/EventsTable"
-import TalentsTable from "../components/TalentsTable"
-import ReportsChart from "../components/ReportsChart"
-import api from "../api"
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react";
+import DashboardLayout from "../components/DashboardLayout";
+import SummaryCards from "../components/SummaryCards";
+import ReservationsTable from "../components/ReservationsTable";
+import EventsTable from "../components/EventsTable";
+import TalentsTable from "../components/TalentsTable";
+import ReportsChart from "../components/ReportsChart";
+import api from "../api";
+import { useNavigate } from "react-router-dom";
 
 export default function DashboardSuperAdmin() {
   const [stats, setStats] = useState([
@@ -16,52 +16,58 @@ export default function DashboardSuperAdmin() {
     { label: "Événements", value: 0 },
     { label: "Talents", value: 0 },
     { label: "Rapports", value: 0 },
-  ])
+  ]);
 
-  const [activeTab, setActiveTab] = useState("overview")
-  const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
+  const [activeTab, setActiveTab] = useState("overview");
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Fetch dashboard data
   useEffect(() => {
     const fetchDashboardData = async () => {
-      setLoading(true)
+      setLoading(true);
       try {
         // Fetch stats
-        const statsResponse = await api.get("/dashboard/stats")
+        const statsResponse = await api.get("/dashboard/stats");
         if (statsResponse.data) {
           setStats([
-            { label: "Réservations", value: statsResponse.data.reservations || 0 },
+            {
+              label: "Réservations",
+              value: statsResponse.data.reservations || 0,
+            },
             { label: "Événements", value: statsResponse.data.events || 0 },
             { label: "Talents", value: statsResponse.data.talents || 0 },
             { label: "Rapports", value: statsResponse.data.reports || 0 },
-          ])
+          ]);
         }
       } catch (error) {
-        console.error("Error fetching dashboard data:", error)
+        console.error("Error fetching dashboard data:", error);
         // Keep default stats if API fails
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchDashboardData()
-  }, [])
+    fetchDashboardData();
+  }, []);
 
   // Function to handle tab change
   const handleTabChange = (tab) => {
-    setActiveTab(tab)
-  }
+    setActiveTab(tab);
+  };
 
   return (
     <DashboardLayout>
       <div className="max-w-full mx-auto">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-[oklch(0.145_0_0)]">Administration Centrale</h1>
-            <p className="text-[oklch(0.556_0_0)] mt-1">Bienvenue dans votre espace super administrateur</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-[oklch(0.145_0_0)]">
+              Administration Centrale
+            </h1>
+            <p className="text-[oklch(0.556_0_0)] mt-1">
+              Bienvenue dans votre espace super administrateur
+            </p>
           </div>
-          
         </div>
 
         {/* Summary Cards */}
@@ -241,12 +247,16 @@ export default function DashboardSuperAdmin() {
                 {activeTab === "overview" && (
                   <div className="space-y-8">
                     <div>
-                      <h2 className="text-lg font-semibold mb-4 text-[oklch(0.145_0_0)]">Aperçu des activités</h2>
+                      <h2 className="text-lg font-semibold mb-4 text-[oklch(0.145_0_0)]">
+                        Aperçu des activités
+                      </h2>
                       <ReportsChart />
                     </div>
                     <div>
                       <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">Réservations récentes</h2>
+                        <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">
+                          Réservations récentes
+                        </h2>
                         <button
                           onClick={() => handleTabChange("reservations")}
                           className="text-sm text-[oklch(47.3%_0.137_46.201)] hover:underline"
@@ -258,7 +268,9 @@ export default function DashboardSuperAdmin() {
                     </div>
                     <div>
                       <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">Événements à venir</h2>
+                        <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">
+                          Événements à venir
+                        </h2>
                         <button
                           onClick={() => handleTabChange("events")}
                           className="text-sm text-[oklch(47.3%_0.137_46.201)] hover:underline"
@@ -274,7 +286,9 @@ export default function DashboardSuperAdmin() {
                 {activeTab === "reservations" && (
                   <div>
                     <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">Gestion des réservations</h2>
+                      <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">
+                        Gestion des réservations
+                      </h2>
                     </div>
                     <ReservationsTable />
                   </div>
@@ -283,8 +297,9 @@ export default function DashboardSuperAdmin() {
                 {activeTab === "events" && (
                   <div>
                     <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">Gestion des événements</h2>
-                      
+                      <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">
+                        Gestion des événements
+                      </h2>
                     </div>
                     <EventsTable />
                   </div>
@@ -293,8 +308,9 @@ export default function DashboardSuperAdmin() {
                 {activeTab === "talents" && (
                   <div>
                     <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">Gestion des talents</h2>
-                     
+                      <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">
+                        Gestion des talents
+                      </h2>
                     </div>
                     <TalentsTable />
                   </div>
@@ -303,7 +319,9 @@ export default function DashboardSuperAdmin() {
                 {activeTab === "reports" && (
                   <div>
                     <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">Rapports et statistiques</h2>
+                      <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">
+                        Rapports et statistiques
+                      </h2>
                       <div className="flex items-center gap-2">
                         <button className="px-4 py-2 bg-gray-200 text-[oklch(0.145_0_0)] rounded-lg shadow hover:bg-gray-300 transition-colors flex items-center gap-1">
                           <svg
@@ -335,7 +353,9 @@ export default function DashboardSuperAdmin() {
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div>
-                        <h3 className="text-md font-semibold mb-4 text-[oklch(0.145_0_0)]">Informations générales</h3>
+                        <h3 className="text-md font-semibold mb-4 text-[oklch(0.145_0_0)]">
+                          Informations générales
+                        </h3>
                         <div className="space-y-4">
                           <div>
                             <label className="block mb-2 text-sm font-medium text-[oklch(0.3_0_0)]">
@@ -362,7 +382,9 @@ export default function DashboardSuperAdmin() {
                               Fuseau horaire
                             </label>
                             <select className="w-full px-4 py-2 border border-[oklch(0.8_0_0)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]">
-                              <option value="Africa/Casablanca">Africa/Casablanca</option>
+                              <option value="Africa/Casablanca">
+                                Africa/Casablanca
+                              </option>
                               <option value="Europe/Paris">Europe/Paris</option>
                               <option value="UTC">UTC</option>
                             </select>
@@ -370,22 +392,36 @@ export default function DashboardSuperAdmin() {
                         </div>
                       </div>
                       <div>
-                        <h3 className="text-md font-semibold mb-4 text-[oklch(0.145_0_0)]">Options de notifications</h3>
+                        <h3 className="text-md font-semibold mb-4 text-[oklch(0.145_0_0)]">
+                          Options de notifications
+                        </h3>
                         <div className="space-y-4">
                           <div className="flex items-center justify-between">
                             <div>
-                              <h4 className="font-medium text-[oklch(0.3_0_0)]">Notifications par email</h4>
-                              <p className="text-sm text-[oklch(0.556_0_0)]">Recevoir les notifications par email</p>
+                              <h4 className="font-medium text-[oklch(0.3_0_0)]">
+                                Notifications par email
+                              </h4>
+                              <p className="text-sm text-[oklch(0.556_0_0)]">
+                                Recevoir les notifications par email
+                              </p>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
-                              <input type="checkbox" className="sr-only peer" defaultChecked />
+                              <input
+                                type="checkbox"
+                                className="sr-only peer"
+                                defaultChecked
+                              />
                               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[oklch(47.3%_0.137_46.201)]/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[oklch(47.3%_0.137_46.201)]"></div>
                             </label>
                           </div>
                           <div className="flex items-center justify-between">
                             <div>
-                              <h4 className="font-medium text-[oklch(0.3_0_0)]">Rapports hebdomadaires</h4>
-                              <p className="text-sm text-[oklch(0.556_0_0)]">Recevoir un rapport hebdomadaire</p>
+                              <h4 className="font-medium text-[oklch(0.3_0_0)]">
+                                Rapports hebdomadaires
+                              </h4>
+                              <p className="text-sm text-[oklch(0.556_0_0)]">
+                                Recevoir un rapport hebdomadaire
+                              </p>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
                               <input type="checkbox" className="sr-only peer" />
@@ -397,7 +433,9 @@ export default function DashboardSuperAdmin() {
                     </div>
 
                     <div className="mt-8 pt-6 border-t border-[oklch(0.922_0_0)]">
-                      <h3 className="text-md font-semibold mb-4 text-[oklch(0.145_0_0)]">Sécurité et accès</h3>
+                      <h3 className="text-md font-semibold mb-4 text-[oklch(0.145_0_0)]">
+                        Sécurité et accès
+                      </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
                           <div className="space-y-4">
@@ -416,11 +454,19 @@ export default function DashboardSuperAdmin() {
                         <div>
                           <div className="flex items-center justify-between mb-4">
                             <div>
-                              <h4 className="font-medium text-[oklch(0.3_0_0)]">Journalisation des activités</h4>
-                              <p className="text-sm text-[oklch(0.556_0_0)]">Enregistrer toutes les activités admin</p>
+                              <h4 className="font-medium text-[oklch(0.3_0_0)]">
+                                Journalisation des activités
+                              </h4>
+                              <p className="text-sm text-[oklch(0.556_0_0)]">
+                                Enregistrer toutes les activités admin
+                              </p>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
-                              <input type="checkbox" className="sr-only peer" defaultChecked />
+                              <input
+                                type="checkbox"
+                                className="sr-only peer"
+                                defaultChecked
+                              />
                               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[oklch(47.3%_0.137_46.201)]/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[oklch(47.3%_0.137_46.201)]"></div>
                             </label>
                           </div>
@@ -444,5 +490,5 @@ export default function DashboardSuperAdmin() {
         </div>
       </div>
     </DashboardLayout>
-  )
+  );
 }

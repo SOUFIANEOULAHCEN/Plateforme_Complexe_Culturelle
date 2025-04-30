@@ -1,14 +1,38 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import Cookies from "js-cookie"
-import api from "../api"
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import api from "../api";
+import Toast from "../components/Toast";
 
 export default function AuthForms() {
-  const [isLogin, setIsLogin] = useState(true)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
+
+  // Fonction utilitaire pour vérifier l'expiration du token JWT
+  function isTokenExpired(token) {
+    if (!token) return true;
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch (e) {
+      return true;
+    }
+  }
+
+  
+  useEffect(() => {
+    const token = Cookies.get("jwt");
+    if (token && isTokenExpired(token)) {
+      Cookies.remove("jwt");
+      Cookies.remove("userEmail");
+      Cookies.remove("userRole");
+      navigate("/login");
+    }
+  }, [navigate]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[oklch(1_0_0)] p-4">
@@ -30,75 +54,97 @@ export default function AuthForms() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
 function LoginForm({ showPassword, setShowPassword, switchToRegister }) {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
+  const [toast, setToast] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError("")
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
       // Try to authenticate with your actual API
       const response = await api.post("/auth/login", {
         email,
         password,
-      })
+      });
 
-      const { token, utilisateur } = response.data
+      const { token, utilisateur } = response.data;
 
       // Store JWT and user info in secure cookies
-      Cookies.set("jwt", token, { secure: true, sameSite: "strict", expires: 1 })
-      Cookies.set("userEmail", utilisateur.email, { secure: true, sameSite: "strict", expires: 1 })
-      Cookies.set("userRole", utilisateur.role, { secure: true, sameSite: "strict", expires: 1 })
+      Cookies.set("jwt", token, {
+        secure: true,
+        sameSite: "strict",
+        expires: 1,
+      });
+      Cookies.set("userEmail", utilisateur.email, {
+        secure: true,
+        sameSite: "strict",
+        expires: 1,
+      });
+      Cookies.set("userRole", utilisateur.role, {
+        secure: true,
+        sameSite: "strict",
+        expires: 1,
+      });
 
       // Redirect based on user role
+      // Redirection selon le rôle de l'utilisateur
       if (utilisateur.role === "superadmin") {
-        navigate("/dashboard/superadmin")
+        navigate("/dashboard/superadmin");
       } else if (utilisateur.role === "admin") {
-        navigate("/dashboard/admin")
+        navigate("/dashboard/admin");
+      } else if (utilisateur.role === "talent") {
+        navigate("/TalentProfil");
+      } else if (utilisateur.role === "utilisateur") {
+        navigate("/UserProfil");
       } else {
-        navigate("/profile")
+        navigate("/"); // Redirection par défaut si le rôle n'est pas reconnu
       }
     } catch (err) {
-      console.error("Login error:", err)
-      setError(err.response?.data?.message || "Erreur lors de la connexion.")
-
-      // For development/testing: Set mock cookies to bypass authentication
-      // Remove this in production
-      if (email === "admin@culture.ma" && password === "admin123") {
-        Cookies.set("jwt", "mock-jwt-token", { secure: true, sameSite: "strict", expires: 1 })
-        Cookies.set("userEmail", email, { secure: true, sameSite: "strict", expires: 1 })
-        Cookies.set("userRole", "admin", { secure: true, sameSite: "strict", expires: 1 })
-        navigate("/dashboard/admin")
-      } else if (email === "superadmin@culture.ma" && password === "super123") {
-        Cookies.set("jwt", "mock-jwt-token", { secure: true, sameSite: "strict", expires: 1 })
-        Cookies.set("userEmail", email, { secure: true, sameSite: "strict", expires: 1 })
-        Cookies.set("userRole", "superadmin", { secure: true, sameSite: "strict", expires: 1 })
-        navigate("/dashboard/superadmin")
-      }
+      console.error("Login error:", err);
+      setToast({
+        message: err.response?.data?.message || "Erreur lors de la connexion.",
+        type: "error",
+      });
+      setError(err.response?.data?.message || "Erreur lors de la connexion.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="rounded-lg border border-[oklch(0.922_0_0)] bg-[oklch(1_0_0)] p-6 shadow-lg">
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold text-[oklch(0.145_0_0)]">Connexion</h1>
-        <p className="mt-1 text-[oklch(0.556_0_0)]">Entrez vos identifiants pour accéder à votre compte</p>
+        <h1 className="text-2xl font-bold text-[oklch(0.145_0_0)]">
+          Connexion
+        </h1>
+        <p className="mt-1 text-[oklch(0.556_0_0)]">
+          Entrez vos identifiants pour accéder à votre compte
+        </p>
       </div>
-      {error && <div className="text-red-600 mb-2 text-center">{error}</div>}
+      {/* Suppression de l'ancien message d'erreur */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="space-y-2">
-          <label htmlFor="email" className="block text-sm font-medium text-[oklch(0.145_0_0)]">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-[oklch(0.145_0_0)]"
+          >
             Email
           </label>
           <input
@@ -113,12 +159,18 @@ function LoginForm({ showPassword, setShowPassword, switchToRegister }) {
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label htmlFor="password" className="block text-sm font-medium text-[oklch(0.145_0_0)]">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-[oklch(0.145_0_0)]"
+            >
               Mot de passe
             </label>
-            <a href="#" className="text-xs text-[oklch(47.3%_0.137_46.201)] hover:underline">
+            <Link
+              to="/forgot-password"
+              className="text-xs text-indigo-600 hover:underline"
+            >
               Mot de passe oublié ?
-            </a>
+            </Link>
           </div>
           <div className="relative">
             <input
@@ -182,7 +234,10 @@ function LoginForm({ showPassword, setShowPassword, switchToRegister }) {
             type="checkbox"
             className="h-4 w-4 rounded border-[oklch(0.922_0_0)] text-[oklch(47.3%_0.137_46.201)] focus:ring-[oklch(47.3%_0.137_46.201)]"
           />
-          <label htmlFor="remember-me" className="ml-2 block text-sm text-[oklch(0.556_0_0)]">
+          <label
+            htmlFor="remember-me"
+            className="ml-2 block text-sm text-[oklch(0.556_0_0)]"
+          >
             Se souvenir de moi
           </label>
         </div>
@@ -198,7 +253,14 @@ function LoginForm({ showPassword, setShowPassword, switchToRegister }) {
               fill="none"
               viewBox="0 0 24 24"
             >
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
               <path
                 className="opacity-75"
                 fill="currentColor"
@@ -215,72 +277,105 @@ function LoginForm({ showPassword, setShowPassword, switchToRegister }) {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
               </svg>
             </>
           )}
         </button>
         <div className="text-center mt-4 text-sm">
           Pas de compte ?{" "}
-          <button type="button" className="text-[oklch(47.3%_0.137_46.201)] underline" onClick={switchToRegister}>
+          <button
+            type="button"
+            className="text-[oklch(47.3%_0.137_46.201)] underline"
+            onClick={switchToRegister}
+          >
             S'inscrire
           </button>
         </div>
       </form>
     </div>
-  )
+  );
 }
 
-function RegisterForm({ showPassword, setShowPassword, showConfirmPassword, setShowConfirmPassword, switchToLogin }) {
-  const [nom, setNom] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
-  const [loading, setLoading] = useState(false)
+function RegisterForm({
+  showPassword,
+  setShowPassword,
+  showConfirmPassword,
+  setShowConfirmPassword,
+  switchToLogin,
+}) {
+  const [toast, setToast] = useState(null);
+  const [nom, setNom] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError("")
-    setSuccess("")
+    e.preventDefault();
+    setError("");
+    setSuccess("");
 
     if (password !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas.")
-      return
+      setError("Les mots de passe ne correspondent pas.");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await api.post("/auth/register", {
         nom,
         email,
         password,
-      })
+      });
 
-      setSuccess("Inscription réussie. Vous pouvez vous connecter.")
+      setSuccess("Inscription réussie. Vous pouvez vous connecter.");
       setTimeout(() => {
-        switchToLogin()
-      }, 1500)
+        switchToLogin();
+      }, 1500);
     } catch (err) {
-      setError(err.response?.data?.message || "Erreur lors de l'inscription.")
+      setToast({
+        message: err.response?.data?.message || "Erreur lors de l'inscription.",
+        type: "error",
+      });
+      setError(err.response?.data?.message || "Erreur lors de l'inscription.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="rounded-lg border border-[oklch(0.922_0_0)] bg-[oklch(1_0_0)] p-6 shadow-lg">
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold text-[oklch(0.145_0_0)]">Créer un compte</h1>
-        <p className="mt-1 text-[oklch(0.556_0_0)]">Remplissez le formulaire pour créer votre compte</p>
+        <h1 className="text-2xl font-bold text-[oklch(0.145_0_0)]">
+          Créer un compte
+        </h1>
+        <p className="mt-1 text-[oklch(0.556_0_0)]">
+          Remplissez le formulaire pour créer votre compte
+        </p>
       </div>
-      {error && <div className="text-red-600 mb-2 text-center">{error}</div>}
-      {success && <div className="text-green-600 mb-2 text-center">{success}</div>}
+      {/* Suppression des anciens messages */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="space-y-2">
-          <label htmlFor="nom" className="block text-sm font-medium text-[oklch(0.145_0_0)]">
+          <label
+            htmlFor="nom"
+            className="block text-sm font-medium text-[oklch(0.145_0_0)]"
+          >
             Nom complet
           </label>
           <input
@@ -294,7 +389,10 @@ function RegisterForm({ showPassword, setShowPassword, showConfirmPassword, setS
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="email" className="block text-sm font-medium text-[oklch(0.145_0_0)]">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-[oklch(0.145_0_0)]"
+          >
             Email
           </label>
           <input
@@ -308,7 +406,10 @@ function RegisterForm({ showPassword, setShowPassword, showConfirmPassword, setS
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="password" className="block text-sm font-medium text-[oklch(0.145_0_0)]">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-[oklch(0.145_0_0)]"
+          >
             Mot de passe
           </label>
           <div className="relative">
@@ -368,7 +469,10 @@ function RegisterForm({ showPassword, setShowPassword, showConfirmPassword, setS
           </div>
         </div>
         <div className="space-y-2">
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-[oklch(0.145_0_0)]">
+          <label
+            htmlFor="confirmPassword"
+            className="block text-sm font-medium text-[oklch(0.145_0_0)]"
+          >
             Confirmer le mot de passe
           </label>
           <div className="relative">
@@ -439,7 +543,14 @@ function RegisterForm({ showPassword, setShowPassword, showConfirmPassword, setS
               fill="none"
               viewBox="0 0 24 24"
             >
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
               <path
                 className="opacity-75"
                 fill="currentColor"
@@ -456,18 +567,27 @@ function RegisterForm({ showPassword, setShowPassword, showConfirmPassword, setS
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
               </svg>
             </>
           )}
         </button>
         <div className="text-center mt-4 text-sm">
           Déjà un compte ?{" "}
-          <button type="button" className="text-[oklch(47.3%_0.137_46.201)] underline" onClick={switchToLogin}>
+          <button
+            type="button"
+            className="text-[oklch(47.3%_0.137_46.201)] underline"
+            onClick={switchToLogin}
+          >
             Se connecter
           </button>
         </div>
       </form>
     </div>
-  )
+  );
 }

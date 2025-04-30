@@ -1,10 +1,18 @@
 import express from "express";
 import Utilisateur from "../models/utilisateur.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
+import upload from "../config/multerConfig.js";
+
+// 🛠 Import controllers
+import { 
+  getUtilisateurByEmail, 
+  updateUtilisateur, 
+  updatePassword 
+} from "../controllers/utilisateurController.js";
 
 const router = express.Router();
 
-// GET /api/utilisateurs?is_talent=true
+// ✅ Route: Get all utilisateurs (optionally filter by is_talent)
 router.get("/", verifyToken, async (req, res) => {
   try {
     const where = {};
@@ -18,7 +26,7 @@ router.get("/", verifyToken, async (req, res) => {
   }
 });
 
-// GET /api/utilisateurs/:id
+// ✅ Route: Get utilisateur by ID
 router.get("/:id", verifyToken, async (req, res) => {
   try {
     const utilisateur = await Utilisateur.findByPk(req.params.id);
@@ -31,28 +39,13 @@ router.get("/:id", verifyToken, async (req, res) => {
   }
 });
 
-// POST /api/utilisateurs
-// router.post('/', verifyToken, async (req, res) => {
-//   try {
-//     const { nom, email, domaine_artiste, statut_talent } = req.body;
-//     if (!nom || !email || !domaine_artiste || !statut_talent) {
-//       return res.status(400).json({ message: "Champs obligatoires manquants." });
-//     }
-//     const utilisateur = await Utilisateur.create(req.body);
-//     res.status(201).json(utilisateur);
-//   } catch (err) {
-//     if (err.name === "SequelizeUniqueConstraintError") {
-//       return res.status(400).json({ message: "Cet email existe déjà." });
-//     }
-//     console.error("Erreur lors de la création de l'utilisateur:", err);
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// });
+// ✅ Route: Search utilisateur by email
+router.get("/search/by-email", verifyToken, getUtilisateurByEmail);
 
+// ✅ Route: Create new utilisateur
 router.post("/", verifyToken, async (req, res) => {
   try {
-    // Permettre la création sans mot de passe pour les tests
-    req.body.password = req.body.password || "tempPassword123";
+    req.body.password = req.body.password || "tempPassword123"; // Default password if not provided
 
     const utilisateur = await Utilisateur.create({
       ...req.body,
@@ -70,23 +63,13 @@ router.post("/", verifyToken, async (req, res) => {
   }
 });
 
-// PUT /api/utilisateurs/:id
-router.put("/:id", verifyToken, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const [updated] = await Utilisateur.update(req.body, { where: { id } });
-    if (updated) {
-      const updatedUser = await Utilisateur.findByPk(id);
-      res.json(updatedUser);
-    } else {
-      res.status(404).json({ message: "Utilisateur non trouvé" });
-    }
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+// ✅ Route: Update utilisateur (with optional image upload)
+router.put("/:id", verifyToken, upload.single('image_profil'), updateUtilisateur);
 
-// Add this DELETE route
+// ✅ Route: Update utilisateur password
+router.put("/:id/password", verifyToken, updatePassword);
+
+// ✅ Route: Delete utilisateur
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const utilisateur = await Utilisateur.findByPk(req.params.id);

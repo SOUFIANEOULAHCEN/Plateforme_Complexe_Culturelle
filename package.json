@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "react-hook-form": "^7.56.1"
+  }
+}

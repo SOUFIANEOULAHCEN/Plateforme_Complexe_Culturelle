@@ -28,8 +28,8 @@ export default function TalentsTable({ limit }) {
   const canDelete = userRole === "superadmin";
 
   useEffect(() => {
-    fetchTalents();
-  }, [limit]);
+      fetchTalents();
+    }, [limit]);
 
   const fetchTalents = async () => {
     setLoading(true);

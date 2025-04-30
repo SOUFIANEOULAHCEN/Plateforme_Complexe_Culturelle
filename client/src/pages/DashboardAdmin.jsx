@@ -54,10 +54,10 @@ export default function DashboardAdmin() {
         console.error("Error fetching dashboard data:", error);
         // Use mock data for development
         setStats([
-          { label: "Réservations", value: 24 },
-          { label: "Événements", value: 12 },
-          { label: "Talents", value: 8 },
-          { label: "Utilisateurs", value: 36 },
+          { label: "Réservations", value: 0 },
+          { label: "Événements", value: 0 },
+          { label: "Talents", value: 0 },
+          { label: "Utilisateurs", value: 0 },
         ]);
       } finally {
         setLoading(false);
@@ -66,6 +66,7 @@ export default function DashboardAdmin() {
 
     fetchDashboardData();
   }, []);
+
 
   // Function to handle tab change
   const handleTabChange = (tab) => {

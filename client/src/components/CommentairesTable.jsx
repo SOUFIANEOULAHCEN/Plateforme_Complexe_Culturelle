@@ -62,50 +62,6 @@ export default function CommentairesTable({ limit, evenementId = null }) {
     } catch (err) {
       console.error("Error fetching data:", err);
       setError("Impossible de charger les données");
-
-      // Utiliser des données fictives pour le développement
-      setCommentaires([
-        {
-          id: 1,
-          contenu: "Excellent événement, j'ai beaucoup apprécié !",
-          date_creation: "2025-04-15T14:30:00",
-          utilisateur_id: 2,
-          evenement_id: 1,
-          note: 5,
-        },
-        {
-          id: 2,
-          contenu: "Bonne organisation mais l'acoustique laissait à désirer.",
-          date_creation: "2025-04-16T10:15:00",
-          utilisateur_id: 3,
-          evenement_id: 1,
-          note: 3,
-        },
-        {
-          id: 3,
-          contenu: "J'ai beaucoup appris pendant cet atelier.",
-          date_creation: "2025-04-17T16:45:00",
-          utilisateur_id: 2,
-          evenement_id: 2,
-          note: 4,
-        },
-      ]);
-
-      setEvents([
-        { id: 1, titre: "Concert Andalou" },
-        { id: 2, titre: "Atelier Photo" },
-      ]);
-
-      setUsers([
-        { id: 1, nom: "Admin", email: "admin@culture.ma" },
-        { id: 2, nom: "Fatima Zahra", email: "fatima@artiste.ma" },
-        { id: 3, nom: "Ahmed Photographe", email: "ahmed@photo.ma" },
-      ]);
-
-      setToast({
-        message: "Utilisation de données de démonstration",
-        type: "info",
-      });
     } finally {
       setLoading(false);
     }

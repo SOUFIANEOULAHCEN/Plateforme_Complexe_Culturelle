@@ -21,14 +21,7 @@ export default function EspacesPage() {
               Consultez et gérez tous les espaces
             </p>
           </div>
-          <div className="mt-4 md:mt-0">
-            <button
-              onClick={() => navigate("/espaces/new")}
-              className="px-4 py-2 bg-[oklch(47.3%_0.137_46.201)] text-white rounded-lg shadow hover:bg-[oklch(50%_0.137_46.201)] transition-colors"
-            >
-              Ajouter un espace
-            </button>
-          </div>
+         
         </div>
 
         {/* Main Content */}

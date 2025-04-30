@@ -21,14 +21,7 @@ export default function CommentairesPage() {
               Consultez et gérez tous les commentaires
             </p>
           </div>
-          <div className="mt-4 md:mt-0">
-            <button
-              onClick={() => navigate("/commentaires/new")}
-              className="px-4 py-2 bg-[oklch(47.3%_0.137_46.201)] text-white rounded-lg shadow hover:bg-[oklch(50%_0.137_46.201)] transition-colors"
-            >
-              Ajouter un commentaire
-            </button>
-          </div>
+         
         </div>
 
         {/* Main Content */}
