@@ -13,6 +13,7 @@ import ReportsChart from "../components/ReportsChart";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
+import EventProposalsTable from "../components/EventProposalsTable";
 
 export default function DashboardAdmin() {
   const [stats, setStats] = useState([
@@ -302,6 +303,30 @@ export default function DashboardAdmin() {
                 </svg>
                 <span className="hidden md:inline">Rapports</span>
               </button>
+              <button
+                onClick={() => handleTabChange("proposals")}
+                className={`flex items-center gap-2 px-4 py-2 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
+                  activeTab === "proposals"
+                    ? "border-[oklch(47.3%_0.137_46.201)] text-[oklch(47.3%_0.137_46.201)]"
+                    : "border-transparent text-[oklch(0.556_0_0)] hover:text-[oklch(0.3_0_0)]"
+                }`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                <span className="hidden md:inline">Propositions</span>
+              </button>
             </div>
           </div>
 
@@ -432,6 +457,16 @@ export default function DashboardAdmin() {
                       </h2>
                     </div>
                     <ReportsChart />
+                  </div>
+                )}
+                {activeTab === "proposals" && (
+                  <div>
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-lg font-semibold text-[oklch(0.145_0_0)]">
+                        Propositions d'événements
+                      </h2>
+                    </div>
+                    <EventProposalsTable />
                   </div>
                 )}
               </>

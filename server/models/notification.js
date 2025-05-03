@@ -1,7 +1,6 @@
-// models/notification.js
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
-import Utilisateur from "./utilisateur.js"; // pour l'association
+import Utilisateur from "./utilisateur.js";
 
 const Notification = sequelize.define("Notification", {
   id: {
@@ -11,7 +10,7 @@ const Notification = sequelize.define("Notification", {
   },
   utilisateurId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true, // Allow null for system-wide notifications
     references: {
       model: Utilisateur,
       key: "id",
@@ -25,9 +24,25 @@ const Notification = sequelize.define("Notification", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  type: {
+    type: DataTypes.ENUM('info', 'warning', 'success', 'error', 'event_proposal'),
+    defaultValue: 'info',
+  },
+  reference_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true, // ID of the related entity (e.g., event proposal ID)
+  },
+  reference_type: {
+    type: DataTypes.STRING,
+    allowNull: true, // Type of the related entity (e.g., 'event_proposal')
+  },
+  for_admins_only: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 }, {
   tableName: "notifications",
-  timestamps: true, // pour createdAt et updatedAt automatiques
+  timestamps: true,
 });
 
 // Association (un utilisateur a plusieurs notifications)

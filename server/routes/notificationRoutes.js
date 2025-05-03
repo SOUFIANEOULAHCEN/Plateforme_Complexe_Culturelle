@@ -3,21 +3,21 @@ import {
   createNotification,
   getNotifications,
   markAsRead,
+  markAllAsRead,
+  getUnreadCount
 } from "../controllers/notificationController.js";
-import { verifyToken, isAdmin } from "../middlewares/authMiddleware.js";
+import { verifyToken } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// Seuls Admin et SuperAdmin peuvent voir/créer les notifications
-router.use(verifyToken, isAdmin);
+// All routes require authentication
+router.use(verifyToken);
 
-// Créer une notification
+// Notification routes
 router.post("/", createNotification);
-
-// Récupérer toutes les notifications
 router.get("/", getNotifications);
-
-// Marquer une notification comme lue
+router.get("/unread-count", getUnreadCount);
 router.put("/:id/read", markAsRead);
+router.put("/mark-all-read", markAllAsRead);
 
 export default router;

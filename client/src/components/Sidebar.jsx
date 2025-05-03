@@ -280,6 +280,34 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                 </Link>
               </li>
 
+              <li>
+                <Link
+                  to="/dashboard/event-proposals"
+                  className={`flex items-center px-4 py-2 text-[oklch(0.3_0_0)] rounded-lg hover:bg-[oklch(0.95_0_0)] ${
+                    isActive("/event-proposals")
+                      ? "bg-[oklch(0.95_0_0)] font-medium"
+                      : ""
+                  }`}
+                  onClick={closeSidebar}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 16l-4-4m0 0l4-4m-4 4h16"
+                    />
+                  </svg>
+                  <span>Propositions d'événements</span>
+                </Link>
+              </li>
+
               {userRole === "superadmin" && (
                 <li>
                   <Link

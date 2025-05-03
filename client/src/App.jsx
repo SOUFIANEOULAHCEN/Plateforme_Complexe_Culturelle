@@ -21,6 +21,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import UserProfil from "./pages/UserProfil";
 import TalentProfil from "./pages/TalentProfil";
+import EventProposalsPage from "./pages/EventProposalsPage";
 
 function App() {
   return (
@@ -122,6 +123,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
               <SocialPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/event-proposals"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+              <EventProposalsPage />
             </ProtectedRoute>
           }
         />
