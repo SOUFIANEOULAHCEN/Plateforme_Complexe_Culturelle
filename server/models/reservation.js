@@ -15,6 +15,16 @@ const Reservation = sequelize.define('reservation', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  type_reservateur: {
+    type: DataTypes.ENUM('individu', 'association', 'entreprise', 'institution'),
+    allowNull: false,
+    defaultValue: 'individu'
+  },
+  documents_fournis: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    defaultValue: {}
+  },
   date_reservation: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
@@ -25,11 +35,24 @@ const Reservation = sequelize.define('reservation', {
   },
   statut: {
     type: DataTypes.ENUM('confirme', 'annule', 'en_attente'),
-    defaultValue: 'confirme',
+    defaultValue: 'en_attente',
   },
+  materiel_requis: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    defaultValue: {}
+  },
+  commentaires: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  date_annulation: {
+    type: DataTypes.DATE,
+    allowNull: true
+  }
 }, {
   tableName: 'reservation',
-  timestamps: false,
+  timestamps: false // Désactiver les timestamps car les colonnes n'existent pas
 });
 
 export default Reservation;

@@ -17,9 +17,13 @@ export default function ReservationForm({
   const [formReservation, setFormReservation] = useState({
     evenement_id: "",
     utilisateur_id: "",
+    type_reservateur: "individu",
+    documents_fournis: {},
     date_reservation: formatDateForInput(new Date()),
     statut: "en_attente",
     nombre_places: 1,
+    materiel_requis: {},
+    commentaires: ""
   });
   const [events, setEvents] = useState([]);
   const [users, setUsers] = useState([]);
@@ -39,9 +43,13 @@ export default function ReservationForm({
       setFormReservation({
         evenement_id: "",
         utilisateur_id: "",
+        type_reservateur: "individu",
+        documents_fournis: {},
         date_reservation: formatDateForInput(new Date()),
         statut: "en_attente",
         nombre_places: 1,
+        materiel_requis: {},
+        commentaires: ""
       });
       fetchEvents()
       fetchUsers()
@@ -117,6 +125,17 @@ export default function ReservationForm({
     }));
   };
 
+  const handleDocumentChange = (e) => {
+    const { name, checked } = e.target;
+    setFormReservation((prev) => ({
+      ...prev,
+      documents_fournis: {
+        ...prev.documents_fournis,
+        [name.split(".")[1]]: checked,
+      },
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -143,9 +162,7 @@ export default function ReservationForm({
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        title={
-          reservation && reservation.id ? "Modifier la réservation" : "Nouvelle réservation"
-        }
+        title={reservation ? "Modifier la réservation" : "Nouvelle réservation"}
         footer={
           <>
             <button
@@ -160,33 +177,7 @@ export default function ReservationForm({
               className="px-4 py-2 bg-[oklch(47.3%_0.137_46.201)] text-white rounded-lg hover:bg-[oklch(50%_0.137_46.201)] disabled:opacity-50"
               disabled={saving}
             >
-              {saving ? (
-                <span className="flex items-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Enregistrement...
-                </span>
-              ) : (
-                "Enregistrer"
-              )}
+              {saving ? "Enregistrement..." : "Enregistrer"}
             </button>
           </>
         }
@@ -197,6 +188,106 @@ export default function ReservationForm({
           </div>
         ) : (
           <form className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Type de réservateur
+                </label>
+                <select
+                  name="type_reservateur"
+                  value={formReservation.type_reservateur}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
+                  required
+                >
+                  <option value="individu">Individu</option>
+                  <option value="association">Association</option>
+                  <option value="entreprise">Entreprise</option>
+                  <option value="institution">Institution</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Documents requis
+                </label>
+                <div className="space-y-2">
+                  {formReservation.type_reservateur === 'individu' && (
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name="documents_fournis.cni_ou_acte_naissance"
+                        checked={formReservation.documents_fournis?.cni_ou_acte_naissance || false}
+                        onChange={handleDocumentChange}
+                        className="mr-2"
+                      />
+                      <span className="text-sm">CNI ou acte de naissance</span>
+                    </div>
+                  )}
+                  {formReservation.type_reservateur === 'association' && (
+                    <>
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          name="documents_fournis.statuts"
+                          checked={formReservation.documents_fournis?.statuts || false}
+                          onChange={handleDocumentChange}
+                          className="mr-2"
+                        />
+                        <span className="text-sm">Statuts</span>
+                      </div>
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          name="documents_fournis.recu_adhesion"
+                          checked={formReservation.documents_fournis?.recu_adhesion || false}
+                          onChange={handleDocumentChange}
+                          className="mr-2"
+                        />
+                        <span className="text-sm">Reçu d'adhésion</span>
+                      </div>
+                    </>
+                  )}
+                  {formReservation.type_reservateur === 'entreprise' && (
+                    <>
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          name="documents_fournis.documents_legaux"
+                          checked={formReservation.documents_fournis?.documents_legaux || false}
+                          onChange={handleDocumentChange}
+                          className="mr-2"
+                        />
+                        <span className="text-sm">Documents légaux</span>
+                      </div>
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          name="documents_fournis.recu_adhesion"
+                          checked={formReservation.documents_fournis?.recu_adhesion || false}
+                          onChange={handleDocumentChange}
+                          className="mr-2"
+                        />
+                        <span className="text-sm">Reçu d'adhésion</span>
+                      </div>
+                    </>
+                  )}
+                  {formReservation.type_reservateur === 'institution' && (
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name="documents_fournis.lettre_officielle"
+                        checked={formReservation.documents_fournis?.lettre_officielle || false}
+                        onChange={handleDocumentChange}
+                        className="mr-2"
+                      />
+                      <span className="text-sm">Lettre officielle</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
                 Événement
@@ -219,26 +310,6 @@ export default function ReservationForm({
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Utilisateur
-              </label>
-              <select
-                name="utilisateur_id"
-                value={formReservation.utilisateur_id}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
-                required
-              >
-                <option value="">Sélectionner un utilisateur</option>
-                {users.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.nom} ({user.email})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">
                 Date de réservation
               </label>
               <input
@@ -249,6 +320,9 @@ export default function ReservationForm({
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
                 required
               />
+              <p className="text-sm text-gray-500 mt-1">
+                La réservation doit être faite au moins 15 jours à l'avance
+              </p>
             </div>
 
             <div>
@@ -268,18 +342,34 @@ export default function ReservationForm({
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Statut
+                Matériel requis
               </label>
-              <select
-                name="statut"
-                value={formReservation.statut}
+              <textarea
+                name="materiel_requis"
+                value={formReservation.materiel_requis.description || ""}
+                onChange={(e) => setFormReservation(prev => ({
+                  ...prev,
+                  materiel_requis: { description: e.target.value }
+                }))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] h-20"
+                placeholder="Décrivez le matériel dont vous avez besoin..."
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Le matériel supplémentaire peut être payant
+              </p>
+            </div>
+
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Commentaires
+              </label>
+              <textarea
+                name="commentaires"
+                value={formReservation.commentaires}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
-              >
-                <option value="en_attente">En attente</option>
-                <option value="confirme">Confirmée</option>
-                <option value="annule">Annulée</option>
-              </select>
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] h-20"
+                placeholder="Commentaires additionnels..."
+              />
             </div>
           </form>
         )}
