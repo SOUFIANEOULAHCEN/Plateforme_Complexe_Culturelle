@@ -62,11 +62,24 @@ const Utilisateur = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    telephone: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      validate: {
+        is: /^[0-9+\s]+$/i
+      }
+    },
+    adresse: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+
   },
   {
     tableName: "utilisateur",
     timestamps: false,
-  }
+  },
+  
 );
 
 export default Utilisateur;

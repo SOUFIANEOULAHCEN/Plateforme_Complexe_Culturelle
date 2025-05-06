@@ -11,6 +11,8 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import eventProposalRoutes from "./routes/eventProposalRoutes.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
+import userProfileRoutes from "./routes/userProfileRoutes.js";
+
 const PORT = 3000;
 const app = express();
 
@@ -23,6 +25,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/evenements", evenementRoutes);
@@ -33,6 +36,10 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/event-proposals", eventProposalRoutes);
 app.use("/api/webhooks", webhookRoutes);
+app.use("/api/profile", userProfileRoutes); // Cette ligne est cruciale
+
+// Servir les fichiers statiques du dossier uploads
+app.use('/uploads', express.static('uploads'));
 
 // Test de connexion à la base de données
 sequelize
