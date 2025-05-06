@@ -5,8 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import api from "../api";
 import Toast from "../components/Toast";
+import Modal from "../components/Modal";
 
-export default function AuthForms() {
+export default function AuthForms({ isOpen, onClose }) {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -23,7 +24,6 @@ export default function AuthForms() {
     }
   }
 
-  
   useEffect(() => {
     const token = Cookies.get("jwt");
     if (token && isTokenExpired(token)) {
@@ -34,14 +34,23 @@ export default function AuthForms() {
     }
   }, [navigate]);
 
+  const handleSuccess = () => {
+    onClose();
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[oklch(1_0_0)] p-4">
-      <div className="w-full max-w-md">
+    <Modal 
+      isOpen={isOpen} 
+      onClose={onClose}
+      title={isLogin ? "Connexion" : "Créer un compte"}
+    >
+      <div className="w-full">
         {isLogin ? (
           <LoginForm
             showPassword={showPassword}
             setShowPassword={setShowPassword}
             switchToRegister={() => setIsLogin(false)}
+            onSuccess={handleSuccess}
           />
         ) : (
           <RegisterForm
@@ -50,14 +59,15 @@ export default function AuthForms() {
             showConfirmPassword={showConfirmPassword}
             setShowConfirmPassword={setShowConfirmPassword}
             switchToLogin={() => setIsLogin(true)}
+            onSuccess={handleSuccess}
           />
         )}
       </div>
-    </div>
+    </Modal>
   );
 }
 
-function LoginForm({ showPassword, setShowPassword, switchToRegister }) {
+function LoginForm({ showPassword, setShowPassword, switchToRegister, onSuccess }) {
   const [toast, setToast] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -109,6 +119,7 @@ function LoginForm({ showPassword, setShowPassword, switchToRegister }) {
       } else {
         navigate("/"); // Redirection par défaut si le rôle n'est pas reconnu
       }
+      onSuccess();
     } catch (err) {
       console.error("Login error:", err);
       setToast({
@@ -308,6 +319,7 @@ function RegisterForm({
   showConfirmPassword,
   setShowConfirmPassword,
   switchToLogin,
+  onSuccess,
 }) {
   const [toast, setToast] = useState(null);
   const [nom, setNom] = useState("");
@@ -340,6 +352,7 @@ function RegisterForm({
       setSuccess("Inscription réussie. Vous pouvez vous connecter.");
       setTimeout(() => {
         switchToLogin();
+        onSuccess();
       }, 1500);
     } catch (err) {
       setToast({

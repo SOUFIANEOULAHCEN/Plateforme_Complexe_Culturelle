@@ -1,43 +1,74 @@
+import atelierTheater from "../assets/atelier-theater.jpg"
+import library from "../assets/library.jpg"
+import music from "../assets/music.jpg"
+import art from "../assets/art.jpeg"
+
 export default function AboutSection() {
-    return (
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row gap-12 items-center">
-            <div className="lg:w-1/2 space-y-6">
-              <h2 className="text-4xl font-serif text-[#8B4513]">
+  return (
+    <section className="py-16 bg-white">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col lg:flex-row gap-12 items-center">
+          <div className="lg:w-1/2 space-y-6">
+            <div className="relative inline-block">
+              <h2 className="text-4xl font-serif text-[#8B4513] relative z-10">
                 Complexe Culturel
                 <br />
                 OUARZAZATE
               </h2>
-              <p className="text-[#8B4513] leading-relaxed">
-                Le Complexe Culturel de Ouarzazatevalorise la culture et les talents locaux en accueillant divers événements artistiques et culturels. 
-                Pour répondre à l’évolution des besoins,
-                il adopte un système numérique pour moderniser la gestion, améliorer la visibilité et renforcer la participation citoyenne.
-              </p>
-              <p className="text-[#8B4513] leading-relaxed">
-              Ce lieu emblématique aspire à devenir un espace de rencontre et d’échange, favorisant la créativité et l’engagement communautaire.
-              </p>
-              <button className="border-2 border-[#8B4513] text-[#8B4513] px-8 py-2 rounded-md hover:bg-[#8B4513] hover:text-white transition-colors duration-300">
-                Voir Plus
+              <div className="absolute -bottom-2 left-0 w-1/2 h-1 bg-[#8B4513]/20"></div>
+            </div>
+            <p className="text-[#8B4513] leading-relaxed text-lg">
+              Le Complexe Culturel de Ouarzazate est bien plus qu'un simple espace culturel. 
+              C'est un lieu vivant qui valorise la culture et les talents locaux en accueillant 
+              divers événements artistiques et culturels tout au long de l'année.
+            </p>
+            <p className="text-[#8B4513] leading-relaxed text-lg">
+              Pour répondre à l'évolution des besoins de notre communauté,
+              nous avons adopté un système numérique moderne pour améliorer la gestion,
+              accroître notre visibilité et renforcer la participation citoyenne.
+            </p>
+            <p className="text-[#8B4513] leading-relaxed text-lg">
+              Notre mission est de devenir un véritable carrefour culturel,
+              un espace de rencontre et d'échange qui favorise la créativité
+              et l'engagement communautaire dans notre belle ville.
+            </p>
+            <div className="pt-6">
+              <button 
+                className="bg-[#8B4513] text-white px-8 py-3 rounded-md hover:bg-[#6f3610] transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              >
+                En savoir plus
               </button>
             </div>
-            <div className="lg:w-1/2 grid grid-cols-2 gap-6">
+          </div>
+          <div className="lg:w-1/2 grid grid-cols-2 gap-6">
+            <div className="space-y-6">
               <img
-                src="/assets/atelier-theater.jpg"
-                alt="Cultural Activity 1"
-                className="w-full h-[400px] object-cover rounded-lg shadow-lg"
+                src={atelierTheater}
+                alt="Atelier théâtre"
+                className="w-full h-[300px] object-cover rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
               />
               <img
-                src="/assets/library.jpg"
-                alt="Cultural Activity 2"
-                className="w-full h-[400px] object-cover rounded-lg shadow-lg transform translate-y-10"
+                src={library}
+                alt="Bibliothèque"
+                className="w-full h-[200px] object-cover rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
               />
             </div>
-
+            <div className="space-y-6 pt-12">
+              <img
+                src={music}
+                alt="Studio de musique"
+                className="w-full h-[200px] object-cover rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
+              />
+              <img
+                src={art}
+                alt="Atelier d'art"
+                className="w-full h-[300px] object-cover rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
+              />
+            </div>
           </div>
         </div>
-      </section>
-    )
-  }
-  
-  
+      </div>
+    </section>
+  )
+}
+

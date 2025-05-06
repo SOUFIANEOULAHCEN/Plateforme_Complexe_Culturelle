@@ -367,7 +367,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                     Cookies.remove("userName");
                     Cookies.remove("userEmail");
                     Cookies.remove("userId");
-                    window.location.href = "/login";
+                    window.location.href = "/";  // Redirection vers la page d'accueil
                   }}
                 >
                   <svg

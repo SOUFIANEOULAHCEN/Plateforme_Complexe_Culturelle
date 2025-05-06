@@ -36,3 +36,94 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 }
+
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #824B26;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6e3d20;
+}
+
+/* Personnalisation des flèches du Slider */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #fff !important;
+  background: rgba(130, 75, 38, 0.5);
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: rgba(130, 75, 38, 0.8);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 20px !important;
+}
+
+/* Personnalisation des points de pagination */
+.swiper-pagination-bullet {
+  background: #fff !important;
+  opacity: 0.5;
+}
+
+.swiper-pagination-bullet-active {
+  background: #824B26 !important;
+  opacity: 1;
+}
+
+
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: #fff !important;
+  background: rgba(130, 75, 38, 0.5);
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+  padding: 25px;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: rgba(130, 75, 38, 0.8);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 20px !important;
+}
+
+.swiper-pagination-bullet {
+  background: #fff !important;
+  opacity: 0.5;
+}
+
+.swiper-pagination-bullet-active {
+  background: #824B26 !important;
+  opacity: 1;
+}

@@ -1,85 +1,84 @@
+import theater3 from "../assets/theater3.jpg"
+import library from "../assets/library.jpg"
+import atelierTheater from "../assets/atelier-theater.jpg"
+import music from "../assets/music.jpg"
+import art from "../assets/art.jpeg"
+import danse from "../assets/danse.jpg"
+import event1 from "../assets/event1.jpg"
+import theater4 from "../assets/theater4.jpg"
+
 export default function Gallery() {
-    const images = [
-      {
-        id: 1,
-        src: "/assets/computer.jpeg",
-        alt: "Computer Lab",
-      },
-      {
-        id: 2,
-        src: "/assets/library.jfif",
-        alt: "Library Space",
-      },
-      {
-        id: 3,
-        src: "/assets/theater2.jpg",
-        alt: "Theater",
-      },
-      {
-        id: 4,
-        src: "/assets/study.jpeg",
-        alt: "Study Area",
-      },
-      {
-        id: 5,
-        src: "/assets/workspace.jpeg",
-        alt: "Workshop Space",
-      },
-      {
-        id: 6,
-        src: "/assets/meeting.jfif",
-        alt: "Meeting Room",
-      },
-      {
-        id: 7,
-        src: "/assets/theater.jpeg",
-        alt: "Auditorium",
-      },
-      {
-        id: 8,
-        src: "/assets/creative.jfif",
-        alt: "Creative Space",
-      },
-      {
-        id: 9,
-        src: "/assets/reading.jfif",
-        alt: "Reading Area",
-      },
-      {
-        id: 10,
-        src: "/assets/art.jpeg",
-        alt: "Art Studio",
-      },
-    ]
-  
-    return (
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-serif text-[#8B4513] text-center">Galeries</h2>
-          <p className="text-xl text-[#8B4513] text-center mb-12">Explorez Notre Complexe Culturel</p>
-  
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {images.map((image, index) => (
-              <div
-                key={image.id}
-                className={`relative group cursor-pointer ${index === 2 ? "md:col-span-2" : ""} ${
-                  index === 5 ? "md:row-span-2" : ""
-                }`}
-              >
-                <img
-                  src={image.src || "/placeholder.svg"}
-                  alt={image.alt}
-                  className="w-full h-full  object-cover rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-10"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-lg font-medium">{image.alt}</span>
-                </div>
+  const images = [
+    {
+      src: theater3,
+      alt: "Salle de théâtre",
+      category: "Espaces"
+    },
+    {
+      src: library,
+      alt: "Bibliothèque",
+      category: "Espaces"
+    },
+    {
+      src: atelierTheater,
+      alt: "Atelier théâtre",
+      category: "Ateliers"
+    },
+    {
+      src: music,
+      alt: "Studio de musique",
+      category: "Espaces"
+    },
+    {
+      src: art,
+      alt: "Atelier d'art",
+      category: "Ateliers"
+    },
+    {
+      src: danse,
+      alt: "Salle de danse",
+      category: "Espaces"
+    },
+    {
+      src: event1,
+      alt: "Événement culturel",
+      category: "Événements"
+    },
+    {
+      src: theater4,
+      alt: "Performance théâtrale",
+      category: "Événements"
+    }
+  ]
+
+  return (
+    <section className="py-16 bg-white">
+      <div className="container mx-auto px-4">
+        <h2 className="text-4xl font-serif text-[#8B4513] text-center mb-12">Notre Galerie</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {images.map((image, index) => (
+            <div
+              key={index}
+              className="group relative overflow-hidden rounded-lg shadow-lg aspect-square cursor-pointer"
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                className="w-full h-full object-cover rounded-lg shadow-lg transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-6">
+                <span className="text-white/70 text-sm mb-1">{image.category}</span>
+                <h3 className="text-white text-xl font-semibold">{image.alt}</h3>
+                <div className="h-0 group-hover:h-px bg-white/30 my-3 transition-all duration-300"></div>
+                <button className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100 bg-white/20 backdrop-blur-sm text-white py-2 px-4 rounded-md hover:bg-white/30">
+                  Voir plus
+                </button>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      </section>
-    )
-  }
-  
-  
+      </div>
+    </section>
+  )
+}
+

@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   Navigate,
+  Outlet
 } from "react-router-dom";
 import AuthForms from "./pages/AuthForms";
 import DashboardAdmin from "./pages/DashboardAdmin";
@@ -22,16 +23,42 @@ import ResetPassword from "./pages/ResetPassword";
 import UserProfil from "./pages/UserProfil";
 import TalentProfil from "./pages/TalentProfil";
 import EventProposalsPage from "./pages/EventProposalsPage";
+import Home from "./pages/Home";
+import AboutSection from "./home/AboutSection";
+import EventSlider from "./home/EventSlider";
+import WorkshopSlider from "./home/WorkshopSlider";
+import Gallery from "./home/Gallery";
+import Header from "./home/Header";
+import Footer from "./home/Footer";
+
+// Layout component pour les pages publiques
+function PublicLayout() {
+  return (
+    <>
+      <Header />
+      <Outlet />
+      <Footer />
+    </>
+  );
+}
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Public routes */}
+        {/* Public layout routes */}
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/CCO" element={<AboutSection />} />
+          <Route path="/Evenements" element={<EventSlider />} />
+          <Route path="/Ateliers" element={<WorkshopSlider />} />
+          <Route path="/Gallery" element={<Gallery />} />
+        </Route>
+
+        {/* Auth routes */}
         <Route path="/login" element={<AuthForms />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/" element={<Navigate to="/login" replace />} />
 
         {/* Routes utilisateur */}
         <Route
@@ -306,7 +333,7 @@ function App() {
         <Route path="/UserProfil" element={<UserProfil />} />
         <Route path="/TalentProfil" element={<TalentProfil />} />
         {/* Fallback route */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

@@ -46,7 +46,7 @@ export default function DashboardLayout({ children }) {
     Cookies.remove("userRole");
     Cookies.remove("userName");
     Cookies.remove("userId");
-    navigate("/login");
+    navigate("/"); // Redirection vers la page d'accueil au lieu de /login
   };
 
   return (

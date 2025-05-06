@@ -1,16 +1,43 @@
-export default function Home({ onLoginClick }) {
+import Slider from '../home/Slider'
+import AboutSection from '../home/AboutSection'
+import EventSlider from '../home/EventSlider'
+import WorkshopSlider from '../home/WorkshopSlider'
+import Gallery from '../home/Gallery'
+
+export default function Home() {
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-4xl font-bold mb-6 text-primaire">Bienvenue au Centre Culturel de Ouarzazate</h1>
-      <p className="text-lg text-gray-700 mb-4">
-        Découvrez nos événements, ateliers et talents locaux.
-      </p>
-      <button
-        className="bg-gray-900 text-white px-4 py-2 rounded"
-        onClick={onLoginClick}
-      >
-        Se connecter
-      </button>
+    <div className="flex flex-col">
+      {/* Hero Section avec Slider */}
+      <section id="hero" className="relative">
+        <Slider />
+      </section>
+
+      {/* À propos Section */}
+      <section id="about" className="scroll-mt-16">
+        <AboutSection />
+      </section>
+
+      {/* Événements Section */}
+      <section id="events" className="scroll-mt-16">
+        <EventSlider />
+      </section>
+
+      {/* Ateliers Section */}
+      <section id="workshops" className="scroll-mt-16">
+        <WorkshopSlider />
+      </section>
+
+      {/* Galerie Section */}
+      <section id="gallery" className="scroll-mt-16">
+        <Gallery />
+      </section>
     </div>
-  );
+  )
 }
