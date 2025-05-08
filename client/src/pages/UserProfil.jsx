@@ -28,7 +28,7 @@ export default function UserProfile() {
   const [toast, setToast] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [activeTab, setActiveTab] = useState("profile");
-  const userEmail = Cookies.get("userEmail");
+  const userEmail = Cookies.get("userEmail"); 
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -158,9 +158,16 @@ export default function UserProfile() {
         });
       } else {
         // Sinon, utiliser la route standard pour les données du profil
-        response = await api.put(`/profile/me`, formDataToSend, {
+        // Convertir les données en objet JSON standard au lieu de FormData
+        const profileData = {
+          nom: formData.nom,
+          email: formData.email,
+          telephone: formData.telephone,
+          adresse: formData.adresse
+        };
+        response = await api.put(`/profile/me`, profileData, {
           headers: { 
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         });
       }
