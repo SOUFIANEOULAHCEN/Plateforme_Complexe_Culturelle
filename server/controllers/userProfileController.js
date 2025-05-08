@@ -118,14 +118,15 @@ export const updateProfileImage = async (req, res) => {
     // Supprimer l'ancienne image si elle existe
     if (user.image_profil) {
       try {
-        await unlink(path.join('uploads', path.basename(user.image_profil)));
+        const oldImagePath = path.join(process.cwd(), 'public', user.image_profil);
+        await unlink(oldImagePath);
       } catch (error) {
         console.error("Erreur lors de la suppression de l'ancienne image:", error);
       }
     }
 
     // Mettre à jour le chemin de l'image
-    const imagePath = `/uploads/${req.file.filename}`;
+    const imagePath = `/uploads/profiles/${req.file.filename}`;
     await user.update({ image_profil: imagePath });
 
     const updatedUser = await Utilisateur.findByPk(req.user.id, {
