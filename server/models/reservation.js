@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
+import Evenement from './evenement.js'; // Add this import
 
 const Reservation = sequelize.define('reservation', {
   id: {
@@ -54,5 +55,8 @@ const Reservation = sequelize.define('reservation', {
   tableName: 'reservation',
   timestamps: false // Désactiver les timestamps car les colonnes n'existent pas
 });
+
+// Uncomment this line to establish the association
+Reservation.belongsTo(Evenement, { foreignKey: 'evenement_id', as: 'evenement' });
 
 export default Reservation;

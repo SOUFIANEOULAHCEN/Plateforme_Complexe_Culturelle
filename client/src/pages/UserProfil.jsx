@@ -3,7 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 import Cookies from "js-cookie";
 import Toast from "../components/Toast";
-import { Bell, Lock, LogOut, User, Camera, Edit2, Key, Shield, CheckCircle, MapPin, Phone, Mail } from 'lucide-react';
+import UserReservationsHistory from "../components/UserReservationsHistory";
+import { Bell, Lock, LogOut, User, Camera, Edit2, Key, Shield, CheckCircle, MapPin, Phone, Mail, Calendar } from 'lucide-react';
 
 export default function UserProfile() {
   const navigate = useNavigate();
@@ -286,6 +287,7 @@ export default function UserProfile() {
 
   const navItems = [
     { id: "profile", icon: User, label: "Profil", emoji: "👤" },
+    { id: "reservations", icon: Calendar, label: "Réservations", emoji: "📅" },
     { id: "notifications", icon: Bell, label: "Notifications", emoji: "🔔" },
     { id: "security", icon: Lock, label: "Sécurité", emoji: "🔒" },
   ];
@@ -542,6 +544,10 @@ export default function UserProfile() {
                   </form>
                 </div>
               </div>
+            )}
+
+            {activeTab === "reservations" && (
+              <UserReservationsHistory />
             )}
 
             {activeTab === "security" && (

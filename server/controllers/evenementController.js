@@ -1,11 +1,31 @@
 import Evenement from "../models/evenement.js";
+import Utilisateur from "../models/utilisateur.js";
 
 export const getEvenements = async (req, res) => {
   try {
+    const { createur_email } = req.query;
+    
+    if (createur_email) {
+      // Joindre la table utilisateur pour filtrer par email du créateur
+      const evenements = await Evenement.findAll({
+        include: [
+          {
+            model: Utilisateur,
+            as: 'createur',
+            where: { email: createur_email },
+            attributes: ['id', 'nom', 'email']
+          }
+        ]
+      });
+      return res.json(evenements);
+    }
+    
+    // Si pas de filtre par email, retourner tous les événements
     const evenements = await Evenement.findAll();
     res.json(evenements);
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Erreur lors de la récupération des événements:", err);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 };
 

@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
+import Utilisateur from './utilisateur.js';
 
 const Evenement = sequelize.define('evenement', {
   id: {
@@ -51,5 +52,8 @@ const Evenement = sequelize.define('evenement', {
   tableName: 'evenement',
   timestamps: false,
 });
+
+// Établir l'association avec l'utilisateur créateur
+Evenement.belongsTo(Utilisateur, { foreignKey: 'createur_id', as: 'createur' });
 
 export default Evenement;

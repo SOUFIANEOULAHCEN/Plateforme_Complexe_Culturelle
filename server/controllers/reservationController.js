@@ -1,5 +1,6 @@
 import Reservation from '../models/reservation.js';
 import Evenement from '../models/evenement.js';
+import Utilisateur from '../models/utilisateur.js'; // Add this import
 
 // Règles de documents requis par type de réservateur
 const DOCUMENTS_REQUIS = {
@@ -165,12 +166,45 @@ export const deleteReservation = async (req, res) => {
 
 export const getReservations = async (req, res) => {
   try {
+    const { utilisateur_email } = req.query;
+    
+    if (utilisateur_email) {
+      // First find the user by email
+      const user = await Utilisateur.findOne({
+        where: { email: utilisateur_email }
+      });
+      
+      if (!user) {
+        return res.json([]); // Return empty array if user not found
+      }
+      
+      // Then find reservations by user ID
+      const reservations = await Reservation.findAll({
+        where: { utilisateur_id: user.id },
+        include: [
+          {
+            model: Evenement,
+            as: 'evenement'
+          }
+        ]
+      });
+      
+      return res.json(reservations);
+    }
+    
+    // If no email filter, return all reservations
     const reservations = await Reservation.findAll({
-      order: [['date_reservation', 'DESC']]
+      include: [
+        {
+          model: Evenement,
+          as: 'evenement'
+        }
+      ]
     });
+    
     res.json(reservations);
   } catch (err) {
-    console.error("Erreur récupération réservations:", err);
-    res.status(500).json({ message: 'Erreur serveur' });
+    console.error("Erreur lors de la récupération des réservations:", err);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 };

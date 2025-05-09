@@ -23,6 +23,7 @@ import ResetPassword from "./pages/ResetPassword";
 import UserProfil from "./pages/UserProfil";
 import TalentProfil from "./pages/TalentProfil";
 import EventProposalsPage from "./pages/EventProposalsPage";
+import ReservationFormPage from "./pages/ReservationFormPage";
 import Home from "./pages/Home";
 import AboutSection from "./home/AboutSection";
 import EventSlider from "./home/EventSlider";
@@ -54,6 +55,9 @@ function App() {
           <Route path="/Ateliers" element={<WorkshopSlider />} />
           <Route path="/Gallery" element={<Gallery />} />
         </Route>
+        
+        {/* Route de réservation */}
+        <Route path="/reservation" element={<ReservationFormPage />} />
 
         {/* Auth routes */}
         <Route path="/login" element={<AuthForms />} />
