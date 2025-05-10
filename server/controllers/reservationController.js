@@ -180,27 +180,14 @@ export const getReservations = async (req, res) => {
       
       // Then find reservations by user ID
       const reservations = await Reservation.findAll({
-        where: { utilisateur_id: user.id },
-        include: [
-          {
-            model: Evenement,
-            as: 'evenement'
-          }
-        ]
+        where: { utilisateur_id: user.id }
       });
       
       return res.json(reservations);
     }
     
     // If no email filter, return all reservations
-    const reservations = await Reservation.findAll({
-      include: [
-        {
-          model: Evenement,
-          as: 'evenement'
-        }
-      ]
-    });
+    const reservations = await Reservation.findAll();
     
     res.json(reservations);
   } catch (err) {

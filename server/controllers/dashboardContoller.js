@@ -71,7 +71,7 @@ export const getDashboardStats = async (req, res) => {
     // Récupération des données mensuelles
     const reservationsData = await Reservation.findAll({
       attributes: [
-        [fn("DATE_FORMAT", col("date_reservation"), "%Y-%m"), "month"],
+        [fn("DATE_FORMAT", col("date_debut"), "%Y-%m"), "month"],
         [fn("COUNT", col("id")), "reservations"],
       ],
       group: ["month"],

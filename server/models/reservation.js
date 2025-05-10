@@ -1,6 +1,5 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
-import Evenement from './evenement.js'; // Add this import
 
 const Reservation = sequelize.define('reservation', {
   id: {
@@ -8,7 +7,31 @@ const Reservation = sequelize.define('reservation', {
     autoIncrement: true,
     primaryKey: true,
   },
-  evenement_id: {
+  titre: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  type_reservation: {
+    type: DataTypes.ENUM('standard', 'evenement'),
+    defaultValue: 'standard',
+  },
+  type_organisateur: {
+    type: DataTypes.ENUM('individu', 'association', 'entreprise'),
+    defaultValue: 'individu',
+  },
+  date_debut: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  date_fin: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  espace_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
@@ -16,47 +39,49 @@ const Reservation = sequelize.define('reservation', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  type_reservateur: {
-    type: DataTypes.ENUM('individu', 'association', 'entreprise', 'institution'),
-    allowNull: false,
-    defaultValue: 'individu'
-  },
-  documents_fournis: {
-    type: DataTypes.JSON,
-    allowNull: true,
-    defaultValue: {}
-  },
-  date_reservation: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
   nombre_places: {
     type: DataTypes.INTEGER,
     defaultValue: 1,
   },
-  statut: {
-    type: DataTypes.ENUM('confirme', 'annule', 'en_attente'),
-    defaultValue: 'en_attente',
-  },
-  materiel_requis: {
+  documents_fournis: {
     type: DataTypes.JSON,
     allowNull: true,
-    defaultValue: {}
+    defaultValue: {},
   },
-  commentaires: {
+  documents_paths: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    defaultValue: {},
+  },
+  materiel_additionnel: {
     type: DataTypes.TEXT,
-    allowNull: true
+    allowNull: true,
+  },
+  statut: {
+    type: DataTypes.ENUM('en_attente', 'confirme', 'annule', 'termine'),
+    defaultValue: 'en_attente',
   },
   date_annulation: {
     type: DataTypes.DATE,
-    allowNull: true
-  }
+    allowNull: true,
+  },
+  commentaires: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
+  },
 }, {
-  tableName: 'reservation',
-  timestamps: false // Désactiver les timestamps car les colonnes n'existent pas
+  tableName: 'reservations',
+  timestamps: true
 });
-
-// Uncomment this line to establish the association
-Reservation.belongsTo(Evenement, { foreignKey: 'evenement_id', as: 'evenement' });
 
 export default Reservation;
