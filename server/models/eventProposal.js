@@ -32,6 +32,10 @@ const EventProposal = sequelize.define('event_proposal', {
     type: DataTypes.ENUM('spectacle', 'atelier', 'conference', 'exposition', 'rencontre'),
     allowNull: false,
   },
+  affiche_url: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   proposeur_email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -46,6 +50,10 @@ const EventProposal = sequelize.define('event_proposal', {
   proposeur_telephone: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  prix: {
+    type: DataTypes.DECIMAL(10, 2),
+    defaultValue: 0.00,
   },
   statut: {
     type: DataTypes.ENUM('en_attente', 'approuve', 'rejete'),
