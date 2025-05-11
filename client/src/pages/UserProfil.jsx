@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 import Cookies from "js-cookie";
 import Toast from "../components/Toast";
-import UserReservationsHistory from "../components/UserReservationsHistory";
+// import UserReservationsHistory from "../components/UserReservationsHistory";
 import { Bell, Lock, LogOut, User, Camera, Edit2, Key, Shield, CheckCircle, MapPin, Phone, Mail, Calendar } from 'lucide-react';
 
 export default function UserProfile() {
@@ -545,10 +545,10 @@ export default function UserProfile() {
                 </div>
               </div>
             )}
-
+{/* 
             {activeTab === "reservations" && (
               <UserReservationsHistory />
-            )}
+            )} */}
 
             {activeTab === "security" && (
               <div className="bg-white rounded-lg shadow-lg overflow-hidden">
