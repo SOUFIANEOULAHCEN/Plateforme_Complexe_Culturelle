@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import api from "../api";
 import Toast from "./Toast";
-
+import Cookies from "js-cookie";
 export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
   const [form, setForm] = useState({
     titre: "",
@@ -26,7 +26,19 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
   // Charger les espaces pour le select
   useEffect(() => {
     if (isOpen) {
-      api.get("/espaces").then(res => setEspaces(res.data)).catch(() => setEspaces([]));
+      api.get("/espaces")
+        .then(res => setEspaces(res.data))
+        .catch((error) => {
+          setEspaces([]);
+          if (error.response && error.response.status === 401) {
+            setToast({ message: "Vous devez être connecté pour proposer un événement.", type: "error" });
+          } else {
+            setToast({ message: "Erreur lors du chargement des espaces.", type: "error" });
+          }
+        });
+      // Récupérer l'email de l'utilisateur connecté et pré-remplir le champ proposeur_email
+      const email = Cookies.get("userEmail");
+      setForm({...form, proposeur_email: email });
     }
   }, [isOpen]);
 
@@ -211,7 +223,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
           />
         </div>
         <div>
-          <label className="block mb-1 text-sm font-medium text-[#824B26]">Prix (en €)</label>
+          <label className="block mb-1 text-sm font-medium text-[#824B26]">Prix (en Dh)</label>
           <input
             type="number"
             name="prix"
