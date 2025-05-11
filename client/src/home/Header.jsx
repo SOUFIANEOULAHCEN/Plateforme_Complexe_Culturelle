@@ -4,10 +4,12 @@ import complex_logo_final_brown from "../assets/img/logo/complex_logo_final_brow
 import france from "../assets/img/france.png";
 import morocco from "../assets/img/morocco.png";
 import AuthForms from "../pages/AuthForms";
+import ReservationModal from "../components/ReservationModal";
 import background from "../assets/img/background.webp";
 
 export default function Header() {
   const [isConnexionModalOpen, setConnexionModalOpen] = useState(false);
+  const [isReservationModalOpen, setReservationModalOpen] = useState(false);
   const [showConnexion, setShowConnexion] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -19,12 +21,16 @@ export default function Header() {
     setShowConnexion(true);
   };
 
-  const closeModal = () => {
+  const closeConnexionModal = () => {
     setConnexionModalOpen(false);
+  };
+  
+  const closeReservationModal = () => {
+    setReservationModalOpen(false);
   };
 
   const handleReservationClick = () => {
-    navigate("/reservation");
+    setReservationModalOpen(true);
   };
 
   const toggleDropdown = () => {
@@ -195,7 +201,13 @@ export default function Header() {
       {/* Modal de Connexion/Inscription */}
       <AuthForms 
         isOpen={isConnexionModalOpen}
-        onClose={closeModal}
+        onClose={closeConnexionModal}
+      />
+      
+      {/* Modal de Réservation */}
+      <ReservationModal
+        isOpen={isReservationModalOpen}
+        onClose={closeReservationModal}
       />
     </div>
   );

@@ -19,7 +19,7 @@ export default function Modal({ isOpen, onClose, title, children, footer }) {
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] flex flex-col">
+      <div className="bg-white rounded-lg shadow-xl w-[70%] max-w-4xl max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-[oklch(0.145_0_0)]">{title}</h3>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-xl font-bold">
