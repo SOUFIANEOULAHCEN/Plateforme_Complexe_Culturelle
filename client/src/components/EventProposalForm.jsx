@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import api from "../api";
 import Toast from "./Toast";
@@ -9,19 +9,34 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
     description: "",
     date_debut: "",
     date_fin: "",
-    lieu: "",
-    type_evenement: "conférence",
-    organisateur: "",
-    contact: "",
+    espace_id: "",
+    type: "spectacle",
+    affiche: null,
+    proposeur_email: "",
+    proposeur_nom: "",
+    proposeur_telephone: "",
+    prix: 0,
     statut: "en_attente",
     commentaires: ""
   });
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
+  const [espaces, setEspaces] = useState([]);
+
+  // Charger les espaces pour le select
+  useEffect(() => {
+    if (isOpen) {
+      api.get("/espaces").then(res => setEspaces(res.data)).catch(() => setEspaces([]));
+    }
+  }, [isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm({ ...form, [name]: name === "prix" ? Number.parseFloat(value) : (name === "espace_id" ? Number(value) : value) });
+  };
+
+  const handleFileChange = (e) => {
+    setForm({ ...form, affiche: e.target.files[0] });
   };
 
   const handleSubmit = async (e) => {
@@ -29,12 +44,22 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
     setLoading(true);
     setToast(null);
     try {
-      await api.post("/event-proposals", form);
+      const formData = new FormData();
+      Object.entries(form).forEach(([key, value]) => {
+        if (key === "affiche" && value) {
+          formData.append("affiche", value);
+        } else {
+          formData.append(key, value);
+        }
+      });
+      await api.post("/event-proposals", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setToast({ message: "Proposition envoyée avec succès", type: "success" });
       if (onSuccess) onSuccess();
-      onClose();
+      setTimeout(() => {
+        onClose();
+      }, 4000);
     } catch (error) {
-      setToast({ message: "Erreur lors de l'envoi de la proposition", type: "error" });
+      setToast({ message: "Une erreur est survenue, veuillez réessayer", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -94,6 +119,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
               value={form.date_debut}
               onChange={handleChange}
               required
+              min={new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16)}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
             />
           </div>
@@ -105,55 +131,94 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
               value={form.date_fin}
               onChange={handleChange}
               required
+              min={form.date_debut || new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16)}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
             />
           </div>
         </div>
         <div>
-          <label className="block mb-1 text-sm font-medium text-[#824B26]">Lieu</label>
-          <input
-            type="text"
-            name="lieu"
-            value={form.lieu}
+          <label className="block mb-1 text-sm font-medium text-[#824B26]">Espace</label>
+          <select
+            name="espace_id"
+            value={form.espace_id}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-          />
+          >
+            <option value="">Sélectionner un espace</option>
+            {espaces.map(espace => (
+              <option key={espace.id} value={espace.id}>{espace.nom}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="block mb-1 text-sm font-medium text-[#824B26]">Type d'événement</label>
           <select
-            name="type_evenement"
-            value={form.type_evenement}
+            name="type"
+            value={form.type}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
           >
-            <option value="conférence">Conférence</option>
-            <option value="exposition">Exposition</option>
+            <option value="spectacle">Spectacle</option>
             <option value="atelier">Atelier</option>
-            <option value="concert">Concert</option>
-            <option value="autre">Autre</option>
+            <option value="conference">Conférence</option>
+            <option value="exposition">Exposition</option>
+            <option value="rencontre">Rencontre</option>
           </select>
         </div>
         <div>
-          <label className="block mb-1 text-sm font-medium text-[#824B26]">Organisateur</label>
+          <label className="block mb-1 text-sm font-medium text-[#824B26]">Affiche de l'événement (optionnel)</label>
+          <input
+            type="file"
+            name="affiche"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">Nom du proposeur</label>
+            <input
+              type="text"
+              name="proposeur_nom"
+              value={form.proposeur_nom}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+            />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">Email du proposeur</label>
+            <input
+              type="email"
+              name="proposeur_email"
+              value={form.proposeur_email}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+            />
+          </div>
+        </div>
+        <div>
+          <label className="block mb-1 text-sm font-medium text-[#824B26]">Téléphone du proposeur</label>
           <input
             type="text"
-            name="organisateur"
-            value={form.organisateur}
+            name="proposeur_telephone"
+            value={form.proposeur_telephone}
             onChange={handleChange}
-            required
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
           />
         </div>
         <div>
-          <label className="block mb-1 text-sm font-medium text-[#824B26]">Contact</label>
+          <label className="block mb-1 text-sm font-medium text-[#824B26]">Prix (en €)</label>
           <input
-            type="text"
-            name="contact"
-            value={form.contact}
+            type="number"
+            name="prix"
+            value={form.prix}
             onChange={handleChange}
-            required
+            min="0"
+            step="0.01"
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
           />
         </div>

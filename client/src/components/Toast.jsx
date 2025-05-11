@@ -29,7 +29,9 @@ export default function Toast({ message, type = "success", onClose }) {
     setExiting(true);
     setTimeout(() => {
       setVisible(false);
-      onClose();
+      if (typeof onClose === "function") {
+        onClose();
+      }
     }, 300); // Extended for smoother exit animation
   };
 

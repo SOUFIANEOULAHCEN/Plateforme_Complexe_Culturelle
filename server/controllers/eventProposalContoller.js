@@ -74,6 +74,12 @@ export const createEventProposal = async (req, res) => {
       proposeur_telephone
     } = req.body;
     
+    // Récupérer l'URL de l'affiche si un fichier a été uploadé
+    let affiche_url = null;
+    if (req.file) {
+      affiche_url = req.file.path.replace(/\\/g, '/'); // Normaliser le chemin pour l'URL
+    }
+    
     // Validate required fields
     if (!titre || !date_debut || !date_fin || !espace_id || !type || !proposeur_email || !proposeur_nom) {
       return res.status(400).json({ message: 'Tous les champs obligatoires doivent être remplis' });
@@ -90,6 +96,7 @@ export const createEventProposal = async (req, res) => {
       proposeur_email,
       proposeur_nom,
       proposeur_telephone,
+      affiche_url,
       statut: 'en_attente'
     });
     
@@ -110,12 +117,17 @@ export const createEventProposal = async (req, res) => {
       })
     });
     
-    // Send confirmation email to proposer
-    await sendEmail({
-      to: proposeur_email,
-      subject: 'Proposition d\'événement reçue',
-      text: `Bonjour ${proposeur_nom},\n\nNous avons bien reçu votre proposition d'événement "${titre}". Notre équipe l'examinera dans les plus brefs délais.\n\nCordialement,\nL'équipe du Centre Culturel`
-    });
+    // Envoi d'email encapsulé dans un try/catch pour ne pas bloquer la création
+    try {
+      await sendEmail({
+        to: proposeur_email,
+        subject: 'Proposition d\'événement reçue',
+        text: `Bonjour ${proposeur_nom},\n\nNous avons bien reçu votre proposition d'événement \"${titre}\". Notre équipe l'examinera dans les plus brefs délais.\n\nCordialement,\nL'équipe du Centre Culturel`
+      });
+    } catch (emailError) {
+      console.error('Erreur lors de l\'envoi de l\'email de confirmation:', emailError);
+      // On n'empêche pas la création même si l'email échoue
+    }
     
     res.status(201).json({
       success: true,
@@ -124,6 +136,7 @@ export const createEventProposal = async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating event proposal:', error);
+    console.error('Contenu reçu:', req.body, req.file); // Ajoutez ceci pour le debug
     res.status(500).json({ message: 'Erreur lors de la création de la proposition d\'événement' });
   }
 };
