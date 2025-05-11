@@ -203,13 +203,11 @@ export default function ReservationModal({ isOpen, onClose }) {
         )}
         {step === "form" && choix === "event_proposal" && (
           <>
-            <Toast message="Remplissez le formulaire pour proposer un événement." type="info" />
             <EventProposalForm isOpen={true} onClose={handleClose} onSuccess={handleClose} />
           </>
         )}
         {step === "form" && choix === "reservation" && (
           <>
-            <Toast message="Remplissez le formulaire pour réserver un espace." type="info" />
             <ReservationForm isOpen={true} onClose={handleClose} onSuccess={handleClose} />
           </>
         )}

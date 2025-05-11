@@ -3,6 +3,7 @@ import Modal from "./Modal";
 import api from "../api";
 import Toast from "./Toast";
 import Cookies from "js-cookie";
+
 export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
   const [form, setForm] = useState({
     titre: "",
@@ -31,16 +32,23 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         .catch((error) => {
           setEspaces([]);
           if (error.response && error.response.status === 401) {
-            setToast({ message: "Vous devez être connecté pour proposer un événement.", type: "error" });
+            showToast("Vous devez être connecté pour proposer un événement.", "error");
           } else {
-            setToast({ message: "Erreur lors du chargement des espaces.", type: "error" });
+            showToast("Erreur lors du chargement des espaces.", "error");
           }
         });
+      
       // Récupérer l'email de l'utilisateur connecté et pré-remplir le champ proposeur_email
       const email = Cookies.get("userEmail");
-      setForm({...form, proposeur_email: email });
+      if (email) {
+        setForm(prev => ({...prev, proposeur_email: email }));
+      }
     }
   }, [isOpen]);
+
+  const showToast = (message, type = "success", duration = 5000) => {
+    setToast({ message, type, duration });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,41 +59,109 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
     setForm({ ...form, affiche: e.target.files[0] });
   };
 
+  const validateForm = () => {
+    const requiredFields = [
+      'titre', 'description', 'date_debut', 'date_fin', 
+      'espace_id', 'proposeur_nom', 'proposeur_email'
+    ];
+    
+    const missingFields = requiredFields.filter(field => !form[field]);
+    
+    if (missingFields.length > 0) {
+      showToast(`Veuillez remplir les champs obligatoires: ${missingFields.join(', ')}`, "error");
+      return false;
+    }
+    
+    if (new Date(form.date_debut) >= new Date(form.date_fin)) {
+      showToast("La date de fin doit être après la date de début", "error");
+      return false;
+    }
+    
+    if (!form.proposeur_email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      showToast("Veuillez entrer une adresse email valide", "error");
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) return;
+    
     setLoading(true);
     setToast(null);
+    
     try {
       const formData = new FormData();
       Object.entries(form).forEach(([key, value]) => {
         if (key === "affiche" && value) {
           formData.append("affiche", value);
-        } else {
+        } else if (value !== null && value !== undefined) {
           formData.append(key, value);
         }
       });
-      await api.post("/event-proposals", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-      setToast({ message: "Proposition envoyée avec succès", type: "success" });
+      
+      await api.post("/event-proposals", formData, { 
+        headers: { 'Content-Type': 'multipart/form-data' } 
+      });
+      
+      showToast("Proposition envoyée avec succès", "success");
       if (onSuccess) onSuccess();
+      
+      // Réinitialiser le formulaire après succès
+      setForm({
+        titre: "",
+        description: "",
+        date_debut: "",
+        date_fin: "",
+        espace_id: "",
+        type: "spectacle",
+        affiche: null,
+        proposeur_email: Cookies.get("userEmail") || "",
+        proposeur_nom: "",
+        proposeur_telephone: "",
+        prix: 0,
+        statut: "en_attente",
+        commentaires: ""
+      });
+      
+      // Fermer automatiquement après 5 secondes
       setTimeout(() => {
         onClose();
-      }, 4000);
+      }, 5000);
     } catch (error) {
-      setToast({ message: "Une erreur est survenue, veuillez réessayer", type: "error" });
+      let errorMessage = "Une erreur est survenue, veuillez réessayer";
+      
+      if (error.response) {
+        if (error.response.status === 401) {
+          errorMessage = "Vous devez être connecté pour proposer un événement";
+        } else if (error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message;
+        }
+      }
+      
+      showToast(errorMessage, "error");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleModalClose = () => {
+    setToast(null);
+    onClose();
+  };
+
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleModalClose}
       title="Proposer un événement culturel"
       footer={
         <div className="flex justify-end space-x-3">
           <button
-            onClick={onClose}
+            onClick={handleModalClose}
             className="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300"
           >
             Annuler
@@ -244,7 +320,15 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
           />
         </div>
       </form>
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          duration={toast.duration}
+          onClose={() => setToast(null)} 
+        />
+      )}
     </Modal>
   );
 }
