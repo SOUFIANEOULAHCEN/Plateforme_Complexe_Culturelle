@@ -25,6 +25,8 @@ export default function EspacesTable({ limit }) {
   const [itemsPerPage] = useState(10);
   const userRole = Cookies.get("userRole");
   const canDelete = userRole === "superadmin";
+   // Ajout des états pour la pagination
+
 
   useEffect(() => {
     fetchEspaces();

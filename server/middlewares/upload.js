@@ -26,10 +26,13 @@ const storage = multer.diskStorage({
 
 // Filtrer les types de fichiers
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
+  // Accepter les images pour image_profil et PDF pour cv
+  if (file.fieldname === 'image_profil' && file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else if (file.fieldname === 'cv' && file.mimetype === 'application/pdf') {
     cb(null, true);
   } else {
-    cb(new Error('Le fichier doit être une image'), false);
+    cb(new Error('Le fichier doit être une image ou un PDF'), false);
   }
 };
 

@@ -73,6 +73,34 @@ const Utilisateur = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true
     },
+    reseaux_sociaux: {
+      type: DataTypes.JSON,
+      allowNull: true
+    },
+    experience: {
+      type: DataTypes.JSON,
+      allowNull: true
+    },
+    competences: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    disponibilites: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    cv: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    specialite: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    annees_experience: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
 
   },
   {

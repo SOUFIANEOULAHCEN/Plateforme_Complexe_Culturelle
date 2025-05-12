@@ -23,6 +23,9 @@ export default function CommentairesTable({ limit, evenementId = null }) {
   const [editingCommentaire, setEditingCommentaire] = useState(null);
   const [viewingCommentaire, setViewingCommentaire] = useState(null);
   const [toast, setToast] = useState(null);
+  // Ajout des états pour la pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
   const userRole = Cookies.get("userRole");
   const canDelete = userRole === "superadmin" || userRole === "admin";
 
@@ -128,6 +131,7 @@ export default function CommentairesTable({ limit, evenementId = null }) {
 
   const handleCommentaireFormSuccess = () => {
     fetchAllData();
+    setCurrentPage(1); // Reset to first page after adding/editing
   };
 
   const formatDate = (dateString) => {
@@ -181,6 +185,14 @@ export default function CommentairesTable({ limit, evenementId = null }) {
 
     return matchesSearch && matchesNote;
   });
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredCommentaires.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredCommentaires.length / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (loading) {
     return (
@@ -265,7 +277,7 @@ export default function CommentairesTable({ limit, evenementId = null }) {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredCommentaires.map((commentaire) => (
+            {currentItems.map((commentaire) => (
               <tr key={commentaire.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {commentaire.id}
@@ -355,6 +367,82 @@ export default function CommentairesTable({ limit, evenementId = null }) {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      {filteredCommentaires.length > itemsPerPage && (
+        <div className="flex items-center justify-between mt-4">
+          {/* Affichage du texte indiquant la plage d'éléments affichés */}
+          <div className="text-sm text-gray-500">
+            Affichage de {indexOfFirstItem + 1} à{" "}
+            {Math.min(indexOfLastItem, filteredCommentaires.length)} sur{" "}
+            {filteredCommentaires.length} commentaires
+          </div>
+
+          <div className="flex space-x-1">
+            <button
+              onClick={() => paginate(1)}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === 1
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              «
+            </button>
+            <button
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === 1
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              ‹
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+              (number) => (
+                <button
+                  key={number}
+                  onClick={() => paginate(number)}
+                  className={`px-3 py-1 rounded-md ${
+                    currentPage === number
+                      ? "bg-[oklch(47.3%_0.137_46.201)] text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  {number}
+                </button>
+              )
+            )}
+
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === totalPages
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              ›
+            </button>
+            <button
+              onClick={() => paginate(totalPages)}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === totalPages
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              »
+            </button>
+          </div>
+        </div>
+      )}
 
       <Modal
         isOpen={showConfirmModal}

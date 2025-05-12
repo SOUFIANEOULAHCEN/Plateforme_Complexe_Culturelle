@@ -10,6 +10,9 @@ const EventProposalsTable = ({ limit }) => {
   const [processingAction, setProcessingAction] = useState(false);
   const [commentaire, setCommentaire] = useState("");
   const [toast, setToast] = useState(null);
+  // Ajout des états pour la pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   useEffect(() => {
     fetchProposals();
@@ -136,10 +139,28 @@ const EventProposalsTable = ({ limit }) => {
     });
   };
 
+  // Compteurs pour le filtrage dynamique
+  const statusCounts = proposals.reduce(
+    (acc, proposal) => {
+      acc.total++;
+      acc[proposal.statut] = (acc[proposal.statut] || 0) + 1;
+      return acc;
+    },
+    { total: 0, en_attente: 0, approuve: 0, rejete: 0 }
+  );
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = proposals.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(proposals.length / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[oklch(47.3%_0.137_46.201)]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#6e3d20]"></div>
       </div>
     );
   }
@@ -152,12 +173,15 @@ const EventProposalsTable = ({ limit }) => {
             {["all", "en_attente", "approuve", "rejete"].map((f) => (
               <button
                 key={f}
-                onClick={() => setFilter(f)}
+                onClick={() => {
+                  setFilter(f);
+                  setCurrentPage(1); // Reset to first page when changing filter
+                }}
                 className={`px-4 py-2 text-sm rounded-lg transition-colors ${
                   filter === f
-                    ? "bg-blue-600 text-white"
+                    ? "bg-[oklch(47.3%_0.137_46.201)] text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
+                } flex items-center gap-2`}
               >
                 {
                   {
@@ -167,6 +191,11 @@ const EventProposalsTable = ({ limit }) => {
                     rejete: "Rejetés",
                   }[f]
                 }
+                <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs">
+                  {f === "all"
+                    ? statusCounts.total
+                    : statusCounts[f] || 0}
+                </span>
               </button>
             ))}
           </div>
@@ -179,135 +208,213 @@ const EventProposalsTable = ({ limit }) => {
           <p className="text-gray-500">Aucune proposition trouvée</p>
         </div>
       ) : (
-        <div className="overflow-x-auto bg-white rounded-lg shadow">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Titre
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Proposeur
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Dates
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Statut
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {proposals.map((proposal) => (
-                <tr key={proposal.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {proposal.titre}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {proposal.proposeur_nom}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {proposal.proposeur_email}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatDate(proposal.date_debut)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {proposal.type}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getStatusBadge(proposal.statut)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => handleViewDetails(proposal)}
-                        className="text-gray-600 hover:text-blue-600"
-                      >
-                        <svg
-                          className="h-5 w-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-                      </button>
-
-                      {proposal.statut === "en_attente" && (
-                        <>
-                          <button
-                            onClick={() => {
-                              setSelectedProposal(proposal);
-                              setCommentaire("");
-                            }}
-                            className="text-green-600 hover:text-green-800"
-                          >
-                            <svg
-                              className="h-5 w-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSelectedProposal(proposal);
-                              setCommentaire("");
-                            }}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            <svg
-                              className="h-5 w-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
+        <>
+          <div className="overflow-x-auto bg-white rounded-lg shadow">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Titre
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Proposeur
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Dates
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Type
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Statut
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {currentItems.map((proposal) => (
+                  <tr key={proposal.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {proposal.titre}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {proposal.proposeur_nom}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {proposal.proposeur_email}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {formatDate(proposal.date_debut)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-[#6e3d20]/10 text-[#6e3d20]">
+                        {proposal.type}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {getStatusBadge(proposal.statut)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => handleViewDetails(proposal)}
+                          className="text-gray-600 hover:text-[#6e3d20]"
+                        >
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                          </svg>
+                        </button>
+
+                        {proposal.statut === "en_attente" && (
+                          <>
+                            <button
+                              onClick={() => {
+                                setSelectedProposal(proposal);
+                                setCommentaire("");
+                              }}
+                              className="text-green-600 hover:text-green-800"
+                            >
+                              <svg
+                                className="h-5 w-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            </button>
+                            <button
+                              onClick={() => {
+                                setSelectedProposal(proposal);
+                                setCommentaire("");
+                              }}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              <svg
+                                className="h-5 w-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          
+          {/* Pagination */}
+          {proposals.length > itemsPerPage && (
+            <div className="flex items-center justify-between mt-4">
+              {/* Affichage du texte indiquant la plage d'éléments affichés */}
+              <div className="text-sm text-gray-500">
+                Affichage de {indexOfFirstItem + 1} à{" "}
+                {Math.min(indexOfLastItem, proposals.length)} sur{" "}
+                {proposals.length} propositions
+              </div>
+
+              <div className="flex space-x-1">
+                <button
+                  onClick={() => paginate(1)}
+                  disabled={currentPage === 1}
+                  className={`px-3 py-1 rounded-md ${
+                    currentPage === 1
+                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  «
+                </button>
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`px-3 py-1 rounded-md ${
+                    currentPage === 1
+                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  ‹
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (number) => (
+                    <button
+                      key={number}
+                      onClick={() => paginate(number)}
+                      className={`px-3 py-1 rounded-md ${
+                        currentPage === number
+                          ? "bg-[#6e3d20] text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      }`}
+                    >
+                      {number}
+                    </button>
+                  )
+                )}
+
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`px-3 py-1 rounded-md ${
+                    currentPage === totalPages
+                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  ›
+                </button>
+                <button
+                  onClick={() => paginate(totalPages)}
+                  disabled={currentPage === totalPages}
+                  className={`px-3 py-1 rounded-md ${
+                    currentPage === totalPages
+                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  »
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* Modal de traitement */}
@@ -348,14 +455,6 @@ const EventProposalsTable = ({ limit }) => {
         </div>
       )}
 
-      {/* New Toast component */}
-      {/* {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )} */}
       {toast && <Toast {...toast} onClose={() => setToast(null)} />}
     </>
   );
