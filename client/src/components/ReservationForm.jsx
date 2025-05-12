@@ -15,6 +15,8 @@ export default function ReservationForm({
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
+  const [modalVisible, setModalVisible] = useState(isOpen);
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const [formReservation, setFormReservation] = useState({
     titre: "",
     description: "",
@@ -31,6 +33,23 @@ export default function ReservationForm({
     commentaires: ""
   });
   const [espaces, setEspaces] = useState([]);
+
+  // Gérer la fermeture après succès
+  useEffect(() => {
+    if (formSubmitted && !toast) {
+      // Si le formulaire a été soumis avec succès et le toast a été fermé, fermer le modal
+      setModalVisible(false);
+      setTimeout(() => {
+        if (onSuccess) onSuccess();
+        onClose();
+      }, 500);
+    }
+  }, [formSubmitted, toast, onSuccess, onClose]);
+
+  // Mettre à jour la visibilité du modal quand isOpen change
+  useEffect(() => {
+    setModalVisible(isOpen);
+  }, [isOpen]);
 
   // Récupérer l'ID utilisateur depuis l'email
   const getUserId = async () => {
@@ -164,8 +183,13 @@ export default function ReservationForm({
       } else {
         await api.post("/reservations", payload);
       }
+      
+      // Afficher le toast de succès et marquer comme soumis
       setToast({ message: "Réservation enregistrée avec succès", type: "success" });
-      if (onSuccess) onSuccess();
+      setFormSubmitted(true);
+      
+      // NE PAS fermer le modal immédiatement, laisser le toast s'afficher
+      // Le useEffect s'occupera de fermer le modal après que le toast soit fermé
     } catch (error) {
       console.error("Error saving reservation:", error);
       setToast({
@@ -184,16 +208,36 @@ export default function ReservationForm({
     return formatDateForInput(date);
   };
 
+  const handleModalClose = () => {
+    // Si un toast est affiché, on ferme d'abord le modal visuel
+    if (toast) {
+      setModalVisible(false);
+      // Attendre que l'animation de fermeture soit terminée avant de réellement fermer
+      setTimeout(() => {
+        onClose();
+      }, 500);
+    } else {
+      // Si pas de toast, on peut fermer directement
+      setModalVisible(false);
+      onClose();
+    }
+  };
+
+  const handleToastClose = () => {
+    // Attendre que l'animation de fermeture soit terminée avant de réinitialiser le toast
+    setTimeout(() => setToast(null), 300);
+  };
+
   return (
     <>
       <Modal
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={modalVisible && isOpen}
+        onClose={handleModalClose}
         title={reservation ? "Modifier la réservation" : "Nouvelle réservation"}
         footer={
           <>
             <button
-              onClick={onClose}
+              onClick={handleModalClose}
               className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
               disabled={saving}
             >
@@ -360,7 +404,7 @@ export default function ReservationForm({
         <Toast
           message={toast.message}
           type={toast.type}
-          onClose={() => setToast(null)}
+          onClose={handleToastClose}
         />
       )}
     </>

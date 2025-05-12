@@ -334,16 +334,10 @@ const handleLogin = async () => {
                       <img 
                         src={
                           talent.image_profil
-                            ? (
-                                talent.image_profil.startsWith('http')
-                                  ? talent.image_profil
-                                  : (
-                                      talent.image_profil.startsWith('/uploads')
-                                        ? talent.image_profil
-                                        : `/public/uploads/profiles/${talent.image_profil}`
-                                    )
-                            )
-                          : '/default-avatar.png'
+                            ? talent.image_profil.startsWith('http')
+                              ? talent.image_profil
+                              : `http://localhost:3000${talent.image_profil}`
+                            : '/default-avatar.png'
                         } 
                         alt={talent.nom} 
                         className="h-full w-full object-cover"

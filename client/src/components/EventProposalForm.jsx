@@ -24,6 +24,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
   const [toast, setToast] = useState(null);
   const [espaces, setEspaces] = useState([]);
   const [modalVisible, setModalVisible] = useState(isOpen);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   // Charger les espaces pour le select
   useEffect(() => {
@@ -47,6 +48,18 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
       }
     }
   }, [isOpen]);
+
+  // Utiliser un useEffect pour gérer la fermeture après succès
+  useEffect(() => {
+    if (formSubmitted && !toast) {
+      // Si le formulaire a été soumis avec succès et le toast a été fermé, fermer le modal
+      setModalVisible(false);
+      setTimeout(() => {
+        if (onSuccess) onSuccess();
+        onClose();
+      }, 500);
+    }
+  }, [formSubmitted, toast, onSuccess, onClose]);
 
   const showToast = (message, type = "success", duration = 5000) => {
     setToast({ message, type, duration });
@@ -108,8 +121,8 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         headers: { 'Content-Type': 'multipart/form-data' } 
       });
       
-      // Afficher d'abord le toast de succès AVANT toute autre action
-      setToast({ message: "Proposition envoyée avec succès", type: "success", duration: 5000 });
+      // Afficher le toast de succès
+      showToast("Proposition envoyée avec succès", "success", 5000);
       
       // Réinitialiser le formulaire après succès
       setForm({
@@ -128,18 +141,12 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         commentaires: ""
       });
       
-      if (onSuccess) onSuccess();
+      // Marquer le formulaire comme soumis avec succès
+      setFormSubmitted(true);
       
-      // Attendre avant de fermer le modal pour s'assurer que le toast est bien affiché
-      setTimeout(() => {
-        // Fermer seulement le modal mais garder le component actif pour que le toast reste visible
-        setModalVisible(false);
-      }, 800);
+      // Ne PAS fermer le modal immédiatement pour laisser le toast s'afficher
+      // La fermeture sera gérée par le useEffect
       
-      // Ne fermer complètement qu'après un délai plus long
-      setTimeout(() => {
-        onClose();
-      }, 4000);
     } catch (error) {
       let errorMessage = "Une erreur est survenue, veuillez réessayer";
       
@@ -151,21 +158,30 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         }
       }
       
-      setToast({ message: errorMessage, type: "error", duration: 5000 });
+      showToast(errorMessage, "error", 5000);
     } finally {
       setLoading(false);
     }
   };
 
   const handleModalClose = () => {
-    // Fermer le modal mais garder les toasts actifs
-    setModalVisible(false);
-    
-    // Attendre un moment avant de vraiment fermer le composant
-    // pour laisser le temps au toast de s'afficher
-    setTimeout(() => {
+    // Si un toast est affiché, on ferme d'abord le modal visuel
+    if (toast) {
+      setModalVisible(false);
+      // Attendre que l'animation de fermeture soit terminée avant de réellement fermer
+      setTimeout(() => {
+        onClose();
+      }, 500);
+    } else {
+      // Si pas de toast, on peut fermer directement
+      setModalVisible(false);
       onClose();
-    }, 500);
+    }
+  };
+
+  const handleToastClose = () => {
+    // Attendre que l'animation de fermeture soit terminée avant de réinitialiser le toast
+    setTimeout(() => setToast(null), 300);
   };
 
   return (
@@ -174,10 +190,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         <Toast
           message={toast.message}
           type={toast.type}
-          onClose={() => {
-            // Attendre que l'animation de fermeture soit terminée avant de réinitialiser le toast
-            setTimeout(() => setToast(null), 300);
-          }}
+          onClose={handleToastClose}
         />
       )}
       <Modal
