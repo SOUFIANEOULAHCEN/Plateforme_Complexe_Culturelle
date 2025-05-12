@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Modal from "./Modal";
 import api from "../api";
 import Toast from "./Toast";
+import Cookies from "js-cookie";
 
 export default function ReservationForm({
   isOpen,
@@ -15,103 +16,84 @@ export default function ReservationForm({
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
   const [formReservation, setFormReservation] = useState({
-    evenement_id: "",
+    titre: "",
+    description: "",
+    type_organisateur: "individu",
+    date_debut: formatDateForInput(new Date()),
+    date_fin: formatDateForInput(new Date()),
+    espace_id: "",
     utilisateur_id: "",
-    type_reservateur: "individu",
-    documents_fournis: {},
-    date_reservation: formatDateForInput(new Date()),
-    statut: "en_attente",
     nombre_places: 1,
-    materiel_requis: {},
+    documents_fournis: {},
+    documents_paths: {},
+    materiel_additionnel: "",
+    statut: "en_attente",
     commentaires: ""
   });
-  const [events, setEvents] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [espaces, setEspaces] = useState([]);
+
+  // Récupérer l'ID utilisateur depuis l'email
+  const getUserId = async () => {
+    const userEmail = Cookies.get("userEmail");
+    if (!userEmail) {
+      return null;
+    }
+
+    try {
+      const response = await api.get(`/utilisateurs/email/${userEmail}`);
+      return response.data.id;
+    } catch (error) {
+      console.error("Error fetching user ID:", error);
+      return null;
+    }
+  };
 
   // Fetch reservation data if editing
   useEffect(() => {
-    if (isOpen && reservation) {
-      // Editing: fill form with reservation prop
-      setFormReservation({
-        ...reservation,
-        date_reservation: formatDateForInput(new Date(reservation.date_reservation)),
-      });
-      fetchEvents()
-      fetchUsers()
-    } else if (isOpen) {
-      // Reset form for new reservation
-      setFormReservation({
-        evenement_id: "",
-        utilisateur_id: "",
-        type_reservateur: "individu",
-        documents_fournis: {},
-        date_reservation: formatDateForInput(new Date()),
-        statut: "en_attente",
-        nombre_places: 1,
-        materiel_requis: {},
-        commentaires: ""
-      });
-      fetchEvents()
-      fetchUsers()
-    }
-  }, [isOpen, reservation]);
+    const initializeForm = async () => {
+      if (isOpen && reservation) {
+        setFormReservation({
+          ...reservation,
+          date_debut: formatDateForInput(new Date(reservation.date_debut)),
+          date_fin: formatDateForInput(new Date(reservation.date_fin)),
+        });
+        await fetchEspaces();
+      } else if (isOpen) {
+        const userId = await getUserId();
+        setFormReservation({
+          titre: "",
+          description: "",
+          type_organisateur: "individu",
+          date_debut: formatDateForInput(new Date()),
+          date_fin: formatDateForInput(new Date()),
+          espace_id: "",
+          utilisateur_id: userId,
+          nombre_places: 1,
+          documents_fournis: {},
+          documents_paths: {},
+          materiel_additionnel: "",
+          statut: "en_attente",
+          commentaires: ""
+        });
+        await fetchEspaces();
+      }
+    };
 
-  // Remove this function, it's not needed anymore:
-  // const fetchReservation = async () => { ... }
+    initializeForm();
+  }, [isOpen, reservation]);
 
   function formatDateForInput(date) {
     return date.toISOString().slice(0, 16);
   }
 
-  const fetchReservation = async () => {
-    setLoading(true);
+  const fetchEspaces = async () => {
     try {
-      const response = await api.get(`/reservations/${reservationId}`);
-      const reservationData = response.data;
-
-      // Format date for input field
-      setReservation({
-        ...reservationData,
-        date_reservation: formatDateForInput(
-          new Date(reservationData.date_reservation)
-        ),
-      });
-
-      // Fetch related data
-      fetchEvents();
-      fetchUsers();
+      const response = await api.get("/espaces");
+      setEspaces(response.data);
     } catch (error) {
-      console.error("Error fetching reservation:", error);
+      console.error("Error fetching espaces:", error);
       setToast({
-        message: "Erreur lors de la récupération de la réservation",
-        type: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchEvents = async () => {
-    try {
-      const response = await api.get("/evenements");
-      setEvents(response.data);
-    } catch (error) {
-      console.error("Error fetching events:", error);
-      setToast({
-        message: "Erreur lors de la récupération des événements",
-        type: "error",
-      });
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      const response = await api.get("/utilisateurs");
-      setUsers(response.data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      setToast({
-        message: "Erreur lors de la récupération des utilisateurs",
+        message: "Erreur lors de la récupération des espaces",
         type: "error",
       });
     }
@@ -125,38 +107,83 @@ export default function ReservationForm({
     }));
   };
 
-  const handleDocumentChange = (e) => {
-    const { name, checked } = e.target;
-    setFormReservation((prev) => ({
-      ...prev,
-      documents_fournis: {
-        ...prev.documents_fournis,
-        [name.split(".")[1]]: checked,
-      },
-    }));
+  // Add validation function
+  const validateReservation = () => {
+    const dateDebut = new Date(formReservation.date_debut);
+    const aujourdhui = new Date();
+    const joursAvantReservation = Math.ceil((dateDebut - aujourdhui) / (1000 * 60 * 60 * 24));
+
+    if (joursAvantReservation < 15) {
+      setToast({
+        message: "La réservation doit être faite au moins 15 jours à l'avance",
+        type: "error"
+      });
+      return false;
+    }
+
+    if (!formReservation.titre || !formReservation.date_debut || !formReservation.date_fin || !formReservation.espace_id) {
+      setToast({
+        message: "Veuillez remplir tous les champs obligatoires",
+        type: "error"
+      });
+      return false;
+    }
+
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
     setToast(null);
+
+    if (!validateReservation()) {
+      setSaving(false);
+      return;
+    }
+
     try {
+      const userId = await getUserId();
+      if (!userId) {
+        setToast({
+          message: "Vous devez être connecté pour faire une réservation",
+          type: "error"
+        });
+        setSaving(false);
+        return;
+      }
+
+      const payload = {
+        ...formReservation,
+        type_reservation: "standard", // Toujours standard
+        utilisateur_id: userId
+      };
+
       if (reservation && reservation.id) {
-        await api.put(`/reservations/${reservation.id}`, formReservation);
+        await api.put(`/reservations/${reservation.id}`, payload);
       } else {
-        await api.post("/reservations", formReservation);
+        await api.post("/reservations", payload);
       }
       setToast({ message: "Réservation enregistrée avec succès", type: "success" });
       if (onSuccess) onSuccess();
     } catch (error) {
+      console.error("Error saving reservation:", error);
       setToast({
-        message: "Erreur lors de l'enregistrement de la réservation",
-        type: "error",
+        message: error.response?.data?.message || "Erreur lors de l'enregistrement de la réservation",
+        type: "error"
       });
     } finally {
       setSaving(false);
     }
   };
+
+  // Calculer la date minimale (15 jours à partir d'aujourd'hui)
+  const getMinDate = () => {
+    const date = new Date();
+    date.setDate(date.getDate() + 15);
+    return formatDateForInput(date);
+  };
+
   return (
     <>
       <Modal
@@ -188,141 +215,100 @@ export default function ReservationForm({
           </div>
         ) : (
           <form className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Type de réservateur
-                </label>
-                <select
-                  name="type_reservateur"
-                  value={formReservation.type_reservateur}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
-                  required
-                >
-                  <option value="individu">Individu</option>
-                  <option value="association">Association</option>
-                  <option value="entreprise">Entreprise</option>
-                  <option value="institution">Institution</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Documents requis
-                </label>
-                <div className="space-y-2">
-                  {formReservation.type_reservateur === 'individu' && (
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        name="documents_fournis.cni_ou_acte_naissance"
-                        checked={formReservation.documents_fournis?.cni_ou_acte_naissance || false}
-                        onChange={handleDocumentChange}
-                        className="mr-2"
-                      />
-                      <span className="text-sm">CNI ou acte de naissance</span>
-                    </div>
-                  )}
-                  {formReservation.type_reservateur === 'association' && (
-                    <>
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          name="documents_fournis.statuts"
-                          checked={formReservation.documents_fournis?.statuts || false}
-                          onChange={handleDocumentChange}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">Statuts</span>
-                      </div>
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          name="documents_fournis.recu_adhesion"
-                          checked={formReservation.documents_fournis?.recu_adhesion || false}
-                          onChange={handleDocumentChange}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">Reçu d'adhésion</span>
-                      </div>
-                    </>
-                  )}
-                  {formReservation.type_reservateur === 'entreprise' && (
-                    <>
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          name="documents_fournis.documents_legaux"
-                          checked={formReservation.documents_fournis?.documents_legaux || false}
-                          onChange={handleDocumentChange}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">Documents légaux</span>
-                      </div>
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          name="documents_fournis.recu_adhesion"
-                          checked={formReservation.documents_fournis?.recu_adhesion || false}
-                          onChange={handleDocumentChange}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">Reçu d'adhésion</span>
-                      </div>
-                    </>
-                  )}
-                  {formReservation.type_reservateur === 'institution' && (
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        name="documents_fournis.lettre_officielle"
-                        checked={formReservation.documents_fournis?.lettre_officielle || false}
-                        onChange={handleDocumentChange}
-                        className="mr-2"
-                      />
-                      <span className="text-sm">Lettre officielle</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Titre *
+              </label>
+              <input
+                type="text"
+                name="titre"
+                value={formReservation.titre}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
+                required
+              />
             </div>
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Événement
+                Description
+              </label>
+              <textarea
+                name="description"
+                value={formReservation.description}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] h-20"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Type d'organisateur *
               </label>
               <select
-                name="evenement_id"
-                value={formReservation.evenement_id}
+                name="type_organisateur"
+                value={formReservation.type_organisateur}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
                 required
               >
-                <option value="">Sélectionner un événement</option>
-                {events.map((event) => (
-                  <option key={event.id} value={event.id}>
-                    {event.titre}
-                  </option>
-                ))}
+                <option value="individu">Individu</option>
+                <option value="association">Association</option>
+                <option value="entreprise">Entreprise</option>
               </select>
             </div>
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Date de réservation
+                Date de début *
               </label>
               <input
                 type="datetime-local"
-                name="date_reservation"
-                value={formReservation.date_reservation}
+                name="date_debut"
+                value={formReservation.date_debut}
                 onChange={handleChange}
+                min={getMinDate()}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
                 required
               />
               <p className="text-sm text-gray-500 mt-1">
                 La réservation doit être faite au moins 15 jours à l'avance
               </p>
+            </div>
+
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Date de fin *
+              </label>
+              <input
+                type="datetime-local"
+                name="date_fin"
+                value={formReservation.date_fin}
+                onChange={handleChange}
+                min={formReservation.date_debut}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Espace *
+              </label>
+              <select
+                name="espace_id"
+                value={formReservation.espace_id}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
+                required
+              >
+                <option value="">Sélectionner un espace</option>
+                {espaces.map((espace) => (
+                  <option key={espace.id} value={espace.id}>
+                    {espace.nom} - {espace.type} {espace.sous_type ? `(${espace.sous_type})` : ''}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
@@ -336,21 +322,17 @@ export default function ReservationForm({
                 onChange={handleChange}
                 min="1"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
-                required
               />
             </div>
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Matériel requis
+                Matériel additionnel
               </label>
               <textarea
-                name="materiel_requis"
-                value={formReservation.materiel_requis.description || ""}
-                onChange={(e) => setFormReservation(prev => ({
-                  ...prev,
-                  materiel_requis: { description: e.target.value }
-                }))}
+                name="materiel_additionnel"
+                value={formReservation.materiel_additionnel}
+                onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] h-20"
                 placeholder="Décrivez le matériel dont vous avez besoin..."
               />
@@ -368,7 +350,7 @@ export default function ReservationForm({
                 value={formReservation.commentaires}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] h-20"
-                placeholder="Commentaires additionnels..."
+                placeholder="Ajoutez des commentaires supplémentaires..."
               />
             </div>
           </form>

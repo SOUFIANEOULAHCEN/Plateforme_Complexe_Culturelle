@@ -1,6 +1,8 @@
 import Reservation from '../models/reservation.js';
 import Evenement from '../models/evenement.js';
 import Utilisateur from '../models/utilisateur.js'; // Add this import
+import Espace from '../models/espace.js';
+import { Op } from 'sequelize';
 
 // Règles de documents requis par type de réservateur
 const DOCUMENTS_REQUIS = {
@@ -17,36 +19,44 @@ const DELAI_ANNULATION = 7;
 export const createReservation = async (req, res) => {
   try {
     const {
-      evenement_id,
+      titre,
+      description,
+      type_organisateur,
+      date_debut,
+      date_fin,
+      espace_id,
       utilisateur_id,
-      type_reservateur,
-      documents_fournis,
-      date_reservation,
       nombre_places,
-      materiel_requis,
+      documents_fournis,
+      documents_paths,
+      materiel_additionnel,
       commentaires
     } = req.body;
 
-    // Vérifier le type de réservateur
-    if (!['individu', 'association', 'entreprise', 'institution'].includes(type_reservateur)) {
+    // Vérifier le type d'organisateur
+    if (!['individu', 'association', 'entreprise'].includes(type_organisateur)) {
       return res.status(400).json({ 
-        message: 'Type de réservateur invalide'
+        message: 'Type d\'organisateur invalide'
       });
     }
 
-    // Vérifier les documents requis
-    const documentsManquants = DOCUMENTS_REQUIS[type_reservateur].filter(
-      doc => !documents_fournis || !documents_fournis[doc]
-    );
-    if (documentsManquants.length > 0) {
+    // Vérifier que l'espace existe
+    const espace = await Espace.findByPk(espace_id);
+    if (!espace) {
       return res.status(400).json({
-        message: 'Documents manquants',
-        documentsManquants
+        message: 'Espace non trouvé'
+      });
+    }
+
+    // Vérifier la capacité de l'espace
+    if (espace.capacite && nombre_places > espace.capacite) {
+      return res.status(400).json({
+        message: `Le nombre de places demandé (${nombre_places}) dépasse la capacité de l'espace (${espace.capacite})`
       });
     }
 
     // Vérifier le délai de réservation
-    const dateReservation = new Date(date_reservation);
+    const dateReservation = new Date(date_debut);
     const aujourdhui = new Date();
     const joursAvantReservation = Math.ceil((dateReservation - aujourdhui) / (1000 * 60 * 60 * 24));
 
@@ -56,17 +66,50 @@ export const createReservation = async (req, res) => {
       });
     }
 
+    // Vérifier si l'espace est déjà réservé pour cette période
+    const reservationExistante = await Reservation.findOne({
+      where: {
+        espace_id,
+        statut: {
+          [Op.notIn]: ['annule', 'termine']
+        },
+        [Op.or]: [
+          {
+            date_debut: {
+              [Op.between]: [date_debut, date_fin]
+            }
+          },
+          {
+            date_fin: {
+              [Op.between]: [date_debut, date_fin]
+            }
+          }
+        ]
+      }
+    });
+
+    if (reservationExistante) {
+      return res.status(400).json({
+        message: 'L\'espace est déjà réservé pour cette période'
+      });
+    }
+
     // Créer la réservation
     const reservation = await Reservation.create({
-      evenement_id,
+      titre,
+      description,
+      type_reservation: 'standard',
+      type_organisateur,
+      date_debut,
+      date_fin,
+      espace_id,
       utilisateur_id,
-      type_reservateur,
-      documents_fournis,
-      date_reservation,
       nombre_places,
-      materiel_requis,
-      commentaires,
-      statut: 'en_attente'
+      documents_fournis,
+      documents_paths,
+      materiel_additionnel,
+      statut: 'en_attente',
+      commentaires
     });
 
     res.status(201).json(reservation);
@@ -88,32 +131,51 @@ export const updateReservation = async (req, res) => {
       return res.status(404).json({ message: "Réservation non trouvée" });
     }
 
-    // Si c'est une annulation, vérifier le délai
-    if (req.body.statut === 'annule') {
-      const dateReservation = new Date(reservation.date_reservation);
+    // Vérifier si la date de début est modifiée
+    if (req.body.date_debut && req.body.date_debut !== reservation.date_debut) {
+      const dateReservation = new Date(req.body.date_debut);
       const aujourdhui = new Date();
       const joursAvantReservation = Math.ceil((dateReservation - aujourdhui) / (1000 * 60 * 60 * 24));
 
-      if (joursAvantReservation < DELAI_ANNULATION) {
+      if (joursAvantReservation < DELAI_RESERVATION) {
         return res.status(400).json({
-          message: `L'annulation doit être faite au moins ${DELAI_ANNULATION} jours à l'avance`
+          message: `La réservation doit être faite au moins ${DELAI_RESERVATION} jours à l'avance`
         });
       }
 
-      req.body.date_annulation = new Date();
+      // Vérifier si l'espace est déjà réservé pour la nouvelle période
+      const reservationExistante = await Reservation.findOne({
+        where: {
+          espace_id: reservation.espace_id,
+          id: { [Op.ne]: id },
+          statut: {
+            [Op.notIn]: ['annule', 'termine']
+          },
+          [Op.or]: [
+            {
+              date_debut: {
+                [Op.between]: [req.body.date_debut, req.body.date_fin]
+              }
+            },
+            {
+              date_fin: {
+                [Op.between]: [req.body.date_debut, req.body.date_fin]
+              }
+            }
+          ]
+        }
+      });
+
+      if (reservationExistante) {
+        return res.status(400).json({
+          message: 'L\'espace est déjà réservé pour cette période'
+        });
+      }
     }
 
-    // Pour une modification, vérifier la disponibilité si la date change
-    if (req.body.date_reservation && req.body.date_reservation !== reservation.date_reservation) {
-      const evenement = await Evenement.findByPk(reservation.evenement_id);
-      const dateReservation = new Date(req.body.date_reservation);
-      
-      // Vérifier que la date est dans la plage de l'événement
-      if (dateReservation < evenement.date_debut || dateReservation > evenement.date_fin) {
-        return res.status(400).json({
-          message: 'La date de réservation doit être comprise dans la période de l\'événement'
-        });
-      }
+    // Si c'est une annulation
+    if (req.body.statut === 'annule') {
+      req.body.date_annulation = new Date();
     }
 
     const [updated] = await Reservation.update(req.body, { 
@@ -145,14 +207,14 @@ export const deleteReservation = async (req, res) => {
       return res.status(404).json({ message: 'Réservation non trouvée' });
     }
 
-    // Vérifier le délai d'annulation avant suppression
-    const dateReservation = new Date(reservation.date_reservation);
+    // Vérifier si la réservation peut être supprimée
+    const dateReservation = new Date(reservation.date_debut);
     const aujourdhui = new Date();
     const joursAvantReservation = Math.ceil((dateReservation - aujourdhui) / (1000 * 60 * 60 * 24));
 
-    if (joursAvantReservation < DELAI_ANNULATION) {
+    if (joursAvantReservation < DELAI_RESERVATION) {
       return res.status(400).json({
-        message: `La suppression doit être faite au moins ${DELAI_ANNULATION} jours à l'avance`
+        message: `La réservation ne peut plus être supprimée car elle est dans moins de ${DELAI_RESERVATION} jours`
       });
     }
 

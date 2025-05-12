@@ -1,6 +1,7 @@
 import express from "express";
 import Utilisateur from "../models/utilisateur.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
+import { getUtilisateurByEmail } from "../controllers/utilisateurController.js";
 
 const router = express.Router();
 
@@ -17,6 +18,9 @@ router.get("/", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// GET /api/utilisateurs/email/:email
+router.get("/email/:email", verifyToken, getUtilisateurByEmail);
 
 // GET /api/utilisateurs/check-email - Vérifier si un email existe (pas besoin d'authentification)
 router.get("/check-email", async (req, res) => {

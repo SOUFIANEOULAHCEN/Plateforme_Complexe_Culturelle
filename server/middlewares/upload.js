@@ -11,7 +11,15 @@ const __dirname = dirname(__filename);
 // Configuration du stockage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = path.join(__dirname, '../public/uploads/EventAffiche/');
+    let uploadPath;
+    
+    // Déterminer le dossier de destination en fonction du type de fichier
+    if (file.fieldname === 'image_profil') {
+      uploadPath = path.join(__dirname, '../public/uploads/profiles/');
+    } else {
+      uploadPath = path.join(__dirname, '../public/uploads/EventAffiche/');
+    }
+    
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
@@ -20,14 +28,17 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const ext = path.extname(file.originalname);
-    cb(null, 'eventaffiche-' + uniqueSuffix + ext);
+    
+    // Préfixer le nom du fichier en fonction du type
+    const prefix = file.fieldname === 'image_profil' ? 'image_profil-' : 'eventaffiche-';
+    cb(null, prefix + uniqueSuffix + ext);
   }
 });
 
 // Filtrer les types de fichiers
 const fileFilter = (req, file, cb) => {
-  // Accepter les images pour image_profil et PDF pour cv
-  if (file.fieldname === 'image_profil' && file.mimetype.startsWith('image/')) {
+  // Accepter les images pour image_profil et affiche, et PDF pour cv
+  if ((file.fieldname === 'image_profil' || file.fieldname === 'affiche') && file.mimetype.startsWith('image/')) {
     cb(null, true);
   } else if (file.fieldname === 'cv' && file.mimetype === 'application/pdf') {
     cb(null, true);

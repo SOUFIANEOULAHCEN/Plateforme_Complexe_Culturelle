@@ -23,10 +23,12 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const [espaces, setEspaces] = useState([]);
+  const [modalVisible, setModalVisible] = useState(isOpen);
 
   // Charger les espaces pour le select
   useEffect(() => {
     if (isOpen) {
+      setModalVisible(true);
       api.get("/espaces")
         .then(res => setEspaces(res.data))
         .catch((error) => {
@@ -91,7 +93,6 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
     if (!validateForm()) return;
     
     setLoading(true);
-    setToast(null);
     
     try {
       const formData = new FormData();
@@ -107,8 +108,8 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         headers: { 'Content-Type': 'multipart/form-data' } 
       });
       
-      showToast("Proposition envoyée avec succès", "success");
-      if (onSuccess) onSuccess();
+      // Afficher d'abord le toast de succès AVANT toute autre action
+      setToast({ message: "Proposition envoyée avec succès", type: "success", duration: 5000 });
       
       // Réinitialiser le formulaire après succès
       setForm({
@@ -127,10 +128,18 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         commentaires: ""
       });
       
-      // Fermer automatiquement après 5 secondes
+      if (onSuccess) onSuccess();
+      
+      // Attendre avant de fermer le modal pour s'assurer que le toast est bien affiché
+      setTimeout(() => {
+        // Fermer seulement le modal mais garder le component actif pour que le toast reste visible
+        setModalVisible(false);
+      }, 800);
+      
+      // Ne fermer complètement qu'après un délai plus long
       setTimeout(() => {
         onClose();
-      }, 5000);
+      }, 4000);
     } catch (error) {
       let errorMessage = "Une erreur est survenue, veuillez réessayer";
       
@@ -142,193 +151,202 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         }
       }
       
-      showToast(errorMessage, "error");
+      setToast({ message: errorMessage, type: "error", duration: 5000 });
     } finally {
       setLoading(false);
     }
   };
 
   const handleModalClose = () => {
-    setToast(null);
-    onClose();
+    // Fermer le modal mais garder les toasts actifs
+    setModalVisible(false);
+    
+    // Attendre un moment avant de vraiment fermer le composant
+    // pour laisser le temps au toast de s'afficher
+    setTimeout(() => {
+      onClose();
+    }, 500);
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleModalClose}
-      title="Proposer un événement culturel"
-      footer={
-        <div className="flex justify-end space-x-3">
-          <button
-            onClick={handleModalClose}
-            className="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300"
-          >
-            Annuler
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="bg-[#824B26] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#6e3d20] transition duration-300 disabled:opacity-50"
-          >
-            {loading ? "Envoi..." : "Envoyer"}
-          </button>
-        </div>
-      }
-    >
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-[#824B26]">Titre de l'événement</label>
-          <input
-            type="text"
-            name="titre"
-            value={form.titre}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-          />
-        </div>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-[#824B26]">Description</label>
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1 text-sm font-medium text-[#824B26]">Date de début</label>
-            <input
-              type="datetime-local"
-              name="date_debut"
-              value={form.date_debut}
-              onChange={handleChange}
-              required
-              min={new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm font-medium text-[#824B26]">Date de fin</label>
-            <input
-              type="datetime-local"
-              name="date_fin"
-              value={form.date_fin}
-              onChange={handleChange}
-              required
-              min={form.date_debut || new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-            />
-          </div>
-        </div>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-[#824B26]">Espace</label>
-          <select
-            name="espace_id"
-            value={form.espace_id}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-          >
-            <option value="">Sélectionner un espace</option>
-            {espaces.map(espace => (
-              <option key={espace.id} value={espace.id}>{espace.nom}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-[#824B26]">Type d'événement</label>
-          <select
-            name="type"
-            value={form.type}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-          >
-            <option value="spectacle">Spectacle</option>
-            <option value="atelier">Atelier</option>
-            <option value="conference">Conférence</option>
-            <option value="exposition">Exposition</option>
-            <option value="rencontre">Rencontre</option>
-          </select>
-        </div>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-[#824B26]">Affiche de l'événement (optionnel)</label>
-          <input
-            type="file"
-            name="affiche"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1 text-sm font-medium text-[#824B26]">Nom du proposeur</label>
-            <input
-              type="text"
-              name="proposeur_nom"
-              value={form.proposeur_nom}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm font-medium text-[#824B26]">Email du proposeur</label>
-            <input
-              type="email"
-              name="proposeur_email"
-              value={form.proposeur_email}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-            />
-          </div>
-        </div>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-[#824B26]">Téléphone du proposeur</label>
-          <input
-            type="text"
-            name="proposeur_telephone"
-            value={form.proposeur_telephone}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-          />
-        </div>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-[#824B26]">Prix (en Dh)</label>
-          <input
-            type="number"
-            name="prix"
-            value={form.prix}
-            onChange={handleChange}
-            min="0"
-            step="0.01"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-          />
-        </div>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-[#824B26]">Commentaires</label>
-          <textarea
-            name="commentaires"
-            value={form.commentaires}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-          />
-        </div>
-      </form>
-      
+    <>
       {toast && (
-        <Toast 
-          message={toast.message} 
-          type={toast.type} 
-          duration={toast.duration}
-          onClose={() => setToast(null)} 
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => {
+            // Attendre que l'animation de fermeture soit terminée avant de réinitialiser le toast
+            setTimeout(() => setToast(null), 300);
+          }}
         />
       )}
-    </Modal>
+      <Modal
+        isOpen={modalVisible && isOpen}
+        onClose={handleModalClose}
+        title="Proposer un événement culturel"
+        footer={
+          <div className="flex justify-end space-x-3">
+            <button
+              onClick={handleModalClose}
+              className="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="bg-[#824B26] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#6e3d20] transition duration-300 disabled:opacity-50"
+            >
+              {loading ? "Envoi..." : "Envoyer"}
+            </button>
+          </div>
+        }
+      >
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">Titre de l'événement</label>
+            <input
+              type="text"
+              name="titre"
+              value={form.titre}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+            />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">Description</label>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-1 text-sm font-medium text-[#824B26]">Date de début</label>
+              <input
+                type="datetime-local"
+                name="date_debut"
+                value={form.date_debut}
+                onChange={handleChange}
+                required
+                min={new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-sm font-medium text-[#824B26]">Date de fin</label>
+              <input
+                type="datetime-local"
+                name="date_fin"
+                value={form.date_fin}
+                onChange={handleChange}
+                required
+                min={form.date_debut || new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">Espace</label>
+            <select
+              name="espace_id"
+              value={form.espace_id}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+            >
+              <option value="">Sélectionner un espace</option>
+              {espaces.map(espace => (
+                <option key={espace.id} value={espace.id}>{espace.nom}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">Type d'événement</label>
+            <select
+              name="type"
+              value={form.type}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+            >
+              <option value="spectacle">Spectacle</option>
+              <option value="atelier">Atelier</option>
+              <option value="conference">Conférence</option>
+              <option value="exposition">Exposition</option>
+              <option value="rencontre">Rencontre</option>
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">Affiche de l'événement (optionnel)</label>
+            <input
+              type="file"
+              name="affiche"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-1 text-sm font-medium text-[#824B26]">Nom du proposeur</label>
+              <input
+                type="text"
+                name="proposeur_nom"
+                value={form.proposeur_nom}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-sm font-medium text-[#824B26]">Email du proposeur</label>
+              <input
+                type="email"
+                name="proposeur_email"
+                value={form.proposeur_email}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">Téléphone du proposeur</label>
+            <input
+              type="text"
+              name="proposeur_telephone"
+              value={form.proposeur_telephone}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+            />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">Prix (en Dh)</label>
+            <input
+              type="number"
+              name="prix"
+              value={form.prix}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+            />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">Commentaires</label>
+            <textarea
+              name="commentaires"
+              value={form.commentaires}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+            />
+          </div>
+        </form>
+      </Modal>
+    </>
   );
 }

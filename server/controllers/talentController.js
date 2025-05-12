@@ -74,7 +74,7 @@ export const updateTalent = async (req, res) => {
 
     // Gestion des fichiers envoyés
     if (req.files?.image_profil) {
-      updates.image_profil = `/uploads/${req.files.image_profil[0].filename}`;
+      updates.image_profil = `/uploads/profiles/${req.files.image_profil[0].filename}`;
     }
 
     if (req.files?.cv) {

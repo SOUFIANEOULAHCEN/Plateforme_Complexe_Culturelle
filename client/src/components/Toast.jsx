@@ -8,21 +8,24 @@ export default function Toast({ message, type = "success", onClose }) {
   const [bounce, setBounce] = useState(false);
 
   useEffect(() => {
-    // Trigger entrance animation
-    setTimeout(() => setVisible(true), 10);
+    // Trigger entrance animation immediately
+    setVisible(true);
 
     // Add a small bounce effect after appearing
-    setTimeout(() => {
+    const bounceTimer = setTimeout(() => {
       setBounce(true);
       setTimeout(() => setBounce(false), 300);
-    }, 400);
+    }, 100);
 
     // Set timer for auto-close
-    const timer = setTimeout(() => {
+    const closeTimer = setTimeout(() => {
       handleClose();
-    }, 5000); // Extended time to 5 seconds
+    }, 5000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(bounceTimer);
+      clearTimeout(closeTimer);
+    };
   }, []);
 
   const handleClose = () => {
@@ -32,7 +35,7 @@ export default function Toast({ message, type = "success", onClose }) {
       if (typeof onClose === "function") {
         onClose();
       }
-    }, 300); // Extended for smoother exit animation
+    }, 300);
   };
 
   // Pulse animation when hovering over the toast
@@ -50,11 +53,13 @@ export default function Toast({ message, type = "success", onClose }) {
 
   const iconAnimation = bounce ? "animate-pulse" : "";
 
+  if (!visible && !exiting) return null;
+
   return (
     <div
-      className={`fixed top-4 right-4 z-50 ${bgColor} text-white px-4 py-3 rounded-lg shadow-lg flex items-center transition-all duration-500 ease-in-out ${
+      className={`fixed top-4 right-4 z-[9999] ${bgColor} text-white px-4 py-3 rounded-lg shadow-lg flex items-center transition-all duration-300 ease-in-out ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[-20px]"
-      } ${exiting ? "opacity-0 translate-y-[-20px] rotate-1" : ""} ${
+      } ${exiting ? "opacity-0 translate-y-[-20px]" : ""} ${
         bounce ? "scale-105" : "scale-100"
       } hover:shadow-xl`}
       onMouseEnter={handleMouseEnter}

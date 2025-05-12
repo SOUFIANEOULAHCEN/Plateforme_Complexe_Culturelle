@@ -1,5 +1,5 @@
 import Utilisateur from "../models/utilisateur.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const getUtilisateurByEmail = async (req, res) => {
   try {
-    const { email } = req.query;
+    const { email } = req.params;
     if (!email) {
       return res.status(400).json({ message: "Email est requis" });
     }

@@ -331,17 +331,23 @@ const handleLogin = async () => {
                 <div className="flex items-center space-x-4">
                   <div className="relative">
                     <div className="h-16 w-16 rounded-full bg-white ring-4 ring-white/30 flex items-center justify-center overflow-hidden">
-                      {talent.image_profil ? (
-                        <img 
-                          src={talent.image_profil} 
-                          alt={talent.nom} 
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-2xl font-medium text-gray-700">
-                          {talent.nom?.charAt(0)?.toUpperCase() || "T"}
-                        </span>
-                      )}
+                      <img 
+                        src={
+                          talent.image_profil
+                            ? (
+                                talent.image_profil.startsWith('http')
+                                  ? talent.image_profil
+                                  : (
+                                      talent.image_profil.startsWith('/uploads')
+                                        ? talent.image_profil
+                                        : `/public/uploads/profiles/${talent.image_profil}`
+                                    )
+                            )
+                          : '/default-avatar.png'
+                        } 
+                        alt={talent.nom} 
+                        className="h-full w-full object-cover"
+                      />
                     </div>
                     {editing && (
                       <label
