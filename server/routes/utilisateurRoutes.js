@@ -127,7 +127,8 @@ router.put("/:id", verifyToken, async (req, res) => {
       role: role || utilisateur.role,
       is_talent: is_talent !== undefined ? is_talent : utilisateur.is_talent,
       domaine_artiste: domaine_artiste || utilisateur.domaine_artiste,
-      description_talent: description_talent || utilisateur.description_talent
+      description_talent: description_talent || utilisateur.description_talent,
+      statut_talent: req.body.statut_talent || utilisateur.statut_talent,
     };
 
     // Mettre à jour le mot de passe seulement s'il est fourni

@@ -250,9 +250,9 @@ export default function ReservationsTable({ limit }) {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     #
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Événement
-                  </th>
+                  </th> */}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Utilisateur
                   </th>
@@ -273,14 +273,14 @@ export default function ReservationsTable({ limit }) {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {indexOfFirstItem + index + 1}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {getEventName(reservation.evenement_id)}
-                    </td>
+                    </td> */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {getUserName(reservation.utilisateur_id)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(reservation.date_reservation)}
+                      {formatDate(reservation.date_debut)} - {formatDate(reservation.date_fin)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(reservation.statut)}
