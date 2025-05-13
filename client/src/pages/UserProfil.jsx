@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 import Cookies from "js-cookie";
 import Toast from "../components/Toast";
-// import UserReservationsHistory from "../components/UserReservationsHistory";
 import { Bell, Lock, LogOut, User, Camera, Edit2, Key, Shield, CheckCircle, MapPin, Phone, Mail, Calendar } from 'lucide-react';
 
 export default function UserProfile() {
@@ -30,13 +29,18 @@ export default function UserProfile() {
   const [imagePreview, setImagePreview] = useState(null);
   const [activeTab, setActiveTab] = useState("profile");
   const userEmail = Cookies.get("userEmail"); 
+  const token = Cookies.get("authToken");
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const [userResponse, notificationsResponse] = await Promise.all([
-          api.get(`/utilisateurs?email=${userEmail}`),
-          api.get(`/reservations?utilisateurEmail=${userEmail}`),
+          api.get(`/utilisateurs?email=${userEmail}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          api.get(`/reservations?utilisateurEmail=${userEmail}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
         ]);
 
         const utilisateur = userResponse.data.find(u => u.email === userEmail);
@@ -68,7 +72,7 @@ export default function UserProfile() {
     };
 
     fetchUserData();
-  }, [userEmail]);
+  }, [userEmail, token]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -102,40 +106,6 @@ export default function UserProfile() {
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   try {
-  //     const formDataToSend = new FormData();
-  //     Object.keys(formData).forEach(key => {
-  //       if (formData[key] !== null) {
-  //         formDataToSend.append(key, formData[key]);
-  //       }
-  //     });
-
-  //     // Ensure the API call matches the backend route
-  //     const response = await api.put(`/api/utilisateurs/${user.id}`, formDataToSend, {
-  //       headers: { 
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     });
-
-  //     setUser(response.data);
-  //     setToast({ message: "✨ Profil mis à jour avec succès!", type: "success" });
-  //     setEditing(false);
-  //   } catch (error) {
-  //     console.error("Erreur de mise à jour:", error);
-  //     setToast({
-  //       message: error.response?.data?.message || "❌ Erreur lors de la mise à jour du profil",
-  //       type: "error",
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -148,18 +118,15 @@ export default function UserProfile() {
         }
       });
 
-      // Utilisation de la route correcte
       let response;
       if (formData.image_profil) {
-        // Si une image est présente, utiliser la route spécifique pour l'image
         response = await api.put(`/profile/me/image`, formDataToSend, {
           headers: { 
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`
           },
         });
       } else {
-        // Sinon, utiliser la route standard pour les données du profil
-        // Convertir les données en objet JSON standard au lieu de FormData
         const profileData = {
           nom: formData.nom,
           email: formData.email,
@@ -169,6 +136,7 @@ export default function UserProfile() {
         response = await api.put(`/profile/me`, profileData, {
           headers: { 
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
           },
         });
       }
@@ -186,40 +154,6 @@ export default function UserProfile() {
       setLoading(false);
     }
   };
-  // const handlePasswordSubmit = async (e) => {
-  //   e.preventDefault();
-    
-  //   if (passwordData.newPassword !== passwordData.confirmPassword) {
-  //     setToast({ message: "❌ Les mots de passe ne correspondent pas", type: "error" });
-  //     return;
-  //   }
-
-  //   setLoading(true);
-
-  //   try {
-  //     // Ensure the API call matches the backend route
-  //     await api.put(`/api/utilisateurs/${user.id}/password`, {
-  //       currentPassword: passwordData.currentPassword,
-  //       newPassword: passwordData.newPassword,
-  //     });
-      
-  //     setToast({ message: "🔐 Mot de passe mis à jour avec succès!", type: "success" });
-  //     setShowPasswordForm(false);
-  //     setPasswordData({
-  //       currentPassword: "",
-  //       newPassword: "",
-  //       confirmPassword: "",
-  //     });
-  //   } catch (error) {
-  //     setToast({
-  //       message: error.response?.data?.message || "❌ Erreur lors de la mise à jour du mot de passe",
-  //       type: "error",
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
@@ -232,10 +166,11 @@ export default function UserProfile() {
     setLoading(true);
 
     try {
-      // Modification de la route ici
       await api.put(`/profile/me/password`, {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword,
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       
       setToast({ message: "🔐 Mot de passe mis à jour avec succès!", type: "success" });
@@ -254,6 +189,7 @@ export default function UserProfile() {
       setLoading(false);
     }
   };
+
   const handleLogout = () => {
     Cookies.remove("userEmail");
     Cookies.remove("authToken");
@@ -287,7 +223,7 @@ export default function UserProfile() {
 
   const navItems = [
     { id: "profile", icon: User, label: "Profil", emoji: "👤" },
-    { id: "reservations", icon: Calendar, label: "Réservations", emoji: "📅" },
+    // { id: "reservations", icon: Calendar, label: "Réservations", emoji: "📅" },
     { id: "notifications", icon: Bell, label: "Notifications", emoji: "🔔" },
     { id: "security", icon: Lock, label: "Sécurité", emoji: "🔒" },
   ];
@@ -545,10 +481,8 @@ export default function UserProfile() {
                 </div>
               </div>
             )}
-{/* 
-            {activeTab === "reservations" && (
-              <UserReservationsHistory />
-            )} */}
+
+           
 
             {activeTab === "security" && (
               <div className="bg-white rounded-lg shadow-lg overflow-hidden">

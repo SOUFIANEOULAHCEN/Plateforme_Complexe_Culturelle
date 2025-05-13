@@ -32,16 +32,16 @@ export default function Footer() {
           <h3 className="text-2xl font-serif text-[#8B4513] text-center mb-8">Nos Partenaires</h3>
           <Swiper
             spaceBetween={30}
-            slidesPerView={2}
+            slidesPerView={1}
             loop={true}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
             }}
             breakpoints={{
-              640: { slidesPerView: 3 },
-              1024: { slidesPerView: 4 },
-              1280: { slidesPerView: 5 },
+              640: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+              1280: { slidesPerView: 4 },
             }}
             modules={[Autoplay]}
             className="flex justify-center items-center"

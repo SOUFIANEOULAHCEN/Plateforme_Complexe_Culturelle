@@ -23,7 +23,6 @@ import ResetPassword from "./pages/ResetPassword";
 import UserProfil from "./pages/UserProfil";
 import TalentProfil from "./pages/TalentProfil";
 import EventProposalsPage from "./pages/EventProposalsPage";
-// import ReservationFormPage from "./pages/ReservationFormPage";
 import Home from "./pages/Home";
 import AboutSection from "./home/AboutSection";
 import EventSlider from "./home/EventSlider";
@@ -31,6 +30,7 @@ import WorkshopSlider from "./home/WorkshopSlider";
 import Gallery from "./home/Gallery";
 import Header from "./home/Header";
 import Footer from "./home/Footer";
+import Contact from "./home/Contact";
 
 // Layout component pour les pages publiques
 function PublicLayout() {
@@ -54,6 +54,7 @@ function App() {
           <Route path="/Evenements" element={<EventSlider />} />
           <Route path="/Ateliers" element={<WorkshopSlider />} />
           <Route path="/Gallery" element={<Gallery />} />
+          <Route path="/Contact" element={<Contact />} />
         </Route>
         
         {/* Route de réservation */}
@@ -206,81 +207,6 @@ function App() {
           element={
             <ProtectedRoute>
               <EventsPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/talents/:id"
-          element={
-            <ProtectedRoute>
-              <TalentsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/talents/:id/edit"
-          element={
-            <ProtectedRoute>
-              <TalentsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/talents/new"
-          element={
-            <ProtectedRoute>
-              <TalentsPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/users/:id"
-          element={
-            <ProtectedRoute>
-              <UsersPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/users/:id/edit"
-          element={
-            <ProtectedRoute>
-              <UsersPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/users/new"
-          element={
-            <ProtectedRoute>
-              <UsersPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/espaces/:id"
-          element={
-            <ProtectedRoute>
-              <EspacesPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/espaces/:id/edit"
-          element={
-            <ProtectedRoute>
-              <EspacesPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/espaces/new"
-          element={
-            <ProtectedRoute>
-              <EspacesPage />
             </ProtectedRoute>
           }
         />

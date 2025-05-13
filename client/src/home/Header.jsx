@@ -126,6 +126,11 @@ export default function Header() {
               Galerie
             </button>
           </li>
+          <li>
+            <Link to="/Contact" className="hover:text-[#6e3d20]">
+              Contact
+            </Link>
+          </li>
         </ul>
 
         {/* Flags and Buttons (desktop) */}

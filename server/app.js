@@ -14,6 +14,7 @@ import webhookRoutes from "./routes/webhookRoutes.js";
 import userProfileRoutes from "./routes/userProfileRoutes.js";
 import {talentRoutes} from './routes/talentRoutes.js';
 import chatbotRoutes from "./routes/chatbotRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 
 const PORT = 3000;
 const app = express();
@@ -38,9 +39,10 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/event-proposals", eventProposalRoutes);
 app.use("/api/webhooks", webhookRoutes);
-app.use("/api/profile", userProfileRoutes); // Cette ligne est cruciale
+app.use("/api/profile", userProfileRoutes);
 app.use("/api/talent", talentRoutes);
 app.use("/api/chatbot", chatbotRoutes);
+app.use("/api/contact", contactRoutes);
 
 // Servir les fichiers statiques du dossier public
 app.use(express.static('public'));
