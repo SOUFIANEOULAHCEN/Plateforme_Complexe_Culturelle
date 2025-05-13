@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Modal from "./Modal";
 import api from "../api";
 import Cookies from "js-cookie";
 import EventForm from "./EventForm";
 import EventDetails from "./EventDetails";
 import Toast from "./Toast";
+import { FunnelIcon } from "@heroicons/react/24/outline";
 
 export default function EventsTable({ limit }) {
   const [events, setEvents] = useState([]);
@@ -24,6 +25,11 @@ export default function EventsTable({ limit }) {
   const [toast, setToast] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Nombre d'éléments par page
+  const [dateDebutMin, setDateDebutMin] = useState("");
+  const [dateDebutMax, setDateDebutMax] = useState("");
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' ou 'desc'
+  const [showSortMenu, setShowSortMenu] = useState(false);
+  const sortMenuRef = useRef();
 
   const userRole = Cookies.get("userRole");
   const canDelete = userRole === "superadmin";
@@ -31,6 +37,16 @@ export default function EventsTable({ limit }) {
   useEffect(() => {
     fetchAllData();
   }, [limit]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (sortMenuRef.current && !sortMenuRef.current.contains(event.target)) {
+        setShowSortMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -163,7 +179,7 @@ export default function EventsTable({ limit }) {
   };
 
   // Filter events based on search term and type
-  const filteredEvents = events.filter((event) => {
+  let filteredEvents = events.filter((event) => {
     const matchesSearch =
       searchTerm === "" ||
       (event.titre &&
@@ -172,6 +188,13 @@ export default function EventsTable({ limit }) {
     const matchesType = typeFilter === "" || event.type === typeFilter;
 
     return matchesSearch && matchesType;
+  });
+
+  // Tri par date_debut
+  filteredEvents = filteredEvents.sort((a, b) => {
+    const dateA = new Date(a.date_debut);
+    const dateB = new Date(b.date_debut);
+    return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
   });
 
   // Pagination logic
@@ -200,8 +223,8 @@ export default function EventsTable({ limit }) {
 
   return (
     <>
-      <div className="mb-4 flex flex-col sm:flex-row justify-between gap-2">
-        <div className="flex flex-col sm:flex-row gap-2 flex-1">
+      <div className="mb-4 flex flex-col sm:flex-row justify-between gap-2 items-center">
+        <div className="flex flex-col sm:flex-row gap-2 flex-1 items-center">
           <input
             type="text"
             placeholder="Rechercher..."
@@ -221,15 +244,33 @@ export default function EventsTable({ limit }) {
             <option value="exposition">Exposition</option>
             <option value="rencontre">Rencontre</option>
           </select>
+          <div className="relative" ref={sortMenuRef}>
+            <button
+              type="button"
+              className="p-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
+              aria-label="Filtrer et trier"
+              onClick={() => setShowSortMenu((v) => !v)}
+            >
+              <FunnelIcon className="w-5 h-5 text-gray-500" />
+            </button>
+            {showSortMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                <button
+                  className={`w-full text-left px-4 py-2 hover:bg-gray-100 ${sortOrder === 'desc' ? 'font-bold text-[oklch(47.3%_0.137_46.201)]' : ''}`}
+                  onClick={() => { setSortOrder('desc'); setShowSortMenu(false); }}
+                >
+                  Date décroissante
+                </button>
+                <button
+                  className={`w-full text-left px-4 py-2 hover:bg-gray-100 ${sortOrder === 'asc' ? 'font-bold text-[oklch(47.3%_0.137_46.201)]' : ''}`}
+                  onClick={() => { setSortOrder('asc'); setShowSortMenu(false); }}
+                >
+                  Date croissante
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-        {!limit && (
-          <button
-            onClick={handleAddEvent}
-            className="px-4 py-2 bg-[oklch(47.3%_0.137_46.201)] text-white rounded-lg shadow hover:bg-[oklch(50%_0.137_46.201)] transition-colors"
-          >
-            Nouvel événement
-          </button>
-        )}
       </div>
 
       {filteredEvents.length === 0 ? (
@@ -242,38 +283,53 @@ export default function EventsTable({ limit }) {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titre</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    ID
+                    <span className="flex items-center gap-1">
+                      Date
+                      <button
+                        type="button"
+                        aria-label="Trier par date croissante"
+                        className={`focus:outline-none ${sortOrder === 'asc' ? 'text-[oklch(47.3%_0.137_46.201)]' : 'text-gray-400'}`}
+                        onClick={() => setSortOrder('asc')}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Trier par date décroissante"
+                        className={`focus:outline-none ${sortOrder === 'desc' ? 'text-[oklch(47.3%_0.137_46.201)]' : 'text-gray-400'}`}
+                        onClick={() => setSortOrder('desc')}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      </button>
+                    </span>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Titre
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Type
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email du proposeur</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {currentItems.map((event) => (
                   <tr key={event.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {event.id}
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={event.affiche_url || '/placeholder.svg'}
+                          alt="Affiche"
+                          className="w-10 h-10 object-cover rounded shadow border border-gray-200 mb-1"
+                          onError={e => { e.target.src = '/placeholder.svg'; e.target.alt = 'Image non disponible'; }}
+                          title={event.id}
+                        />
+                        <span className="text-xs text-gray-400">{event.id}</span>
+                      </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {event.titre}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {getTypeBadge(event.type)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(event.date_debut)}
-                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{event.titre}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{getTypeBadge(event.type)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(event.date_debut)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{event.proposeur_email || event.createur?.email || 'N/A'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
                         onClick={() => handleViewEvent(event)}
@@ -349,104 +405,36 @@ export default function EventsTable({ limit }) {
           {/* Pagination */}
           {filteredEvents.length > itemsPerPage && (
             <div className="flex items-center justify-between mt-4">
-              {/* Affichage du texte indiquant la plage d'éléments affichés */}
               <div className="text-sm text-gray-500">
                 Affichage de {indexOfFirstItem + 1} à {Math.min(indexOfLastItem, filteredEvents.length)} sur {filteredEvents.length} événements
               </div>
-
               <div className="flex space-x-1">
-                <button
-                  onClick={() => paginate(1)}
-                  disabled={currentPage === 1}
-                  className={`px-3 py-1 rounded-md ${
-                    currentPage === 1
-                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  «
-                </button>
-                <button
-                  onClick={() => paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className={`px-3 py-1 rounded-md ${
-                    currentPage === 1
-                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  ‹
-                </button>
-
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (number) => (
-                    <button
-                      key={number}
-                      onClick={() => paginate(number)}
-                      className={`px-3 py-1 rounded-md ${
-                        currentPage === number
-                          ? "bg-[oklch(47.3%_0.137_46.201)] text-white"
-                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                      }`}
-                    >
-                      {number}
-                    </button>
-                  )
-                )}
-
-                <button
-                  onClick={() => paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className={`px-3 py-1 rounded-md ${
-                    currentPage === totalPages
-                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  ›
-                </button>
-                <button
-                  onClick={() => paginate(totalPages)}
-                  disabled={currentPage === totalPages}
-                  className={`px-3 py-1 rounded-md ${
-                    currentPage === totalPages
-                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  »
-                </button>
+                <button onClick={() => paginate(1)} disabled={currentPage === 1} className={`px-3 py-1 rounded-md ${currentPage === 1 ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}>«</button>
+                <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className={`px-3 py-1 rounded-md ${currentPage === 1 ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}>‹</button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+                  <button key={number} onClick={() => paginate(number)} className={`px-3 py-1 rounded-md ${currentPage === number ? "bg-[oklch(47.3%_0.137_46.201)] text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}>{number}</button>
+                ))}
+                <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} className={`px-3 py-1 rounded-md ${currentPage === totalPages ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}>›</button>
+                <button onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} className={`px-3 py-1 rounded-md ${currentPage === totalPages ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}>»</button>
               </div>
             </div>
           )}
         </>
       )}
 
+      {/* Modals et Toasts */}
       <Modal
         isOpen={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
         title="Confirmer la suppression"
         footer={
           <>
-            <button
-              onClick={() => setShowConfirmModal(false)}
-              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
-            >
-              Annuler
-            </button>
-            <button
-              onClick={confirmDelete}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-            >
-              Supprimer
-            </button>
+            <button onClick={() => setShowConfirmModal(false)} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Annuler</button>
+            <button onClick={confirmDelete} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Supprimer</button>
           </>
         }
       >
-        <p className="text-sm text-gray-500">
-          Êtes-vous sûr de vouloir supprimer cet événement ? Cette action est
-          irréversible.
-        </p>
+        <p className="text-sm text-gray-500">Êtes-vous sûr de vouloir supprimer cet événement ? Cette action est irréversible.</p>
       </Modal>
 
       <EventForm

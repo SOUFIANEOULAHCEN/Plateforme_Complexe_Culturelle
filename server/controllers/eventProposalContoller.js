@@ -77,7 +77,9 @@ export const createEventProposal = async (req, res) => {
     // Récupérer l'URL de l'affiche si un fichier a été uploadé
     let affiche_url = null;
     if (req.file) {
-      affiche_url = req.file.path.replace(/\\/g, '/'); // Normaliser le chemin pour l'URL
+      // S'assurer que l'URL commence par /uploads/
+      const normalizedPath = req.file.path.replace(/\\/g, '/');
+      affiche_url = normalizedPath.startsWith('uploads/') ? '/' + normalizedPath : normalizedPath;
     }
     
     // Validate required fields
@@ -168,6 +170,9 @@ export const processEventProposal = async (req, res) => {
     
     // If approved, create an actual event
     if (statut === 'approuve') {
+      // Chercher l'utilisateur correspondant à l'email du proposeur
+      let createur = await Utilisateur.findOne({ where: { email: proposal.proposeur_email } });
+      let createur_id = createur ? createur.id : req.user.id;
       const newEvent = await Evenement.create({
         titre: proposal.titre,
         description: proposal.description,
@@ -175,8 +180,11 @@ export const processEventProposal = async (req, res) => {
         date_fin: proposal.date_fin,
         espace_id: proposal.espace_id,
         type: proposal.type,
-        createur_id: req.user.id,
-        statut: 'planifie'
+        createur_id,
+        affiche_url: proposal.affiche_url,
+        prix: proposal.prix,
+        statut: 'planifie',
+        proposeur_email: proposal.proposeur_email,
       });
       
       // Create notification for event creation
@@ -190,6 +198,15 @@ export const processEventProposal = async (req, res) => {
           eventId: newEvent.id,
           proposalId: proposal.id
         })
+      });
+
+      // Ajout du traçage de l'événement accepté
+      const TracageEvenement = (await import('../models/tracageEvenement.js')).default;
+      await TracageEvenement.create({
+        evenement_id: newEvent.id,
+        action: 'acceptation',
+        user_id: req.user.id,
+        date_tracage: new Date(),
       });
 
       // Send approval email

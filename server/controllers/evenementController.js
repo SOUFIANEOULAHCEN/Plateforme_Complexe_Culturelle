@@ -3,26 +3,31 @@ import Utilisateur from "../models/utilisateur.js";
 
 export const getEvenements = async (req, res) => {
   try {
-    const { createur_email } = req.query;
-    
-    if (createur_email) {
-      // Joindre la table utilisateur pour filtrer par email du créateur
-      const evenements = await Evenement.findAll({
-        include: [
-          {
-            model: Utilisateur,
-            as: 'createur',
-            where: { email: createur_email },
-            attributes: ['id', 'nom', 'email']
-          }
-        ]
-      });
-      return res.json(evenements);
+    const { createur_email, date_debut_min, date_debut_max } = req.query;
+    const where = {};
+    if (date_debut_min) {
+      where.date_debut = { ...(where.date_debut || {}), $gte: new Date(date_debut_min) };
     }
-    
-    // Si pas de filtre par email, retourner tous les événements
-    const evenements = await Evenement.findAll();
-    res.json(evenements);
+    if (date_debut_max) {
+      where.date_debut = { ...(where.date_debut || {}), $lte: new Date(date_debut_max) };
+    }
+    let include = [
+      {
+        model: Utilisateur,
+        as: 'createur',
+        attributes: ['id', 'nom', 'email']
+      }
+    ];
+    if (createur_email) {
+      include[0].where = { email: createur_email };
+    }
+    const evenements = await Evenement.findAll({ where, include });
+    // Injecter proposeur_email fallback si absent
+    const evenementsWithProposeur = evenements.map(ev => ({
+      ...ev.toJSON(),
+      proposeur_email: ev.proposeur_email || (ev.createur ? ev.createur.email : null)
+    }));
+    res.json(evenementsWithProposeur);
   } catch (err) {
     console.error("Erreur lors de la récupération des événements:", err);
     res.status(500).json({ message: "Erreur serveur" });

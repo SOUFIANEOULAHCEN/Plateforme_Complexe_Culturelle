@@ -74,6 +74,16 @@ export default function EventDetails({ isOpen, onClose, event, onEdit }) {
       >
         {event ? (
           <div className="space-y-4">
+            {event.affiche && (
+              <div className="flex justify-center mb-4">
+                <img
+                  src={typeof event.affiche === 'string' ? event.affiche : URL.createObjectURL(event.affiche)}
+                  alt="Affiche de l'événement"
+                  className="max-h-64 rounded-lg border border-gray-200 shadow"
+                  onError={e => { e.target.src = '/placeholder.svg'; e.target.alt = 'Image non disponible'; }}
+                />
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h3 className="text-sm font-medium text-gray-500">
@@ -126,6 +136,13 @@ export default function EventDetails({ isOpen, onClose, event, onEdit }) {
                   : `${Number(event.prix).toFixed(2)} MAD`}
               </p>
             </div>
+
+            {event.createur?.email && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Email du créateur</h3>
+                <p className="mt-1 text-sm text-gray-900">{event.createur.email}</p>
+              </div>
+            )}
 
             {event.description && (
               <div>

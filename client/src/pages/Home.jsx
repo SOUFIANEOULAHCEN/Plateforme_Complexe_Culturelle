@@ -8,6 +8,7 @@ import EventProposalForm from '../components/EventProposalForm'
 import ReservationForm from '../components/ReservationForm'
 import Cookies from 'js-cookie'
 import Modal from '../components/Modal'
+import { ChatBot } from '../components/ChatBot/ChatBot'
 
 export default function Home() {
   const [choix, setChoix] = useState('');
@@ -53,14 +54,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      {/* Choix utilisateur */}
-      {/* <section className="flex flex-col items-center justify-center py-8 bg-[#f6f1ed]">
-        <h2 className="text-2xl font-bold mb-4 text-[#824B26]">Que souhaitez-vous faire ?</h2>
-        <div className="flex gap-6">
-          <button onClick={() => handleOpen('event_proposal')} className="px-6 py-3 bg-[#824B26] text-white rounded-lg font-semibold hover:bg-[#6e3d20] transition">Proposer un événement</button>
-          <button onClick={() => handleOpen('reservation')} className="px-6 py-3 bg-[#e6b17a] text-[#824B26] rounded-lg font-semibold hover:bg-[#d99a4a] transition">Réserver un espace</button>
-        </div>
-      </section> */}
+
       {/* Modal d'inscription si email manquant */}
       {showSignup && (
         <Modal isOpen={showSignup} onClose={() => setShowSignup(false)} title="Inscription requise">
@@ -94,6 +88,7 @@ export default function Home() {
       <section id="gallery" className="scroll-mt-16">
         <Gallery />
       </section>
+      <ChatBot />
     </div>
   )
 }
