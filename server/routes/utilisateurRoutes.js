@@ -67,4 +67,85 @@ router.delete("/:id", verifyToken, async (req, res) => {
   }
 });
 
+// POST /api/utilisateurs - Créer un nouvel utilisateur
+router.post("/", verifyToken, async (req, res) => {
+  try {
+    const { nom, prenom, email, password, role, is_talent } = req.body;
+    
+    // Vérifier si l'email existe déjà
+    const existingUser = await Utilisateur.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: "Cet email est déjà utilisé" });
+    }
+
+    // Créer le nouvel utilisateur
+    const newUser = await Utilisateur.create({
+      nom,
+      prenom,
+      email,
+      password, // Note: Assurez-vous que le modèle hash le mot de passe
+      role: role || 'user', // Valeur par défaut si non spécifiée
+      is_talent: is_talent || false
+    });
+
+    // Ne pas renvoyer le mot de passe dans la réponse
+    const userResponse = { ...newUser.toJSON() };
+    delete userResponse.password;
+
+    res.status(201).json(userResponse);
+  } catch (err) {
+    console.error("Erreur lors de la création de l'utilisateur:", err);
+    res.status(500).json({ message: "Erreur lors de la création de l'utilisateur" });
+  }
+});
+
+// PUT /api/utilisateurs/:id - Modifier un utilisateur existant
+router.put("/:id", verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nom, prenom, email, password, role, is_talent, domaine_artiste, description_talent } = req.body;
+
+    // Trouver l'utilisateur
+    const utilisateur = await Utilisateur.findByPk(id);
+    if (!utilisateur) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+
+    // Vérifier si l'email est déjà utilisé par un autre utilisateur
+    if (email && email !== utilisateur.email) {
+      const existingUser = await Utilisateur.findOne({ where: { email } });
+      if (existingUser) {
+        return res.status(400).json({ message: "Cet email est déjà utilisé" });
+      }
+    }
+
+    // Mettre à jour l'utilisateur
+    const updateData = {
+      nom: nom || utilisateur.nom,
+      prenom: prenom || utilisateur.prenom,
+      email: email || utilisateur.email,
+      role: role || utilisateur.role,
+      is_talent: is_talent !== undefined ? is_talent : utilisateur.is_talent,
+      domaine_artiste: domaine_artiste || utilisateur.domaine_artiste,
+      description_talent: description_talent || utilisateur.description_talent
+    };
+
+    // Mettre à jour le mot de passe seulement s'il est fourni
+    if (password) {
+      updateData.password = password;
+    }
+
+    await utilisateur.update(updateData);
+
+    // Ne pas renvoyer le mot de passe dans la réponse
+    const userResponse = { ...utilisateur.toJSON() };
+    delete userResponse.password;
+
+    res.json(userResponse);
+  } catch (err) {
+    console.error("Erreur lors de la modification de l'utilisateur:", err);
+    res.status(500).json({ message: "Erreur lors de la modification de l'utilisateur" });
+  }
+});
+
 export default router;

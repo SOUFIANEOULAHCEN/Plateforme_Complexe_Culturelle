@@ -66,32 +66,38 @@ export const createReservation = async (req, res) => {
       });
     }
 
-    // Vérifier si l'espace est déjà réservé pour cette période
-    const reservationExistante = await Reservation.findOne({
-      where: {
-        espace_id,
-        statut: {
-          [Op.notIn]: ['annule', 'termine']
-        },
-        [Op.or]: [
-          {
-            date_debut: {
-              [Op.between]: [date_debut, date_fin]
-            }
-          },
-          {
-            date_fin: {
-              [Op.between]: [date_debut, date_fin]
-            }
-          }
-        ]
-      }
-    });
+    // Ajoute ce check AVANT la vérification de chevauchement
+    const isAdmin = req.user && (req.user.role === 'admin' || req.user.role === 'superadmin');
+    const forcer = req.body.forcer === true;
 
-    if (reservationExistante) {
-      return res.status(400).json({
-        message: 'L\'espace est déjà réservé pour cette période'
+    // Vérifier si l'espace est déjà réservé pour cette période
+    if (!(isAdmin && forcer)) {
+      const reservationExistante = await Reservation.findOne({
+        where: {
+          espace_id,
+          statut: {
+            [Op.notIn]: ['annule', 'termine']
+          },
+          [Op.or]: [
+            {
+              date_debut: {
+                [Op.between]: [date_debut, date_fin]
+              }
+            },
+            {
+              date_fin: {
+                [Op.between]: [date_debut, date_fin]
+              }
+            }
+          ]
+        }
       });
+
+      if (reservationExistante) {
+        return res.status(400).json({
+          message: 'L\'espace est déjà réservé pour cette période'
+        });
+      }
     }
 
     // Créer la réservation
@@ -257,3 +263,14 @@ export const getReservations = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
+// Suppose que reservedPeriods contient les réservations existantes pour l'espace sélectionné
+function isDateReserved(dateDebut, dateFin) {
+  return reservedPeriods.some(period => {
+    const start = new Date(period.date_debut);
+    const end = new Date(period.date_fin);
+    return (
+      (new Date(dateDebut) < end) && (new Date(dateFin) > start)
+    );
+  });
+}

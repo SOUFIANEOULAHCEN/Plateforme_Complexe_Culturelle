@@ -42,26 +42,31 @@ export default function UserDetails({ isOpen, onClose, userId, onEdit }) {
     })
   }
 
-  const getRoleBadge = (role) => {
+  const getRoleBadge = (role, isTalent) => {
+    if (isTalent) {
+      return (
+        <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          Talent
+        </span>
+      );
+    }
     const roleMap = {
       utilisateur: "bg-blue-100 text-blue-800",
       admin: "bg-purple-100 text-purple-800",
       superadmin: "bg-red-100 text-red-800",
-    }
-
+    };
     const roleText = {
       utilisateur: "Utilisateur",
       admin: "Admin",
       superadmin: "Super Admin",
-    }
-
-    const className = roleMap[role] || "bg-gray-100 text-gray-800"
+    };
+    const className = roleMap[role] || "bg-gray-100 text-gray-800";
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium ${className}`}>
         {roleText[role] || role || "N/A"}
       </span>
-    )
-  }
+    );
+  };
 
   const getStatusBadge = (status) => {
     const statusMap = {
@@ -120,7 +125,7 @@ export default function UserDetails({ isOpen, onClose, userId, onEdit }) {
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Rôle</h3>
-                <p className="mt-1">{getRoleBadge(user.role)}</p>
+                <p className="mt-1">{getRoleBadge(user.role, user.is_talent)}</p>
               </div>
             </div>
 

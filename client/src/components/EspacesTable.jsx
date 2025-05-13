@@ -25,6 +25,7 @@ export default function EspacesTable({ limit }) {
   const [itemsPerPage] = useState(10);
   const userRole = Cookies.get("userRole");
   const canDelete = userRole === "superadmin";
+  const allTypes = Array.from(new Set(espaces.map(e => e.type).filter(Boolean)));
    // Ajout des états pour la pagination
 
 
@@ -104,23 +105,33 @@ export default function EspacesTable({ limit }) {
     setCurrentPage(1); // Reset to first page after adding/editing
   };
 
+  // Générer dynamiquement les couleurs pour chaque type
+  const typeColors = {
+    salle: "bg-blue-100 text-blue-800",
+    atelier: "bg-green-100 text-green-800",
+    exposition: "bg-yellow-100 text-yellow-800",
+    cinéma: "bg-purple-100 text-purple-800",
+    theatre: "bg-pink-100 text-pink-800",
+    // Ajoute ici d'autres types si besoin
+  };
+
+  // Générer dynamiquement le texte affiché pour chaque type
+  const typeLabels = {
+    salle: "Salle",
+    atelier: "Atelier",
+    exposition: "Exposition",
+    cinéma: "Cinéma",
+    theatre: "Théâtre",
+    // Ajoute ici d'autres types si besoin
+  };
+
   const getTypeBadge = (type) => {
-    const typeMap = {
-      salle: "bg-blue-100 text-blue-800",
-      atelier: "bg-green-100 text-green-800",
-    };
-
-    const typeText = {
-      salle: "Salle",
-      atelier: "Atelier",
-    };
-
-    const className = typeMap[type] || "bg-gray-100 text-gray-800";
+    const className = typeColors[type] || "bg-gray-100 text-gray-800";
     return (
       <span
         className={`px-2 py-1 rounded-full text-xs font-medium ${className}`}
       >
-        {typeText[type] || type || "N/A"}
+        {typeLabels[type] || (type ? type.charAt(0).toUpperCase() + type.slice(1) : "N/A")}
       </span>
     );
   };
@@ -180,8 +191,11 @@ export default function EspacesTable({ limit }) {
             onChange={(e) => setTypeFilter(e.target.value)}
           >
             <option value="">Tous les types</option>
-            <option value="salle">Salle</option>
-            <option value="atelier">Atelier</option>
+            {allTypes.map(type => (
+              <option key={type} value={type}>
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </option>
+            ))}
           </select>
         </div>
         {!limit && (

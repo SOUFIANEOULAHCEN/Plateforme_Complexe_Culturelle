@@ -3,7 +3,8 @@
 import { useState } from "react"
 import DashboardLayout from "../components/DashboardLayout"
 import ReservationsTable from "../components/ReservationsTable"
-import ReservationForm from "../components/ReservationForm"
+// import ReservationForm from "../components/ReservationForm"
+import AdminReservationForm from "../components/AdminReservationForm"
 
 export default function ReservationsPage() {
   const [loading, setLoading] = useState(false)
@@ -39,7 +40,7 @@ export default function ReservationsPage() {
       </div>
 
       {/* ReservationForm Modal */}
-      <ReservationForm
+      <AdminReservationForm
         isOpen={showReservationForm}
         onClose={() => setShowReservationForm(false)}
         onSuccess={handleReservationFormSuccess}

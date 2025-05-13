@@ -29,7 +29,7 @@ export default function ResetPassword() {
       const response = await api.post(`/auth/reset-password/${token}`, { password });
       setToast({ message: response.data.message, type: 'success' });
       setMessage(response.data.message);
-      setTimeout(() => navigate('/login'), 2000);
+      setTimeout(() => navigate('/'), 2000);
     } catch (err) {
       setToast({ message: err.response?.data?.message || 'Erreur lors de la réinitialisation', type: 'error' });
       setError(err.response?.data?.message || 'Erreur lors de la réinitialisation');

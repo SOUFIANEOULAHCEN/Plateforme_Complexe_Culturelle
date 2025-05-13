@@ -185,25 +185,29 @@ export default function EspaceForm({ isOpen, onClose, espace = null, onSuccess }
               >
                 <option value="salle">Salle</option>
                 <option value="atelier">Atelier</option>
+                <option value="exposition">Exposition</option>
+                <option value="cinéma">Cinéma</option>
               </select>
             </div>
 
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Sous-type</label>
-              <select
-                name="sous_type"
-                value={formData.sous_type}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
-              >
-                <option value="">Sélectionner un sous-type</option>
-                {getSousTypeOptions().map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {getSousTypeOptions().length > 0 && (
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">Sous-type</label>
+                <select
+                  name="sous_type"
+                  value={formData.sous_type}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
+                >
+                  <option value="">Sélectionner un sous-type</option>
+                  {getSousTypeOptions().map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">Capacité</label>
@@ -226,17 +230,6 @@ export default function EspaceForm({ isOpen, onClose, espace = null, onSuccess }
                 rows="4"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
               ></textarea>
-            </div>
-
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">URL de l'image</label>
-              <input
-                type="text"
-                name="image_url"
-                value={formData.image_url}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
-              />
             </div>
           </form>
         )}

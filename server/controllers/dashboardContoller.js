@@ -17,9 +17,9 @@ export const getSummaryData = async (req, res) => {
       ]);
 
       return res.json({
-        labels: ["Utilisateurs", "Admins", "Super Admins", "Talents"],
-        values: [utilisateurs, admins, superadmins, talents],
-      });
+        labels: ["Utilisateurs", "Talents", "Admins", "Super Admins"],
+        values: [utilisateurs, talents, admins, superadmins],
+      })
     }
 
     // Logique normale pour les autres données

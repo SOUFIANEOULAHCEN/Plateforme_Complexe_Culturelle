@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
+import bcrypt from "bcryptjs";
 
 const Utilisateur = sequelize.define(
   "utilisateur",
@@ -106,8 +107,27 @@ const Utilisateur = sequelize.define(
   {
     tableName: "utilisateur",
     timestamps: false,
+    hooks: {
+      beforeCreate: async (user) => {
+        if (user.password) {
+          const salt = await bcrypt.genSalt(10);
+          user.password = await bcrypt.hash(user.password, salt);
+        }
+      },
+      beforeUpdate: async (user) => {
+        if (user.changed('password') && !user.password.startsWith('$2b$')) {
+          const salt = await bcrypt.genSalt(10);
+          user.password = await bcrypt.hash(user.password, salt);
+        }
+      }
+    }
   },
   
 );
+
+// Méthode pour vérifier le mot de passe
+Utilisateur.prototype.validatePassword = async function(password) {
+  return bcrypt.compare(password, this.password);
+};
 
 export default Utilisateur;

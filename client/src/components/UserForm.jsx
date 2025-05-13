@@ -8,14 +8,14 @@ import Toast from "./Toast";
 export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
   const [formData, setFormData] = useState({
     nom: "",
+    prenom: "",
     email: "",
     password: "",
     role: "utilisateur",
     is_talent: false,
     // Champs spécifiques aux talents
-    domaine: "",
-    experience: "",
-    portfolio: "",
+    domaine_artiste: "",
+    description_talent: "",
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -28,13 +28,13 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
     } else {
       setFormData({
         nom: "",
+        prenom: "",
         email: "",
         password: "",
         role: "utilisateur",
         is_talent: false,
-        domaine: "",
-        experience: "",
-        portfolio: "",
+        domaine_artiste: "",
+        description_talent: "",
       });
       setIsTalent(false);
     }
@@ -46,13 +46,13 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
       const user = response.data;
       setFormData({
         nom: user.nom || "",
+        prenom: user.prenom || "",
         email: user.email || "",
         password: "",
         role: user.role || "utilisateur",
         is_talent: user.is_talent || false,
-        domaine: user.domaine || "",
-        experience: user.experience || "",
-        portfolio: user.portfolio || "",
+        domaine_artiste: user.domaine_artiste || "",
+        description_talent: user.description_talent || "",
       });
       setIsTalent(user.is_talent || false);
     } catch (error) {
@@ -84,15 +84,16 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.nom) newErrors.nom = "Le nom est requis";
+    if (!formData.prenom) newErrors.prenom = "Le prénom est requis";
     if (!formData.email) newErrors.email = "L'email est requis";
     else if (!/^\S+@\S+\.\S+$/.test(formData.email))
       newErrors.email = "Email invalide";
     if (!userId && !formData.password)
       newErrors.password = "Le mot de passe est requis";
     if (isTalent) {
-      if (!formData.domaine) newErrors.domaine = "Le domaine est requis";
-      if (!formData.experience)
-        newErrors.experience = "L'expérience est requise";
+      if (!formData.domaine_artiste) newErrors.domaine_artiste = "Le domaine est requis";
+      if (!formData.description_talent)
+        newErrors.description_talent = "La description est requise";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -106,14 +107,14 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
     try {
       const userData = {
         nom: formData.nom,
+        prenom: formData.prenom,
         email: formData.email,
         role: formData.role,
         is_talent: isTalent,
         ...(formData.password && { password: formData.password }),
         ...(isTalent && {
-          domaine: formData.domaine,
-          experience: formData.experience,
-          portfolio: formData.portfolio,
+          domaine_artiste: formData.domaine_artiste,
+          description_talent: formData.description_talent,
         }),
       };
 
@@ -219,6 +220,24 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
+            Prénom
+          </label>
+          <input
+            type="text"
+            name="prenom"
+            value={formData.prenom}
+            onChange={handleChange}
+            className={`w-full px-3 py-2 border rounded-md ${
+              errors.prenom ? "border-red-500" : "border-gray-300"
+            }`}
+          />
+          {errors.prenom && (
+            <p className="mt-1 text-sm text-red-600">{errors.prenom}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             Email
           </label>
           <input
@@ -270,6 +289,7 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
           >
             <option value="utilisateur">Utilisateur</option>
             <option value="admin">Admin</option>
+            <option value="superadmin">Super Admin</option>
           </select>
         </div>
 
@@ -277,7 +297,6 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
           <input
             type="checkbox"
             id="is_talent"
-            name="is_talent"
             checked={isTalent}
             onChange={handleTalentChange}
             className="h-4 w-4 text-[oklch(47.3%_0.137_46.201)] focus:ring-[oklch(47.3%_0.137_46.201)] border-gray-300 rounded"
@@ -294,63 +313,49 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Domaine
+                Domaine artistique
               </label>
               <input
                 type="text"
-                name="domaine"
-                value={formData.domaine}
+                name="domaine_artiste"
+                value={formData.domaine_artiste}
                 onChange={handleChange}
                 className={`w-full px-3 py-2 border rounded-md ${
-                  errors.domaine ? "border-red-500" : "border-gray-300"
+                  errors.domaine_artiste ? "border-red-500" : "border-gray-300"
                 }`}
               />
-              {errors.domaine && (
-                <p className="mt-1 text-sm text-red-600">{errors.domaine}</p>
+              {errors.domaine_artiste && (
+                <p className="mt-1 text-sm text-red-600">{errors.domaine_artiste}</p>
               )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Expérience
+                Description du talent
               </label>
               <textarea
-                name="experience"
-                value={formData.experience}
+                name="description_talent"
+                value={formData.description_talent}
                 onChange={handleChange}
-                rows="3"
+                rows="4"
                 className={`w-full px-3 py-2 border rounded-md ${
-                  errors.experience ? "border-red-500" : "border-gray-300"
+                  errors.description_talent ? "border-red-500" : "border-gray-300"
                 }`}
               />
-              {errors.experience && (
-                <p className="mt-1 text-sm text-red-600">{errors.experience}</p>
+              {errors.description_talent && (
+                <p className="mt-1 text-sm text-red-600">{errors.description_talent}</p>
               )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Portfolio (URL)
-              </label>
-              <input
-                type="url"
-                name="portfolio"
-                value={formData.portfolio}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
             </div>
           </>
         )}
-
-        {toast && (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast(null)}
-          />
-        )}
       </form>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </Modal>
   );
 }

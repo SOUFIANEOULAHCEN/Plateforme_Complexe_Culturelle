@@ -6,6 +6,7 @@ const EventProposalsTable = ({ limit }) => {
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("en_attente");
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedProposal, setSelectedProposal] = useState(null);
   const [processingAction, setProcessingAction] = useState(false);
   const [commentaire, setCommentaire] = useState("");
@@ -149,11 +150,27 @@ const EventProposalsTable = ({ limit }) => {
     { total: 0, en_attente: 0, approuve: 0, rejete: 0 }
   );
 
+  // Filter proposals based on search term and status
+  const filteredProposals = proposals.filter((proposal) => {
+    const matchesSearch =
+      searchTerm === "" ||
+      (proposal.titre &&
+        proposal.titre.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (proposal.proposeur_nom &&
+        proposal.proposeur_nom.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (proposal.proposeur_email &&
+        proposal.proposeur_email.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesStatus = filter === "all" || proposal.statut === filter;
+
+    return matchesSearch && matchesStatus;
+  });
+
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = proposals.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(proposals.length / itemsPerPage);
+  const currentItems = filteredProposals.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredProposals.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -167,43 +184,31 @@ const EventProposalsTable = ({ limit }) => {
 
   return (
     <>
-      <div className="mb-4 flex flex-col sm:flex-row justify-between gap-2">
-        <div className="flex flex-col sm:flex-row gap-2 flex-1">
-          <div className="mb-4 flex flex-wrap gap-2">
-            {["all", "en_attente", "approuve", "rejete"].map((f) => (
-              <button
-                key={f}
-                onClick={() => {
-                  setFilter(f);
-                  setCurrentPage(1); // Reset to first page when changing filter
-                }}
-                className={`px-4 py-2 text-sm rounded-lg transition-colors ${
-                  filter === f
-                    ? "bg-[oklch(47.3%_0.137_46.201)] text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                } flex items-center gap-2`}
-              >
-                {
-                  {
-                    all: "Tous",
-                    en_attente: "En attente",
-                    approuve: "Approuvés",
-                    rejete: "Rejetés",
-                  }[f]
-                }
-                <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs">
-                  {f === "all"
-                    ? statusCounts.total
-                    : statusCounts[f] || 0}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+      <div className="mb-4 flex flex-col sm:flex-row justify-between gap-2 items-center">
+        <input
+          type="text"
+          placeholder="Rechercher..."
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] flex-1"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <select
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] ml-0 sm:ml-2"
+          value={filter}
+          onChange={e => {
+            setFilter(e.target.value);
+            setCurrentPage(1);
+          }}
+        >
+          <option value="all">Tous les statuts ({statusCounts.total})</option>
+          <option value="en_attente">En attente ({statusCounts.en_attente})</option>
+          <option value="approuve">Approuvés ({statusCounts.approuve})</option>
+          <option value="rejete">Rejetés ({statusCounts.rejete})</option>
+        </select>
       </div>
 
       {/* Tableau */}
-      {proposals.length === 0 ? (
+      {filteredProposals.length === 0 ? (
         <div className="text-center py-8 bg-white rounded-lg shadow">
           <p className="text-gray-500">Aucune proposition trouvée</p>
         </div>
@@ -340,13 +345,13 @@ const EventProposalsTable = ({ limit }) => {
           </div>
           
           {/* Pagination */}
-          {proposals.length > itemsPerPage && (
+          {filteredProposals.length > itemsPerPage && (
             <div className="flex items-center justify-between mt-4">
               {/* Affichage du texte indiquant la plage d'éléments affichés */}
               <div className="text-sm text-gray-500">
                 Affichage de {indexOfFirstItem + 1} à{" "}
-                {Math.min(indexOfLastItem, proposals.length)} sur{" "}
-                {proposals.length} propositions
+                {Math.min(indexOfLastItem, filteredProposals.length)} sur{" "}
+                {filteredProposals.length} propositions
               </div>
 
               <div className="flex space-x-1">
@@ -380,7 +385,7 @@ const EventProposalsTable = ({ limit }) => {
                       onClick={() => paginate(number)}
                       className={`px-3 py-1 rounded-md ${
                         currentPage === number
-                          ? "bg-[#6e3d20] text-white"
+                          ? "bg-[oklch(47.3%_0.137_46.201)] text-white"
                           : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                       }`}
                     >

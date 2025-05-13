@@ -78,7 +78,7 @@ export default function ForgotPassword() {
           </form>
           <div className="text-center mt-4 text-sm">
             <Link
-              to="/login"
+              to="/"
               className="text-[oklch(47.3%_0.137_46.201)] underline"
             >
               Retour à la connexion

@@ -54,9 +54,11 @@ export default function TalentProfile() {
         experience: Array.isArray(user.experience)
           ? user.experience
           : (typeof user.experience === 'string' ? JSON.parse(user.experience || '[]') : []),
-        reseaux_sociaux: typeof user.reseaux_sociaux === 'object'
+        reseaux_sociaux: (user.reseaux_sociaux && typeof user.reseaux_sociaux === 'object')
           ? user.reseaux_sociaux
-          : (typeof user.reseaux_sociaux === 'string' ? JSON.parse(user.reseaux_sociaux || '{}') : {}),
+          : (typeof user.reseaux_sociaux === 'string' && user.reseaux_sociaux !== ''
+              ? JSON.parse(user.reseaux_sociaux)
+              : {}),
       };
 
       setTalent(userWithExperience);
@@ -71,9 +73,11 @@ export default function TalentProfile() {
         annees_experience: user.annees_experience || "",
         competences: user.competences || "",
         disponibilites: user.disponibilites || "",
-        reseaux_sociaux: typeof user.reseaux_sociaux === 'object'
+        reseaux_sociaux: (user.reseaux_sociaux && typeof user.reseaux_sociaux === 'object')
           ? user.reseaux_sociaux
-          : (typeof user.reseaux_sociaux === 'string' ? JSON.parse(user.reseaux_sociaux || '{}') : {}),
+          : (typeof user.reseaux_sociaux === 'string' && user.reseaux_sociaux !== ''
+              ? JSON.parse(user.reseaux_sociaux)
+              : {}),
         experience: Array.isArray(user.experience)
           ? user.experience
           : (typeof user.experience === 'string' ? JSON.parse(user.experience || '[]') : []),
@@ -441,9 +445,11 @@ const handleLogin = async () => {
                             annees_experience: talent.annees_experience || "",
                             competences: talent.competences || "",
                             disponibilites: talent.disponibilites || "",
-                            reseaux_sociaux: typeof talent.reseaux_sociaux === 'object'
+                            reseaux_sociaux: (talent.reseaux_sociaux && typeof talent.reseaux_sociaux === 'object')
                               ? talent.reseaux_sociaux
-                              : (typeof talent.reseaux_sociaux === 'string' ? JSON.parse(talent.reseaux_sociaux || '{}') : {}),
+                              : (typeof talent.reseaux_sociaux === 'string' && talent.reseaux_sociaux !== ''
+                                  ? JSON.parse(talent.reseaux_sociaux)
+                                  : {}),
                             experience: Array.isArray(talent.experience)
                               ? talent.experience
                               : (typeof talent.experience === 'string' ? JSON.parse(talent.experience || '[]') : []),

@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import Modal from "./Modal";
 import api from "../api";
 import Cookies from "js-cookie";
-import ReservationForm from "./ReservationForm";
+// import ReservationForm from "./ReservationForm";
 import ReservationDetails from "./ReservationDetails";
 import Toast from "./Toast";
+import AdminReservationForm from "./AdminReservationForm";
 
 export default function ReservationsTable({ limit }) {
   const [reservations, setReservations] = useState([]);
@@ -27,6 +28,8 @@ export default function ReservationsTable({ limit }) {
   const [toast, setToast] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [selectedUser, setSelectedUser] = useState("");
+  const [reservedPeriods, setReservedPeriods] = useState([]);
 
   useEffect(() => {
     fetchAllData();
@@ -460,14 +463,38 @@ export default function ReservationsTable({ limit }) {
         </p>
       </Modal>
 
-      <ReservationForm
+      <AdminReservationForm
         isOpen={showReservationForm}
         onClose={() => setShowReservationForm(false)}
         reservation={editingReservation}
         onSuccess={handleReservationFormSuccess}
         events={events}
         users={users}
-      />
+      >
+        <div>
+          <label className="block mb-2 text-sm font-medium text-gray-700">
+            Utilisateur *
+          </label>
+          <input
+            type="text"
+            list="users"
+            value={selectedUser}
+            onChange={e => setSelectedUser(e.target.value)}
+            placeholder="Email de l'utilisateur"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
+            required
+          />
+          <datalist id="users">
+            {users
+              .filter(user => user.role === "utilisateur" && user.is_talent === false)
+              .map(user => (
+                <option key={user.id} value={user.email}>
+                  {user.nom} ({user.email})
+                </option>
+              ))}
+          </datalist>
+        </div>
+      </AdminReservationForm>
 
       <ReservationDetails
         isOpen={showReservationDetails}
@@ -489,4 +516,14 @@ export default function ReservationsTable({ limit }) {
       )}
     </>
   );
+}
+
+function isDateReserved(dateDebut, dateFin) {
+  return reservedPeriods.some(period => {
+    const start = new Date(period.date_debut);
+    const end = new Date(period.date_fin);
+    return (
+      (new Date(dateDebut) < end) && (new Date(dateFin) > start)
+    );
+  });
 }
