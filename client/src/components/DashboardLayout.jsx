@@ -1,9 +1,29 @@
 import { useState, useEffect } from "react"
 import Sidebar from "./Sidebar"
+import NotificationsPanel from "../components/NotificationsPanel"
 
 export default function DashboardLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  // Fonction pour mettre à jour le nombre de notifications non lues
+  const handleUnreadCount = (count) => setUnreadCount(count)
+
+  useEffect(() => {
+    // Récupérer le nombre de notifications non lues au chargement
+    const fetchUnread = async () => {
+      try {
+        const res = await fetch("/api/notification/unread-count");
+        const data = await res.json();
+        setUnreadCount(data.unreadCount || 0);
+      } catch {
+        setUnreadCount(0);
+      }
+    };
+    fetchUnread();
+  }, [])
 
   useEffect(() => {
     // Check if sidebar collapse state is saved in localStorage
@@ -69,18 +89,35 @@ export default function DashboardLayout({ children }) {
     }
   }, [])
 
+  // Calculer la marge à gauche du bouton selon l'état de la sidebar
+  const notifBtnMargin = isSidebarOpen ? (isCollapsed ? 'ml-16' : 'ml-64') : 'ml-0';
+
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} onCollapse={setIsCollapsed} />
-      
-      {/* Main content */}
-      <main 
-        className={`flex-1 overflow-auto transition-all duration-300 ease-in-out ${
-          isSidebarOpen 
-            ? (isCollapsed ? "ml-16" : "ml-64") 
-            : "ml-0"
-        }`}
+      {/* Bouton notifications en haut à droite avec badge */}
+      <button
+        className={`fixed top-4 right-8 z-50 bg-[#8B4513] text-white p-3 rounded-full shadow-lg hover:bg-[#6e3d20] transition ${notifBtnMargin}`}
+        onClick={() => setShowNotifications(true)}
+        title="Voir les notifications"
       >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+        {unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5 min-w-[20px] text-center border-2 border-white">
+            {unreadCount}
+          </span>
+        )}
+      </button>
+      {showNotifications && (
+        <NotificationsPanel 
+          onClose={() => setShowNotifications(false)} 
+          onUnreadCountChange={handleUnreadCount}
+        />
+      )}
+      {/* Main content */}
+      <div className={`flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 ${isSidebarOpen ? (isCollapsed ? 'ml-16' : 'ml-64') : 'ml-0'} transition-all duration-300`}>
         {/* Toggle sidebar button for mobile */}
         <button
           className="fixed top-4 left-4 z-40 p-2 rounded-md bg-[oklch(47.3%_0.137_46.201)] text-white md:hidden shadow-lg"
@@ -102,11 +139,10 @@ export default function DashboardLayout({ children }) {
             />
           </svg>
         </button>
-        
-        <div className="p-6 min-h-screen">
+        <div className="p-6 pl-4 min-h-screen">
           {children}
         </div>
-      </main>
+      </div>
     </div>
   )
 }

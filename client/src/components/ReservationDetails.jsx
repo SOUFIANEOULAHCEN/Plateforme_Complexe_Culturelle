@@ -75,32 +75,38 @@ export default function ReservationDetails({ isOpen, onClose, reservation, onEdi
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-gray-500">Événement</h3>
-            <p className="mt-1 text-sm text-gray-900">
-              {reservation.evenement_titre || `Événement #${reservation.evenement_id}`}
-              {reservation.evenement && (
-                <span className="block text-xs text-gray-500">
-                  {formatDate(reservation.evenement.date_debut)} - {formatDate(reservation.evenement.date_fin)}
-                </span>
-              )}
-            </p>
+            <h3 className="text-sm font-medium text-gray-500">Email de l'utilisateur</h3>
+            <p className="mt-1 text-sm text-gray-900">{reservation.utilisateur?.email || reservation.utilisateur_email || "N/A"}</p>
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-gray-500">Utilisateur</h3>
-            <p className="mt-1 text-sm text-gray-900">
-              {reservation.utilisateur_nom || `Utilisateur #${reservation.utilisateur_id}`}
-              {reservation.utilisateur && (
-                <span className="block text-xs text-gray-500">
-                  {reservation.utilisateur.email}
-                </span>
-              )}
-            </p>
+            <h3 className="text-sm font-medium text-gray-500">Titre</h3>
+            <p className="mt-1 text-sm text-gray-900">{reservation.titre}</p>
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-gray-500">Date de réservation</h3>
-            <p className="mt-1 text-sm text-gray-900">{formatDate(reservation.date_reservation)}</p>
+            <h3 className="text-sm font-medium text-gray-500">Description</h3>
+            <p className="mt-1 text-sm text-gray-900">{reservation.description}</p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Type d'organisateur</h3>
+            <p className="mt-1 text-sm text-gray-900">{reservation.type_organisateur}</p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Date de début</h3>
+            <p className="mt-1 text-sm text-gray-900">{formatDate(reservation.date_debut)}</p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Date de fin</h3>
+            <p className="mt-1 text-sm text-gray-900">{formatDate(reservation.date_fin)}</p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Espace</h3>
+            <p className="mt-1 text-sm text-gray-900">{reservation.evenement_titre || reservation.espace_nom || reservation.espace_id || "N/A"}</p>
           </div>
 
           <div>
@@ -108,19 +114,15 @@ export default function ReservationDetails({ isOpen, onClose, reservation, onEdi
             <p className="mt-1 text-sm text-gray-900">{reservation.nombre_places}</p>
           </div>
 
-          {reservation.createdAt && (
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Date de création</h3>
-              <p className="mt-1 text-sm text-gray-900">{formatDate(reservation.createdAt)}</p>
-            </div>
-          )}
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Matériel additionnel</h3>
+            <p className="mt-1 text-sm text-gray-900">{reservation.materiel_additionnel || "Aucun"}</p>
+          </div>
 
-          {reservation.updatedAt && (
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Dernière modification</h3>
-              <p className="mt-1 text-sm text-gray-900">{formatDate(reservation.updatedAt)}</p>
-            </div>
-          )}
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Commentaires</h3>
+            <p className="mt-1 text-sm text-gray-900">{reservation.commentaires || "Aucun"}</p>
+          </div>
         </div>
       ) : (
         <div className="text-center py-4 text-gray-500">Aucune information disponible</div>

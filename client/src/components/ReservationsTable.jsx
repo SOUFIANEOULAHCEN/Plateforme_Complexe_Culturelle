@@ -94,9 +94,11 @@ export default function ReservationsTable({ limit }) {
       });
     } catch (error) {
       console.error("Error deleting reservation:", error);
-      setError("Erreur lors de la suppression de la réservation");
+      setShowConfirmModal(false);
+      // Afficher le message d'erreur du serveur s'il existe
+      const errorMessage = error.response?.data?.message || "Erreur lors de la suppression de la réservation";
       setToast({
-        message: "Erreur lors de la suppression de la réservation",
+        message: errorMessage,
         type: "error",
       });
     }

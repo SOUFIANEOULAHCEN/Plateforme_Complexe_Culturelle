@@ -11,6 +11,8 @@ export default function AdminReservationForm({
   onClose,
   reservation = null,
   onSuccess,
+  events,
+  users
 }) {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -33,7 +35,6 @@ export default function AdminReservationForm({
     commentaires: ""
   });
   const [espaces, setEspaces] = useState([]);
-  const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
 
   // Gérer la fermeture après succès
@@ -79,6 +80,14 @@ export default function AdminReservationForm({
           date_fin: formatDateForInput(new Date(reservation.date_fin)),
         });
         await fetchEspaces();
+        let email = "";
+        if (reservation.utilisateur && reservation.utilisateur.email) {
+          email = reservation.utilisateur.email;
+        } else if (reservation.utilisateur_id && users && users.length > 0) {
+          const userObj = users.find(u => u.id === reservation.utilisateur_id || u._id === reservation.utilisateur_id);
+          if (userObj) email = userObj.email;
+        }
+        setSelectedUser(email);
       } else if (isOpen) {
         const userId = await getUserId();
         setFormReservation({
@@ -97,11 +106,12 @@ export default function AdminReservationForm({
           commentaires: ""
         });
         await fetchEspaces();
+        setSelectedUser("");
       }
     };
 
     initializeForm();
-  }, [isOpen, reservation]);
+  }, [isOpen, reservation, users]);
 
   function formatDateForInput(date) {
     return date.toISOString().slice(0, 16);
@@ -237,10 +247,9 @@ export default function AdminReservationForm({
     if (isOpen) {
       api.get('/utilisateurs')
         .then(res => {
-          setUsers(res.data);
           console.log("Utilisateurs récupérés :", res.data);
         })
-        .catch(() => setUsers([]));
+        .catch(() => console.error("Erreur lors de la récupération des utilisateurs"));
     }
   }, [isOpen]);
 
