@@ -24,6 +24,7 @@ import UserProfil from "./pages/UserProfil";
 import TalentProfil from "./pages/TalentProfil";
 import EventProposalsPage from "./pages/EventProposalsPage";
 import ContactMessagesPage from "./pages/ContactMessagesPage";
+import ChatbotQAPage from "./pages/ChatbotQAPage";
 import Home from "./pages/Home";
 import AboutSection from "./home/AboutSection";
 import EventSlider from "./home/EventSlider";
@@ -103,8 +104,7 @@ function App() {
               <ContactMessagesPage />
             </ProtectedRoute>
           }
-        />
-        <Route
+        />        <Route
           path="/dashboard/reservations"
           element={
             <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
@@ -173,6 +173,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
               <EventProposalsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/chatbot"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+              <ChatbotQAPage />
             </ProtectedRoute>
           }
         />

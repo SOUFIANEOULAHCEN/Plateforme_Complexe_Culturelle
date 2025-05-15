@@ -65,9 +65,9 @@ export default function ContactMessagesTable({ messages, onMarkAsRead, onSendRes
                     {message.is_read ? "Lu" : "Non lu"}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">{message.nom}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{message.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{message.nom}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{message.email}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {format(new Date(message.created_at), "dd MMMM yyyy HH:mm", {
                     locale: fr,
                   })}
@@ -75,9 +75,27 @@ export default function ContactMessagesTable({ messages, onMarkAsRead, onSendRes
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <button
                     onClick={() => handleViewMessage(message)}
-                    className="text-[#824B26] hover:text-[#5c3116] mr-4"
+                    className="text-[oklch(47.3%_0.137_46.201)] hover:text-[oklch(50%_0.137_46.201)]"
                   >
-                    Voir le message
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-5 h-5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
                   </button>
                 </td>
               </tr>
@@ -91,6 +109,24 @@ export default function ContactMessagesTable({ messages, onMarkAsRead, onSendRes
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title="Détails du message"
+        footer={
+          <div className="flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Fermer
+            </button>
+            <button
+              onClick={handleSendResponse}
+              disabled={!responseText.trim()}
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[oklch(47.3%_0.137_46.201)] hover:bg-[oklch(50%_0.137_46.201)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[oklch(47.3%_0.137_46.201)] disabled:opacity-50"
+            >
+              Envoyer la réponse
+            </button>
+          </div>
+        }
       >
         {selectedMessage && (
           <div className="space-y-6">
@@ -121,41 +157,22 @@ export default function ContactMessagesTable({ messages, onMarkAsRead, onSendRes
               </p>
             </div>
 
-            <form onSubmit={handleSendResponse} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="response"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Répondre
-                </label>
-                <textarea
-                  id="response"
-                  rows="4"
-                  value={responseText}
-                  onChange={(e) => setResponseText(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#824B26] focus:border-[#824B26]"
-                  placeholder="Votre réponse..."
-                ></textarea>
-              </div>
-
-              <div className="flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  Fermer
-                </button>
-                <button
-                  type="submit"
-                  disabled={!responseText.trim()}
-                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#824B26] hover:bg-[#5c3116] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#824B26] disabled:opacity-50"
-                >
-                  Envoyer la réponse
-                </button>
-              </div>
-            </form>
+            <div>
+              <label
+                htmlFor="response"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Répondre
+              </label>
+              <textarea
+                id="response"
+                rows="4"
+                value={responseText}
+                onChange={(e) => setResponseText(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[oklch(47.3%_0.137_46.201)] focus:border-[oklch(47.3%_0.137_46.201)]"
+                placeholder="Votre réponse..."
+              ></textarea>
+            </div>
           </div>
         )}
       </Modal>

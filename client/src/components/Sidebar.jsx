@@ -548,7 +548,49 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                   )}
                 </Link>
               </li>
-              
+                {/* Chatbot */}
+              <li>
+                <Link
+                  to="/dashboard/chatbot"
+                  className={`group flex items-center ${
+                    isCollapsed ? "justify-center" : ""
+                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
+                    isActive("/chatbot") ? "bg-white/20 font-medium" : ""
+                  }`}
+                  onClick={closeSidebar}
+                >
+                  <span className="inline-flex items-center justify-center w-6 h-6">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                      />
+                    </svg>
+                  </span>
+
+                  {!isCollapsed && (
+                    <span className="ml-3 transition-opacity duration-200">
+                      Chatbot
+                    </span>
+                  )}
+
+                  {/* Tooltip for collapsed state */}
+                  {isCollapsed && (
+                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                      Chatbot
+                    </div>
+                  )}
+                </Link>
+              </li>
+
               {/* Configuration */}
               <li>                
                 <Link
