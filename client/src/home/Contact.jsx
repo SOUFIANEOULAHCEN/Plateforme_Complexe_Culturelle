@@ -272,7 +272,7 @@ const Contact = () => {
                   </svg>
                   <div>
                     <h3 className="font-semibold">Email</h3>
-                    <p className="text-gray-600">contact@culture-ouarzazate.ma</p>
+                    <p className="text-gray-600">ouarzazatecomplexe@gmail.com</p>
                   </div>
                 </div>
               </div>
@@ -281,10 +281,7 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* Section Footer */}
-      <div>
-        <Footer />
-      </div>
+    
 
       {/* Toast notification */}
       {toast && (

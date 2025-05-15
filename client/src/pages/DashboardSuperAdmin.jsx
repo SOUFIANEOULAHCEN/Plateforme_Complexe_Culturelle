@@ -15,7 +15,7 @@ export default function DashboardSuperAdmin() {
     { label: "Réservations", value: 0 },
     { label: "Événements", value: 0 },
     { label: "Talents", value: 0 },
-    { label: "Rapports", value: 0 },
+    { label: "Utilisateurs", value: 0 },
   ]);
 
   const [activeTab, setActiveTab] = useState("overview");
@@ -37,7 +37,7 @@ export default function DashboardSuperAdmin() {
             },
             { label: "Événements", value: statsResponse.data.events || 0 },
             { label: "Talents", value: statsResponse.data.talents || 0 },
-            { label: "Rapports", value: statsResponse.data.reports || 0 },
+            { label: "Utilisateurs", value: statsResponse.data.userRoles.utilisateurs || 0 },
           ]);
         }
       } catch (error) {

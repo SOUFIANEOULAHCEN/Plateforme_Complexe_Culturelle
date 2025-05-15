@@ -31,6 +31,7 @@ import Gallery from "./home/Gallery";
 import Header from "./home/Header";
 import Footer from "./home/Footer";
 import Contact from "./home/Contact";
+import EvenementHomePage from './home/EvenementHomePage';
 
 // Layout component pour les pages publiques
 function PublicLayout() {
@@ -175,11 +176,10 @@ function App() {
               <DashboardSuperAdmin />
             </ProtectedRoute>
           }
-        />
-        <Route
+        />       <Route
           path="/dashboard/config"
           element={
-            <ProtectedRoute allowedRoles={['superadmin']}>
+            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
               <ConfigPage />
             </ProtectedRoute>
           }
@@ -262,6 +262,7 @@ function App() {
         />
         <Route path="/UserProfil" element={<UserProfil />} />
         <Route path="/TalentProfil" element={<TalentProfil />} />
+        {/* <Route path="/evenements" element={<EvenementHomePage />} /> */}
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

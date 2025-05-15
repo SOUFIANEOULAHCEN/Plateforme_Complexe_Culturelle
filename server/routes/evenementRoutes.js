@@ -11,7 +11,7 @@ import upload from '../middlewares/upload.js';
 
 const router = express.Router();
 
-router.get('/', verifyToken, getEvenements);
+router.get('/', getEvenements);
 router.get('/:id', verifyToken, getEvenementById);
 router.post('/', verifyToken, upload.single('affiche'), createEvenement);
 router.put('/:id', verifyToken, updateEvenement);

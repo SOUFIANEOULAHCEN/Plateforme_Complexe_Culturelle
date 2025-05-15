@@ -112,13 +112,14 @@ export default function ReportsPage() {
           monthlyData: response.data.monthlyData.map(m => ({
             month: m.month,
             reservations: m.reservations,
-            events: m.events
+            events: m.events,
+            reservationTitles: m.reservationTitles || [],
           })),
           summaryStats: [
             { label: "Réservations", value: totalReservations },
             { label: "Événements", value: totalEvents },
             { label: "Talents", value: response.data.userRoles.talents },
-            { label: "Utilisateurs", value: totalUsers }
+            { label: "Utilisateurs", value: response.data.userRoles.utilisateurs }
           ]
         });
       } catch (error) {

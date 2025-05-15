@@ -14,6 +14,7 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
 import EventProposalsTable from "../components/EventProposalsTable";
+import ConfigPage from "./ConfigPage";
 
 export default function DashboardAdmin() {
   const [stats, setStats] = useState([
@@ -52,11 +53,7 @@ export default function DashboardAdmin() {
             },
             {
               label: "Utilisateurs",
-              value:
-                statsResponse.data.userRoles.utilisateurs +
-                  statsResponse.data.userRoles.talents +
-                  statsResponse.data.userRoles.admins +
-                  statsResponse.data.userRoles.superadmins || 0,
+              value: statsResponse.data.userRoles.utilisateurs || 0,
             },
           ]);
         }
@@ -79,6 +76,10 @@ export default function DashboardAdmin() {
 
   // Function to handle tab change
   const handleTabChange = (tab) => {
+    if (tab === "config") {
+      navigate("/dashboard/config");
+      return;
+    }
     setActiveTab(tab);
   };
 
@@ -431,6 +432,8 @@ export default function DashboardAdmin() {
                     <EspacesTable />
                   </div>
                 )}
+
+                
 
                 {activeTab === "commentaires" && (
                   <div>

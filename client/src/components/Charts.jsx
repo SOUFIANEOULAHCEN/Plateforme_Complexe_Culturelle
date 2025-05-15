@@ -35,6 +35,34 @@ const COLOR_PALETTE = {
 };
 
 export default function Charts({ stats }) {
+  // Plugin pour afficher les titres sous chaque barre de réservation
+  const reservationTitlesPlugin = {
+    id: 'reservationTitlesPlugin',
+    afterDraw: (chart) => {
+      const { ctx, chartArea, scales, data } = chart;
+      if (!ctx || !chartArea) return;
+      ctx.save();
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      // Pour chaque mois, afficher les titres sous la barre de réservation
+      stats.monthlyData.forEach((d, i) => {
+        if (d.reservationTitles && d.reservationTitles.length > 0) {
+          const x = scales.x.getPixelForValue(i);
+          // Utiliser la couleur de la barre de réservation
+          ctx.fillStyle = COLOR_PALETTE.primary;
+          d.reservationTitles.forEach((title, j) => {
+            ctx.fillText(
+              title,
+              x,
+              chartArea.bottom + 12 + j * 12 // espace sous l'axe X
+            );
+          });
+        }
+      });
+      ctx.restore();
+    }
+  };
+
   // Configuration du graphique circulaire
   const pieData = {
     labels: ["Utilisateurs", "Talents", "Admins", "Super Admins"],
@@ -85,7 +113,11 @@ export default function Charts({ stats }) {
 
   // Configuration du graphique à barres
   const barData = {
-    labels: stats.monthlyData.map((d) => d.month),
+    labels: stats.monthlyData.map((d) =>
+      d.reservationTitles && d.reservationTitles.length > 0
+        ? d.month + '\\n' + d.reservationTitles.join(', ')
+        : d.month
+    ),
     datasets: [
       {
         label: "Réservations",
@@ -101,6 +133,59 @@ export default function Charts({ stats }) {
       },
     ],
   };
+
+  // Options pour afficher les titres au-dessus des barres de réservation
+  const barOptions = {
+    maintainAspectRatio: false,
+    responsive: true,
+    scales: {
+      x: {
+        ticks: {
+          maxRotation: 0,
+          minRotation: 0,
+          font: { size: 12 },
+        },
+        afterFit: (scale) => {
+          scale.height = 80;
+        }
+      },
+      y: { beginAtZero: true },
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          title: (context) => {
+            // Affiche le mois + les titres de réservation dans le tooltip
+            const idx = context[0].dataIndex;
+            const titles = stats.monthlyData[idx]?.reservationTitles || [];
+            if (context[0].datasetIndex === 0 && titles.length > 0) {
+              return [context[0].label, ...titles];
+            }
+            return context[0].label;
+          },
+        },
+      },
+      datalabels: {
+        display: true,
+        align: 'end',
+        anchor: 'end',
+        formatter: (value, context) => {
+          // Affiche les titres au-dessus des barres de réservation uniquement
+          if (context.datasetIndex === 0) {
+            const idx = context.dataIndex;
+            const titles = stats.monthlyData[idx]?.reservationTitles || [];
+            return titles.length > 0 ? titles.join('\n') : '';
+          }
+          return '';
+        },
+        font: {
+          size: 10,
+        },
+        color: '#333',
+      },
+    },
+  };
+
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -146,13 +231,8 @@ export default function Charts({ stats }) {
         <div className="h-96">
           <Bar
             data={barData}
-            options={{
-              maintainAspectRatio: false,
-              responsive: true,
-              scales: {
-                y: { beginAtZero: true },
-              },
-            }}
+            options={barOptions}
+            plugins={[reservationTitlesPlugin]}
           />
         </div>
       </div>

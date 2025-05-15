@@ -79,6 +79,23 @@ export const getDashboardStats = async (req, res) => {
       raw: true,
     });
 
+    // Ajout : récupérer les titres de chaque réservation par mois
+    const reservationsTitlesByMonth = await Reservation.findAll({
+      attributes: [
+        [fn("DATE_FORMAT", col("date_debut"), "%Y-%m"), "month"],
+        "titre",
+      ],
+      order: [["date_debut", "ASC"]],
+      raw: true,
+    });
+
+    // Regrouper les titres par mois
+    const titlesMap = {};
+    reservationsTitlesByMonth.forEach((r) => {
+      if (!titlesMap[r.month]) titlesMap[r.month] = [];
+      titlesMap[r.month].push(r.titre);
+    });
+
     const eventsData = await Evenement.findAll({
       attributes: [
         [fn("DATE_FORMAT", col("date_debut"), "%Y-%m"), "month"],
@@ -102,6 +119,7 @@ export const getDashboardStats = async (req, res) => {
       reservations:
         reservationsData.find((r) => r.month === month)?.reservations || 0,
       events: eventsData.find((e) => e.month === month)?.events || 0,
+      reservationTitles: titlesMap[month] || [],
     }));
     res.json({
       userRoles: {

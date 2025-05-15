@@ -12,13 +12,9 @@ const __dirname = dirname(__filename);
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let uploadPath;
-    
-    // Déterminer le dossier de destination en fonction du type de fichier
-    if (file.fieldname === 'image_profil') {
-      uploadPath = path.join(__dirname, '../public/uploads/profiles/');
-    } else {
-      uploadPath = path.join(__dirname, '../public/uploads/EventAffiche/');
-    }
+      // Déterminer le dossier de destination en fonction du type de fichier
+    const destPath = file.fieldname === 'image_profil' ? 'profiles' : 'EventAffiche';
+    uploadPath = path.join(__dirname, '../public/uploads', destPath);
     
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });

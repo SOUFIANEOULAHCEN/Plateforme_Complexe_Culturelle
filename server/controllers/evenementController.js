@@ -54,11 +54,10 @@ export const createEvenement = async (req, res) => {
     // Vérifier que createur_id est présent (si nécessaire)
     if (!req.body.createur_id) {
       return res.status(400).json({ message: "Createur ID est requis" });
-    }
-
-    // Gestion de l'upload de l'affiche
+    }    // Gestion de l'upload de l'affiche
     let affiche_url = null;
     if (req.file) {
+      // Stocke le chemin sans le 'public' pour l'URL
       affiche_url = `/uploads/EventAffiche/${req.file.filename}`;
     }
 
