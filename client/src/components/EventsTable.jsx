@@ -283,7 +283,7 @@ export default function EventsTable({ limit }) {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Affiche</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titre</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -317,7 +317,7 @@ export default function EventsTable({ limit }) {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="flex flex-col items-center">
                         <img
-                          src={event.affiche_url || '/placeholder.svg'}
+                          src={`http://localhost:3000${event.affiche_url || event.affiche || ''}`}
                           alt="Affiche"
                           className="w-10 h-10 object-cover rounded shadow border border-gray-200 mb-1"
                           onError={e => { e.target.src = '/placeholder.svg'; e.target.alt = 'Image non disponible'; }}

@@ -3,6 +3,7 @@ import Evenement from '../models/evenement.js';
 import Utilisateur from '../models/utilisateur.js'; // Add this import
 import Espace from '../models/espace.js';
 import { Op } from 'sequelize';
+import sendEmail from '../utils/sendEmail.js';
 
 // Règles de documents requis par type de réservateur
 const DOCUMENTS_REQUIS = {
@@ -33,6 +34,19 @@ export const createReservation = async (req, res) => {
       commentaires
     } = req.body;
 
+    // Vérification des champs obligatoires
+    if (!utilisateur_id) {
+      return res.status(400).json({ 
+        message: "L'ID de l'utilisateur est requis"
+      });
+    }
+
+    if (!espace_id) {
+      return res.status(400).json({ 
+        message: "L'ID de l'espace est requis"
+      });
+    }
+
     // Vérifier le type d'organisateur
     if (!['individu', 'association', 'entreprise'].includes(type_organisateur)) {
       return res.status(400).json({ 
@@ -45,6 +59,14 @@ export const createReservation = async (req, res) => {
     if (!espace) {
       return res.status(400).json({
         message: 'Espace non trouvé'
+      });
+    }
+
+    // Vérifier que l'utilisateur existe
+    const utilisateur = await Utilisateur.findByPk(utilisateur_id);
+    if (!utilisateur) {
+      return res.status(400).json({
+        message: 'Utilisateur non trouvé'
       });
     }
 
@@ -131,10 +153,33 @@ export const createReservation = async (req, res) => {
 export const updateReservation = async (req, res) => {
   try {
     const { id } = req.params;
-    const reservation = await Reservation.findByPk(id);
-    
+    console.log("Updating reservation with ID:", id); // Debug log
+    console.log("Update payload:", req.body); // Debug log
+
+    // Vérifier que l'ID est un nombre valide
+    if (isNaN(parseInt(id))) {
+      return res.status(400).json({ 
+        message: "ID de réservation invalide" 
+      });
+    }
+
+    // Vérifier que la réservation existe
+    const reservation = await Reservation.findByPk(id, {
+      include: [
+        { model: Utilisateur, as: 'utilisateur' },
+        { model: Espace, as: 'espace' }
+      ]
+    });
+
+    console.log("Found reservation:", reservation); // Debug log
+
     if (!reservation) {
-      return res.status(404).json({ message: "Réservation non trouvée" });
+      console.log("Reservation not found with ID:", id); // Debug log
+      return res.status(404).json({ 
+        message: "Réservation non trouvée",
+        id: id,
+        details: "La réservation avec cet ID n'existe pas dans la base de données"
+      });
     }
 
     // Vérifier si la date de début est modifiée
@@ -184,22 +229,36 @@ export const updateReservation = async (req, res) => {
       req.body.date_annulation = new Date();
     }
 
+    // Mise à jour de la réservation
     const [updated] = await Reservation.update(req.body, { 
-      where: { id },
-      returning: true
+      where: { id }
     });
 
+    console.log("Update result:", updated); // Debug log
+
     if (updated) {
-      const updatedReservation = await Reservation.findByPk(id);
+      const updatedReservation = await Reservation.findByPk(id, {
+        include: [
+          { model: Utilisateur, as: 'utilisateur' },
+          { model: Espace, as: 'espace' }
+        ]
+      });
+      console.log("Updated reservation:", updatedReservation); // Debug log
       res.json(updatedReservation);
     } else {
-      res.status(404).json({ message: "Réservation non trouvée" });
+      console.log("No rows updated for ID:", id); // Debug log
+      res.status(404).json({ 
+        message: "Réservation non trouvée",
+        id: id,
+        details: "La mise à jour n'a pas pu être effectuée"
+      });
     }
   } catch (err) {
     console.error("Erreur mise à jour réservation:", err);
     res.status(500).json({ 
       message: "Erreur lors de la modification de la réservation",
-      error: err.message 
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
   }
 };
@@ -274,3 +333,103 @@ function isDateReserved(dateDebut, dateFin) {
     );
   });
 }
+
+export const decisionReservation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { decision } = req.body; // 'confirme' ou 'annule'
+    
+    if (!['confirme', 'annule'].includes(decision)) {
+      return res.status(400).json({ message: "Décision invalide" });
+    }
+
+    // Récupérer la réservation avec l'utilisateur associé
+    const reservation = await Reservation.findByPk(id, {
+      include: [
+        { 
+          model: Utilisateur,
+          as: 'utilisateur'
+        }
+      ]
+    });
+
+    if (!reservation) {
+      return res.status(404).json({ message: "Réservation non trouvée" });
+    }
+
+    // Mettre à jour le statut
+    reservation.statut = decision;
+    if (decision === 'annule') {
+      reservation.date_annulation = new Date();
+    }
+    await reservation.save();
+
+    // Envoi d'email avec un message plus détaillé
+    if (reservation.utilisateur && reservation.utilisateur.email) {
+      let subject, text;
+      if (decision === 'confirme') {
+        subject = 'Votre réservation a été acceptée';
+        text = `Bonjour ${reservation.utilisateur.nom || ''},
+
+Votre réservation a été acceptée.
+
+Détails de la réservation :
+- Titre : ${reservation.titre}
+- Date de début : ${new Date(reservation.date_debut).toLocaleDateString()}
+- Date de fin : ${new Date(reservation.date_fin).toLocaleDateString()}
+
+Pour finaliser votre réservation, veuillez vous présenter au bureau du directeur avec les documents suivants :
+1. Une pièce d'identité valide
+2. Les documents spécifiques à votre type de réservation
+3. Le paiement des frais de réservation
+
+Le directeur vous remettra alors votre badge d'accès et vous donnera toutes les informations nécessaires pour votre événement.
+
+Merci de votre confiance.
+
+Cordialement,
+L'équipe de gestion des réservations`;
+      } else {
+        subject = 'Votre réservation a été refusée';
+        text = `Bonjour ${reservation.utilisateur.nom || ''},
+
+Nous regrettons de vous informer que votre réservation (ID: ${reservation.id}) a été refusée.
+
+Détails de la réservation :
+- Titre : ${reservation.titre}
+- Date de début : ${new Date(reservation.date_debut).toLocaleDateString()}
+- Date de fin : ${new Date(reservation.date_fin).toLocaleDateString()}
+
+Si vous souhaitez plus d'informations sur les raisons de ce refus, n'hésitez pas à contacter notre service client.
+
+Merci de votre compréhension.
+
+Cordialement,
+L'équipe de gestion des réservations`;
+      }
+
+      await sendEmail({ 
+        to: reservation.utilisateur.email, 
+        subject, 
+        text 
+      });
+    }
+
+    res.json({ 
+      message: `Réservation ${decision === 'confirme' ? 'acceptée' : 'refusée'} et email envoyé.`,
+      reservation: {
+        ...reservation.toJSON(),
+        utilisateur: {
+          email: reservation.utilisateur.email,
+          nom: reservation.utilisateur.nom
+        }
+      }
+    });
+  } catch (err) {
+    console.error('Erreur décision réservation:', err);
+    res.status(500).json({ 
+      message: "Erreur lors du traitement de la décision", 
+      error: err.message 
+    });
+  }
+};

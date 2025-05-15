@@ -1,5 +1,7 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
+import Utilisateur from './utilisateur.js';
+import Espace from './espace.js';
 
 const Reservation = sequelize.define('reservation', {
   id: {
@@ -83,5 +85,9 @@ const Reservation = sequelize.define('reservation', {
   tableName: 'reservations',
   timestamps: true
 });
+
+// Définir les associations
+Reservation.belongsTo(Utilisateur, { foreignKey: 'utilisateur_id', as: 'utilisateur' });
+Reservation.belongsTo(Espace, { foreignKey: 'espace_id', as: 'espace' });
 
 export default Reservation;

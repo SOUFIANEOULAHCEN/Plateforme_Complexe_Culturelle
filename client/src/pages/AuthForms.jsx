@@ -349,6 +349,10 @@ function RegisterForm({
         password,
       });
 
+      setToast({
+        message: "Inscription réussie ! Vous pouvez maintenant vous connecter.",
+        type: "success"
+      });
       setSuccess("Inscription réussie. Vous pouvez vous connecter.");
       setTimeout(() => {
         switchToLogin();

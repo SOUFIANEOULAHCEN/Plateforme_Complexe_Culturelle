@@ -15,6 +15,11 @@ import userProfileRoutes from "./routes/userProfileRoutes.js";
 import {talentRoutes} from './routes/talentRoutes.js';
 import chatbotRoutes from "./routes/chatbotRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import path from "path";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const PORT = 3000;
 const app = express();
@@ -47,7 +52,7 @@ app.use("/api/contact", contactRoutes);
 // Servir les fichiers statiques du dossier public
 app.use(express.static('public'));
 // Exposer le dossier uploads pour les affiches d'événements
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 // Test de connexion à la base de données
 sequelize

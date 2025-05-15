@@ -7,12 +7,13 @@ import {
   getEvenementById 
 } from '../controllers/evenementController.js';
 import { verifyToken, isSuperAdmin } from '../middlewares/authMiddleware.js';
+import upload from '../middlewares/upload.js';
 
 const router = express.Router();
 
 router.get('/', verifyToken, getEvenements);
 router.get('/:id', verifyToken, getEvenementById);
-router.post('/', verifyToken, createEvenement);
+router.post('/', verifyToken, upload.single('affiche'), createEvenement);
 router.put('/:id', verifyToken, updateEvenement);
 router.delete('/:id', verifyToken, isSuperAdmin, deleteEvenement); // Only SuperAdmin can delete
 

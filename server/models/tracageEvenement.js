@@ -11,29 +11,35 @@ const TracageEvenement = sequelize.define('tracage_evenement', {
   },
   evenement_id: {
     type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  titre: {
+    type: DataTypes.STRING,
     allowNull: false,
-    references: {
-      model: Evenement,
-      key: 'id',
-    },
+  },
+  affiche_url: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  proposeur_nom: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  proposeur_email: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   action: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'acceptation',
   },
   user_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Utilisateur,
-      key: 'id',
-    },
+    allowNull: true,
   },
   date_tracage: {
     type: DataTypes.DATE,
     allowNull: false,
-    defaultValue: DataTypes.NOW,
   },
 }, {
   tableName: 'tracage_evenement',

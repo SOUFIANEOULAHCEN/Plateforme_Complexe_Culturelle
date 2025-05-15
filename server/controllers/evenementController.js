@@ -1,5 +1,6 @@
 import Evenement from "../models/evenement.js";
 import Utilisateur from "../models/utilisateur.js";
+import TracageEvenement from '../models/tracageEvenement.js';
 
 export const getEvenements = async (req, res) => {
   try {
@@ -55,7 +56,16 @@ export const createEvenement = async (req, res) => {
       return res.status(400).json({ message: "Createur ID est requis" });
     }
 
-    const evenement = await Evenement.create(req.body);
+    // Gestion de l'upload de l'affiche
+    let affiche_url = null;
+    if (req.file) {
+      affiche_url = `/uploads/EventAffiche/${req.file.filename}`;
+    }
+
+    const evenement = await Evenement.create({
+      ...req.body,
+      affiche_url,
+    });
     res.status(201).json(evenement);
   } catch (err) {
     console.error("Error creating event:", err);
@@ -83,6 +93,7 @@ export const deleteEvenement = async (req, res) => {
     if (!event) {
       return res.status(404).json({ message: "Événement non trouvé" });
     }
+    await TracageEvenement.destroy({ where: { evenement_id: id } });
     await event.destroy();
     res.json({ message: "Événement supprimé avec succès" });
   } catch (err) {

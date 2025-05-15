@@ -36,6 +36,7 @@ export default function AdminReservationForm({
   });
   const [espaces, setEspaces] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
+  const [error, setError] = useState(null);
 
   // Gérer la fermeture après succès
   useEffect(() => {
@@ -173,46 +174,41 @@ export default function AdminReservationForm({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSaving(true);
-    setToast(null);
-
-    if (!validateReservation()) {
-      setSaving(false);
-      return;
-    }
-
-    // Trouver l'utilisateur sélectionné
-    const user = users.find(u => u.email === selectedUser);
-    if (!user) {
-      setToast({
-        message: "Veuillez sélectionner un utilisateur valide dans la liste.",
-        type: "error"
-      });
-      setSaving(false);
-      return;
-    }
-
-    const payload = {
-      ...formReservation,
-      type_reservation: "standard",
-      utilisateur_id: user._id
-    };
+    setLoading(true);
+    setError(null);
 
     try {
-      if (reservation && reservation.id) {
-        await api.put(`/reservations/${reservation.id}`, payload);
-      } else {
-        await api.post("/reservations", payload);
+      const user = users.find(u => u.email === selectedUser);
+      if (!user) {
+        setError("Utilisateur non trouvé");
+        setLoading(false);
+        return;
       }
-      setToast({ message: "Réservation enregistrée avec succès", type: "success" });
-      setFormSubmitted(true);
+
+      const payload = {
+        ...formReservation,
+        utilisateur_id: user.id
+      };
+
+
+      let response;
+      // if (reservation?.id) {
+      //   console.log("Updating reservation with ID:", reservation.id); // Debug log
+      //   response = await api.put(`/reservations/${reservation.id}`, payload);
+      //   console.log("Update response:", response.data); // Debug log
+      // } else {
+      //   console.log("Creating new reservation"); // Debug log
+      //   response = await api.post("/reservations", payload);
+      //   console.log("Create response:", response.data); // Debug log
+      // }
+
+      onSuccess();
+      onClose();
     } catch (error) {
-      setToast({
-        message: error.response?.data?.message || "Erreur lors de l'enregistrement de la réservation",
-        type: "error"
-      });
+      console.error("Error details:", error.response?.data); // Debug log
+      setError(error.response?.data?.message || "Une erreur est survenue");
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
   };
 
@@ -246,9 +242,6 @@ export default function AdminReservationForm({
   useEffect(() => {
     if (isOpen) {
       api.get('/utilisateurs')
-        .then(res => {
-          console.log("Utilisateurs récupérés :", res.data);
-        })
         .catch(() => console.error("Erreur lors de la récupération des utilisateurs"));
     }
   }, [isOpen]);

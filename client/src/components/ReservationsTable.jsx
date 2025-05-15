@@ -30,6 +30,9 @@ export default function ReservationsTable({ limit }) {
   const [itemsPerPage] = useState(10);
   const [selectedUser, setSelectedUser] = useState("");
   const [reservedPeriods, setReservedPeriods] = useState([]);
+  const [dateDebutMin, setDateDebutMin] = useState('');
+  const [dateDebutMax, setDateDebutMax] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc');
 
   useEffect(() => {
     fetchAllData();
@@ -110,6 +113,7 @@ export default function ReservationsTable({ limit }) {
   };
 
   const handleEditReservation = (reservation) => {
+    
     setEditingReservation(reservation);
     setShowReservationForm(true);
   };
@@ -182,18 +186,41 @@ export default function ReservationsTable({ limit }) {
     const matchesStatus =
       statusFilter === "" || reservation.statut === statusFilter;
 
-    return matchesSearch && matchesStatus;
+    const dateDebut = new Date(reservation.date_debut);
+    const afterMin = !dateDebutMin || dateDebut >= new Date(dateDebutMin);
+    const beforeMax = !dateDebutMax || dateDebut <= new Date(dateDebutMax);
+
+    return matchesSearch && matchesStatus && afterMin && beforeMax;
   });
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredReservations.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const sortedReservations = [...filteredReservations].sort((a, b) => {
+    const dateA = new Date(a.date_debut);
+    const dateB = new Date(b.date_debut);
+    return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+  });
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+  const indexOfLastItem = indexOfFirstItem + itemsPerPage;
+  const currentItems = sortedReservations.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredReservations.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Handler pour accepter/refuser une réservation
+  const handleDecision = async (id, decision) => {
+    try {
+      await api.put(`/reservations/${id}/decision`, { decision });
+      setToast({
+        message: `Réservation ${decision === 'confirme' ? 'acceptée' : 'refusée'} avec succès`,
+        type: 'success',
+      });
+      fetchAllData();
+    } catch (err) {
+      setToast({
+        message: err.response?.data?.message || 'Erreur lors du traitement',
+        type: 'error',
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -213,34 +240,24 @@ export default function ReservationsTable({ limit }) {
 
   return (
     <>
-      <div className="mb-4 flex flex-col sm:flex-row justify-between gap-2">
-        <div className="flex flex-col sm:flex-row gap-2 flex-1">
-          <input
-            type="text"
-            placeholder="Rechercher..."
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] flex-1"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <select
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="">Tous les statuts</option>
-            <option value="confirme">Confirmée</option>
-            <option value="en_attente">En attente</option>
-            <option value="annule">Annulée</option>
-          </select>
-        </div>
-        {!limit && (
-          <button
-            onClick={handleAddReservation}
-            className="px-4 py-2 bg-[oklch(47.3%_0.137_46.201)] text-white rounded-lg shadow hover:bg-[oklch(50%_0.137_46.201)] transition-colors"
-          >
-            Nouvelle réservation
-          </button>
-        )}
+      <div className="mb-4 flex flex-col md:flex-row items-center gap-2">
+        <input
+          type="text"
+          placeholder="Rechercher..."
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] flex-1 min-w-[180px]"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <select
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] min-w-[140px]"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <option value="">Tous les statuts</option>
+          <option value="confirme">Confirmée</option>
+          <option value="en_attente">En attente</option>
+          <option value="annule">Annulée</option>
+        </select>
       </div>
 
       {filteredReservations.length > 0 ? (
@@ -259,7 +276,21 @@ export default function ReservationsTable({ limit }) {
                     Utilisateur
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
+                    <span className="flex items-center gap-1">
+                      Date
+                      <button
+                        type="button"
+                        aria-label={sortOrder === 'asc' ? 'Trier par date décroissante' : 'Trier par date croissante'}
+                        className={`focus:outline-none ${sortOrder === 'asc' ? 'text-[oklch(47.3%_0.137_46.201)]' : 'text-gray-400'}`}
+                        onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                      >
+                        {sortOrder === 'asc' ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                        )}
+                      </button>
+                    </span>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Statut
@@ -331,6 +362,29 @@ export default function ReservationsTable({ limit }) {
                           />
                         </svg>
                       </button>
+                      {/* Boutons Accepter/Refuser pour admin/superadmin et statut en_attente */}
+                      {['admin', 'superadmin'].includes(userRole) && reservation.statut === 'en_attente' && (
+                        <>
+                          <button
+                            onClick={() => handleDecision(reservation.id, 'confirme')}
+                            className="text-green-600 hover:text-green-800 mr-2"
+                            title="Accepter"
+                          >
+                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => handleDecision(reservation.id, 'annule')}
+                            className="text-red-600 hover:text-red-800"
+                            title="Refuser"
+                          >
+                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </>
+                      )}
                       {canDelete && (
                         <button
                           onClick={() => handleDeleteClick(reservation.id)}

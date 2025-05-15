@@ -5,7 +5,7 @@ import Toast from "./Toast";
 const EventProposalsTable = ({ limit }) => {
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("en_attente");
+  const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProposal, setSelectedProposal] = useState(null);
   const [processingAction, setProcessingAction] = useState(false);
@@ -425,36 +425,38 @@ const EventProposalsTable = ({ limit }) => {
       {/* Modal de traitement */}
       {selectedProposal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold mb-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 font-inter">
+            <h3 className="text-xl font-bold mb-4 text-[#a94c0f]">
               Traiter la proposition
             </h3>
             <textarea
               value={commentaire}
               onChange={(e) => setCommentaire(e.target.value)}
               placeholder="Commentaire (optionnel)"
-              className="w-full p-3 border rounded-lg mb-4"
+              className="w-full p-3 border rounded-lg mb-6 focus:ring-2 focus:ring-[#a94c0f] focus:border-[#a94c0f]"
               rows="3"
             />
             <div className="flex justify-end gap-3">
               <button
                 onClick={handleCloseModal}
-                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                className="rounded-lg px-6 py-2 font-semibold bg-gray-100 text-[#a94c0f] border border-gray-200 hover:bg-gray-200 transition"
               >
                 Annuler
               </button>
               <button
-                onClick={() => handleProcessProposal("rejete")}
-                className="px-4 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg"
+                onClick={() => handleProcessProposal('rejete')}
+                className="rounded-lg px-6 py-2 font-semibold border-2 border-[#a94c0f] text-[#a94c0f] bg-white hover:bg-[#a94c0f] hover:text-white transition"
               >
                 Rejeter
               </button>
-              <button
-                onClick={() => handleProcessProposal("approuve")}
-                className="px-4 py-2 bg-green-100 text-green-700 hover:bg-green-200 rounded-lg"
-              >
-                Approuver
-              </button>
+              {selectedProposal?.statut !== 'rejete' && (
+                <button
+                  onClick={() => handleProcessProposal('approuve')}
+                  className="rounded-lg px-6 py-2 font-semibold bg-[#a94c0f] text-white border-2 border-[#a94c0f] hover:bg-[#7a370b] hover:border-[#7a370b] transition"
+                >
+                  Approuver
+                </button>
+              )}
             </div>
           </div>
         </div>
