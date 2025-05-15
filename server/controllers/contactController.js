@@ -116,4 +116,43 @@ export const markAsRead = async (req, res) => {
       error: error.message 
     });
   }
-}; 
+};
+
+// Répondre à un message de contact
+export const respondToMessage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email, response } = req.body;
+
+    const message = await ContactMessage.findByPk(id);
+    if (!message) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Message non trouvé' 
+      });
+    }
+
+    // Envoyer l'email de réponse
+    await sendEmail({
+      to: email,
+      subject: 'Réponse à votre message - Centre Culturel Ouarzazate',
+      text: response
+    });
+
+    // Mettre à jour le message comme étant lu
+    message.is_read = true;
+    await message.save();
+
+    res.json({ 
+      success: true,
+      message: 'Réponse envoyée avec succès'
+    });
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi de la réponse:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Erreur lors de l\'envoi de la réponse',
+      error: error.message 
+    });
+  }
+};

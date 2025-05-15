@@ -23,6 +23,7 @@ import ResetPassword from "./pages/ResetPassword";
 import UserProfil from "./pages/UserProfil";
 import TalentProfil from "./pages/TalentProfil";
 import EventProposalsPage from "./pages/EventProposalsPage";
+import ContactMessagesPage from "./pages/ContactMessagesPage";
 import Home from "./pages/Home";
 import AboutSection from "./home/AboutSection";
 import EventSlider from "./home/EventSlider";
@@ -92,6 +93,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
               <DashboardAdmin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/messages"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+              <ContactMessagesPage />
             </ProtectedRoute>
           }
         />
