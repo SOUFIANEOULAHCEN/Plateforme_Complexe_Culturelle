@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Navigation, Pagination, Autoplay } from "swiper/modules"
+import { Link } from "react-router-dom"
 import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/pagination"
@@ -255,7 +256,7 @@ const EventSlider = () => {
                     className="w-full bg-[#8B4513] text-white py-3 px-4 rounded-lg hover:bg-[#6f3610] 
                               transition-all duration-300 transform hover:-translate-y-1 shadow-md 
                               hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#D2691E]"
-                    onClick={() => openEventModal(event)}
+                    onClick={() => window.location.href = '/evenementsInfo'}
                   >
                     En savoir plus
                   </button>

@@ -33,7 +33,7 @@ import Gallery from "./home/Gallery";
 import Header from "./home/Header";
 import Footer from "./home/Footer";
 import Contact from "./home/Contact";
-import EvenementHomePage from './home/EvenementHomePage';
+import Evenements from "./home/Evenements";
 
 // Layout component pour les pages publiques
 function PublicLayout() {
@@ -58,6 +58,8 @@ function App() {
           <Route path="/Ateliers" element={<WorkshopSlider />} />
           <Route path="/Gallery" element={<Gallery />} />
           <Route path="/Contact" element={<Contact />} />
+        <Route path="/evenementsInfo" element={<Evenements />} />
+
         </Route>
         
         {/* Route de réservation */}
@@ -279,7 +281,6 @@ function App() {
         />
         <Route path="/UserProfil" element={<UserProfil />} />
         <Route path="/TalentProfil" element={<TalentProfil />} />
-        {/* <Route path="/evenements" element={<EvenementHomePage />} /> */}
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

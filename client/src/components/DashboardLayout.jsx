@@ -127,7 +127,7 @@ export default function DashboardLayout({ children }) {
         />
       )}
       {/* Main content */}
-      <div className={`flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 ${isSidebarOpen ? (isCollapsed ? 'ml-16' : 'ml-64') : 'ml-0'} transition-all duration-300`}>
+      <div className={`flex-1 pl-6 pt-10 overflow-x-hidden overflow-y-auto bg-gray-50 ${isSidebarOpen ? (isCollapsed ? 'ml-16' : 'ml-64') : 'ml-0'} transition-all duration-300`}>
         {/* Toggle sidebar button for mobile */}
         <button
           className="fixed top-4 left-4 z-40 p-2 rounded-md bg-[oklch(47.3%_0.137_46.201)] text-white md:hidden shadow-lg"

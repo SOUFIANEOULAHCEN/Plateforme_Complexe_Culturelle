@@ -464,7 +464,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               </li>
 
               {/* Comments */}
-              <li>
+              {/* <li>
                 <Link
                   to="/dashboard/commentaires"
                   className={`group flex items-center ${
@@ -497,14 +497,13 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                     </span>
                   )}
 
-                  {/* Tooltip for collapsed state */}
                   {isCollapsed && (
                     <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                       Commentaires
                     </div>
                   )}
                 </Link>
-              </li>
+              </li> */}
 
               {/* Reports */}
               <li>

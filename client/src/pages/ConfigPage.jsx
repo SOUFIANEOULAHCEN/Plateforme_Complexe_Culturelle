@@ -7,6 +7,7 @@ import api from "../api"
 
 export default function ConfigPage() {
   const [loading, setLoading] = useState(false)
+  const [sendingNewsletter, setSendingNewsletter] = useState(false)
   const [toast, setToast] = useState(null)
   const [generalSettings, setGeneralSettings] = useState({
     platformName: "Centre Culturel Ouarzazate",
@@ -84,6 +85,28 @@ export default function ConfigPage() {
     }
   }
 
+  const handleSendNewsletter = async () => {
+    setSendingNewsletter(true);
+    try {
+      const response = await api.post("/api/complexe-config/send-newsletter");
+      if (response.data.successCount > 0) {
+        setToast({
+          type: "success",
+          message: `Newsletter envoyée avec succès à ${response.data.successCount} utilisateur(s)`
+        });
+      } else {
+        throw new Error("Aucun destinataire n'a reçu la newsletter");
+      }
+    } catch (error) {
+      setToast({
+        type: "error",
+        message: error.response?.data?.message || "Erreur lors de l'envoi de la newsletter"
+      });
+    } finally {
+      setSendingNewsletter(false);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="max-w-full mx-auto">
@@ -92,6 +115,13 @@ export default function ConfigPage() {
             <h1 className="text-2xl md:text-3xl font-bold text-[oklch(0.145_0_0)]">Configuration du système</h1>
             <p className="text-[oklch(0.556_0_0)] mt-1">Gérez les paramètres du système</p>
           </div>
+          <button
+            onClick={handleSendNewsletter}
+            disabled={sendingNewsletter}
+            className={`px-6 py-2 mt-4 md:mt-0 bg-[oklch(47.3%_0.137_46.201)] text-white rounded-lg shadow hover:bg-[oklch(50%_0.137_46.201)] transition-colors ${sendingNewsletter ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            {sendingNewsletter ? 'Envoi en cours...' : 'Envoyer une newsletter'}
+          </button>
         </div>
 
         {/* Main Content */}

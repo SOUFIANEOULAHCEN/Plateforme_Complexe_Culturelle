@@ -49,6 +49,7 @@ app.use("/api/profile", userProfileRoutes);
 app.use("/api/talent", talentRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/complexe-config", complexeConfigRoutes);
 app.use("/api/config", complexeConfigRoutes);
 
 // Servir les fichiers statiques du dossier public

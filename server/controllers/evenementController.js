@@ -1,6 +1,8 @@
 import Evenement from "../models/evenement.js";
 import Utilisateur from "../models/utilisateur.js";
 import TracageEvenement from '../models/tracageEvenement.js';
+import Notification from "../models/notification.js";
+import sendEmail from "../utils/sendEmail.js";
 
 export const getEvenements = async (req, res) => {
   try {
@@ -35,6 +37,61 @@ export const getEvenements = async (req, res) => {
   }
 };
 
+// Fonction utilitaire pour envoyer des notifications pour un événement
+const notifyUsersAboutEvent = async (evenement, isNewEvent = true) => {
+  try {
+    // Récupérer tous les utilisateurs
+    const users = await Utilisateur.findAll();
+
+    // Pour chaque utilisateur
+    for (const user of users) {
+      // Créer une notification dans la base de données
+      await Notification.create({
+        utilisateurId: user.id,
+        type: 'event',
+        message: isNewEvent ? 
+          `Nouvel événement: ${evenement.titre} prévu le ${new Date(evenement.date_debut).toLocaleDateString()}` :
+          `Mise à jour de l'événement: ${evenement.titre}`,
+        reference_id: evenement.id,
+        reference_type: 'event',
+        is_read: false,
+        metadata: JSON.stringify({
+          eventId: evenement.id,
+          title: evenement.titre,
+          startDate: evenement.date_debut,
+          endDate: evenement.date_fin,
+          type: evenement.type
+        })
+      });
+
+      // Envoyer un email si l'utilisateur a activé les notifications par email
+      if (user.email_notifications) {
+        await sendEmail({
+          to: user.email,
+          subject: isNewEvent ? "Nouvel événement au Centre Culturel" : "Mise à jour d'un événement",
+          text: `
+Cher(e) ${user.nom},
+
+${isNewEvent ? "Un nouvel événement a été programmé" : "Un événement a été mis à jour"} au Centre Culturel.
+
+Détails de l'événement:
+- Titre: ${evenement.titre}
+- Type: ${evenement.type}
+- Date de début: ${new Date(evenement.date_debut).toLocaleDateString()}
+- Date de fin: ${new Date(evenement.date_fin).toLocaleDateString()}
+
+Nous espérons vous y voir!
+
+Cordialement,
+L'équipe du Centre Culturel`
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Erreur lors de l'envoi des notifications:", error);
+  }
+};
+
 // evenementController.js
 export const createEvenement = async (req, res) => {
   try {
@@ -65,6 +122,10 @@ export const createEvenement = async (req, res) => {
       ...req.body,
       affiche_url,
     });
+
+    // Envoyer des notifications pour le nouvel événement
+    await notifyUsersAboutEvent(evenement);
+
     res.status(201).json(evenement);
   } catch (err) {
     console.error("Error creating event:", err);

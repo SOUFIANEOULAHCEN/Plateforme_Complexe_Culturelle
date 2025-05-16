@@ -28,7 +28,7 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
     } else {
       setFormData({
         nom: "",
-        prenom: "",
+        // prenom: "",
         email: "",
         password: "",
         role: "utilisateur",
@@ -46,7 +46,7 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
       const user = response.data;
       setFormData({
         nom: user.nom || "",
-        prenom: user.prenom || "",
+        // prenom: user.prenom || "",
         email: user.email || "",
         password: "",
         role: user.role || "utilisateur",
@@ -84,7 +84,7 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.nom) newErrors.nom = "Le nom est requis";
-    if (!formData.prenom) newErrors.prenom = "Le prénom est requis";
+    // if (!formData.prenom) newErrors.prenom = "Le prénom est requis";
     if (!formData.email) newErrors.email = "L'email est requis";
     else if (!/^\S+@\S+\.\S+$/.test(formData.email))
       newErrors.email = "Email invalide";
@@ -107,7 +107,7 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
     try {
       const userData = {
         nom: formData.nom,
-        prenom: formData.prenom,
+        // prenom: formData.prenom,
         email: formData.email,
         role: formData.role,
         is_talent: isTalent,
@@ -217,7 +217,7 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
             <p className="mt-1 text-sm text-red-600">{errors.nom}</p>
           )}
         </div>
-
+{/* 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Prénom
@@ -234,7 +234,7 @@ export default function UserForm({ isOpen, onClose, userId, onSuccess }) {
           {errors.prenom && (
             <p className="mt-1 text-sm text-red-600">{errors.prenom}</p>
           )}
-        </div>
+        </div> */}
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">

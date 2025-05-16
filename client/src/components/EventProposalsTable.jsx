@@ -127,6 +127,31 @@ const EventProposalsTable = ({ limit }) => {
       </span>
     );
   };
+  
+  const getTypeBadge = (type) => {
+    const typeMap = {
+      spectacle: "bg-pink-100 text-pink-800",
+      atelier: "bg-green-100 text-green-800",
+      conference: "bg-yellow-100 text-yellow-800",
+      exposition: "bg-blue-100 text-blue-800",
+      rencontre: "bg-purple-100 text-purple-800",
+    };
+
+    const typeText = {
+      spectacle: "Spectacle",
+      atelier: "Atelier",
+      conference: "Conférence",
+      exposition: "Exposition",
+      rencontre: "Rencontre",
+    };
+    
+    const className = typeMap[type?.toLowerCase()] || "bg-gray-100 text-gray-800";
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${className}`}>
+        {typeText[type?.toLowerCase()] || type || "Autre"}
+      </span>
+    );
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -256,9 +281,7 @@ const EventProposalsTable = ({ limit }) => {
                       {formatDate(proposal.date_debut)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-[#6e3d20]/10 text-[#6e3d20]">
-                        {proposal.type}
-                      </span>
+                      {getTypeBadge(proposal.type)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(proposal.statut)}

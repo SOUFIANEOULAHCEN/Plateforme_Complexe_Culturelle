@@ -9,7 +9,7 @@ import { verifyToken, isSuperAdmin } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', verifyToken, getEspaces);
+router.get('/', getEspaces);
 router.post('/', verifyToken, createEspace);
 router.put('/:id', verifyToken, updateEspace);
 router.delete('/:id', verifyToken, isSuperAdmin, deleteEspace); // Only SuperAdmin can delete
