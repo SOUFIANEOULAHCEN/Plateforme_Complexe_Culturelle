@@ -4,12 +4,14 @@ import React, { useEffect, useState } from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Navigation, Pagination, Autoplay } from "swiper/modules"
 import { Link } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/pagination"
 
 // EventModal component with modern design and primary color
 const EventModal = ({ isOpen, onClose, event }) => {
+  const { t } = useTranslation();
   // Primary color constants
   const primaryColor = "#8B4513"; // Brown/wood color
   const primaryLightColor = "#D2691E"; // Lighter brown/chocolate color
@@ -40,7 +42,7 @@ const EventModal = ({ isOpen, onClose, event }) => {
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', { 
+    return date.toLocaleDateString(t('locale') === 'ar' ? 'ar-MA' : 'fr-FR', { 
       day: '2-digit', 
       month: '2-digit', 
       year: 'numeric' 
@@ -49,7 +51,7 @@ const EventModal = ({ isOpen, onClose, event }) => {
 
   // Format address for location
   const formatLocation = (location) => {
-    if (!location) return "Lieu à confirmer";
+    if (!location) return t('location_tbc');
     return location;
   };
 
@@ -71,7 +73,7 @@ const EventModal = ({ isOpen, onClose, event }) => {
         <button 
           className="absolute top-6 right-6 z-20 bg-white/20 hover:bg-white/80 text-white hover:text-[#8B4513] rounded-full p-3 backdrop-blur-md transition-all duration-300 border border-white/30"
           onClick={onClose}
-          aria-label="Fermer"
+          aria-label={t('close')}
           style={{
             borderColor: `${primaryColor}40` // Adding some transparency to the border
           }}
@@ -85,7 +87,7 @@ const EventModal = ({ isOpen, onClose, event }) => {
         <div className="relative w-full h-[85vh]">
           <img 
             src={event?.affiche_url ? `http://localhost:3000${event.affiche_url}` : "/default-event.jpg"}
-            alt={event?.title || "Événement"} 
+            alt={event?.title || event?.titre || t('event')} 
             className="w-full h-full object-cover"
           />
           
@@ -158,7 +160,7 @@ const EventModal = ({ isOpen, onClose, event }) => {
                   }}
                   onClick={onClose}
                 >
-                  Fermer
+                  {t('close')}
                 </button>
               </div>
             </div>
@@ -170,6 +172,7 @@ const EventModal = ({ isOpen, onClose, event }) => {
 };
 
 const EventSlider = () => {
+  const { t, i18n } = useTranslation();
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedEvent, setSelectedEvent] = useState(null)
@@ -210,8 +213,8 @@ const EventSlider = () => {
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        <h2 className="text-5xl font-bold text-[#8B4513] text-center mb-6">Événements à venir</h2>
-        <p className="text-gray-600 text-center max-w-2xl mx-auto mb-12">Découvrez notre programmation culturelle et rejoignez-nous pour des moments inoubliables.</p>
+        <h2 className="text-5xl font-bold text-[#8B4513] text-center mb-6">{t('events_title')}</h2>
+        <p className="text-gray-600 text-center max-w-2xl mx-auto mb-12">{t('events_subtitle')}</p>
         
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
@@ -242,38 +245,44 @@ const EventSlider = () => {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-[#D2691E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        {event.date ? new Date(event.date).toLocaleDateString() : 
-                         event.date_debut ? new Date(event.date_debut).toLocaleDateString() : ""}
+                        {event.date ? new Date(event.date).toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR') : 
+                         event.date_debut ? new Date(event.date_debut).toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR') : ""}
+                      </div>
+                      <div className="flex items-center text-white/80">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-[#D2691E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        {event.lieu || event.location || t('location_tbc')}
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="p-6">
-                  <p className="text-[#8B4513] mb-6 line-clamp-2">
-                    {event.description || "Découvrez tous les détails de cet événement."}
+                  <p className="text-gray-600 line-clamp-2 mb-4">
+                    {event.description}
                   </p>
                   <button
-                    className="w-full bg-[#8B4513] text-white py-3 px-4 rounded-lg hover:bg-[#6f3610] 
-                              transition-all duration-300 transform hover:-translate-y-1 shadow-md 
-                              hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#D2691E]"
-                    onClick={() => window.location.href = '/evenementsInfo'}
+                     onClick={() => window.location.href = '/evenementsInfo'}
+                    className="w-full bg-[#8B4513] text-white py-2 px-4 rounded-lg hover:bg-[#6f3610] transition-colors duration-300"
                   >
-                    En savoir plus
+                    {t('events_details')}
                   </button>
                 </div>
               </div>
-              
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
 
       {/* Event Modal */}
-      <EventModal 
-        isOpen={isModalOpen} 
-        onClose={closeEventModal} 
-        event={selectedEvent} 
-      />
+      {isModalOpen && selectedEvent && (
+        <EventModal
+          isOpen={isModalOpen}
+          onClose={closeEventModal}
+          event={selectedEvent}
+        />
+      )}
     </section>
   );
 };

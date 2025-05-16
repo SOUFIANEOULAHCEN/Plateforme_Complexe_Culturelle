@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Footer from "./Footer";
+import { useTranslation } from "react-i18next";
 import bibliotheque from '../assets/img/imgAtelier/bibliotheque.jfif';
 import theatre from '../assets/img/imgAtelier/theatre.jpg';
 import musique from '../assets/img/imgAtelier/musique.jpg';
@@ -15,38 +16,39 @@ import prof6 from '../assets/img/imgAtelier/prof6.jpg';
 
 import Image_de_centre from '../assets/img/imgAtelier/Image_de_centre.jpeg'
 
-
 function Atelier() {
+  const { t } = useTranslation();
+
   // Données pour les ateliers
   const items = [
     {
-      title: "Bibliothèque",
-      description: "Plongez dans un monde de connaissance et d'imagination",
+      titleKey: "workshop_library_title",
+      descriptionKey: "workshop_library_description",
       image: bibliotheque,
     },
     {
-      title: "Théâtre",
-      description: "Découvrez l'art dramatique et exprimez votre créativité sur scène",
+      titleKey: "workshop_theater_title",
+      descriptionKey: "workshop_theater_description",
       image: theatre,
     },
     {
-      title: "Musique",
-      description: "Explorez l'univers musical et découvrez de nouveaux sons",
+      titleKey: "workshop_music_title",
+      descriptionKey: "workshop_music_description",
       image: musique,
     },
     {
-      title: "Peinture",
-      description: "Exprimez vos émotions à travers l'art visuel",
+      titleKey: "workshop_art_title",
+      descriptionKey: "workshop_art_description",
       image: pientre,
     },
     {
-      title: "Informatique",
-      description: "Découvrez les technologies numériques et développez vos compétences",
+      titleKey: "workshop_computer_title",
+      descriptionKey: "workshop_computer_description",
       image: informatique,
     },
     {
-      title: "Langues Étrangères",
-      description: "Apprenez de nouvelles langues pour élargir vos horizons",
+      titleKey: "workshop_language_title",
+      descriptionKey: "workshop_language_description",
       image: etrangere,
     },
   ];
@@ -55,35 +57,35 @@ function Atelier() {
   const teamMembers = [
     {
       name: "Hafsa Stifa",
-      role: "Langues Étrangères",
+      roleKey: "workshop_language_role",
       image: prof2,
     },
     {
       name: "Mohammed Louahi",
-      role: "Peinture",
-      image: prof11, // Supprimer les guillemets et l'espace en trop
+      roleKey: "workshop_art_role",
+      image: prof11,
     },
     {
       name: "Meryem Elkhyat",
-      role: "Théâtre",
+      roleKey: "workshop_theater_role",
       image: prof11,
     },
     {
       name: "Soufian Oulahssane",
-      role: "Musique",
+      roleKey: "workshop_music_role",
       image: prof5,
     },
     {
       name: "Hafsa Loukili",
-      role: "Peinture",
+      roleKey: "workshop_art_role",
       image: prof3,
     },
     {
       name: "Imad Dalal",
-      role: "Informatique",
+      roleKey: "workshop_computer_role",
       image: prof6,
     },
-];
+  ];
 
   // État et logique pour le SliderCards (ateliers)
   const [currentIndexAteliers, setCurrentIndexAteliers] = useState(0);
@@ -180,7 +182,7 @@ function Atelier() {
           <div className="absolute inset-0">
             <img
               src={Image_de_centre}
-              alt="CCO Ouarzazate"
+              alt={t('workshops_hero_alt')}
               className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/50" />
@@ -188,20 +190,20 @@ function Atelier() {
           <div className="relative z-10 flex h-full items-center justify-center text-center">
             <div className="px-4">
               <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl">
-                Ateliers
+                {t('workshops_title')}
               </h1>
               <div className="mt-6">
                 <a
                   href="/accueil"
                   className="inline-block bg-[#8B4513] text-white font-semibold py-1 px-3 rounded-md hover:bg-[#6e3d20] transition duration-300"
                 >
-                  Accueil
+                  {t('home')}
                 </a>
                 <a
                   href="/cc0"
                   className="ml-4 inline-block bg-[#8B4513] text-white font-semibold py-1 px-3 rounded-md hover:bg-[#6e3d20] transition duration-300"
                 >
-                  Ateliers
+                  {t('workshops')}
                 </a>
               </div>
             </div>
@@ -215,18 +217,17 @@ function Atelier() {
                 <h1
                     className="text-[8rem] font-bold select-none [text-shadow:_1px_1px_#8B4513] [-webkit-text-stroke:_2px_rgba(139,69,19,0.5)] text-white"
                 >
-                    Ateliers
+                    {t('workshops_title')}
                 </h1>
                 <h2
                     className="text-5xl font-bold absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2"
                     style={{ color: "#8B4513" }}
                 >
-                    Ateliers
+                    {t('workshops_title')}
                 </h2>
             </div>
             <p className="text-max-w-3xl  text-center  mb-8">
-              Le Complexe Culturel OUARZAZATE propose divers ateliers créatifs et éducatifs<br /> pour tous les âges : arts, robotique, danse, et plus.
-              Rejoignez-nous pour<br /> apprendre et créer dans une ambiance conviviale.
+              {t('workshops_description')}
             </p>
             <div className="w-full max-w-7xl mx-auto px-4 py-8">
               <div className="relative">
@@ -239,7 +240,7 @@ function Atelier() {
                       startAutoSlideAteliers();
                     }}
                     className="absolute left-0 z-10 -ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-100"
-                    aria-label="Previous slide"
+                    aria-label={t('previous')}
                   >
                     <svg
                       className="h-6 w-6"
@@ -265,14 +266,14 @@ function Atelier() {
                           <div className="aspect-video relative mb-4 overflow-hidden rounded-lg">
                             <img
                               src={item.image || "/placeholder.svg"}
-                              alt={item.title}
+                              alt={t(item.titleKey)}
                               className="h-full w-full object-cover"
                             />
                           </div>
                           <h3 className="text-xl font-semibold mb-2 text-[#8B4513] group-hover:text-white">
-                            {item.title}
+                            {t(item.titleKey)}
                           </h3>
-                          <p className="text-[#8B4513] group-hover:text-white">{item.description}</p>
+                          <p className="text-[#8B4513] group-hover:text-white">{t(item.descriptionKey)}</p>
                         </div>
                       </div>
                     ))}
@@ -286,7 +287,7 @@ function Atelier() {
                       startAutoSlideAteliers();
                     }}
                     className="absolute right-0 z-10 -mr-4 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-100"
-                    aria-label="Next slide"
+                    aria-label={t('next')}
                   >
                     <svg
                       className="h-6 w-6"
@@ -317,7 +318,7 @@ function Atelier() {
                           ? "bg-primary"
                           : "bg-gray-300"
                       }`}
-                      aria-label={`Go to slide ${index + 1}`}
+                      aria-label={t('go_to_slide', { number: index + 1 })}
                     />
                   ))}
                 </div>
@@ -329,9 +330,9 @@ function Atelier() {
         {/* Section Équipe */}
         <section id="equipe" className="text-[#8B4513]">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-8">Notre Équipe d'Animateurs</h2>
+            <h2 className="text-3xl font-bold text-center mb-8">{t('workshops_team_title')}</h2>
             <p className="text-max-w-3xl  text-center mb-8">
-              Des professionnels passionnés animent chaque atelier, apportant expertise<br /> et créativité pour offrir une expérience d'apprentissage enrichissante à tous <br /> les participants.
+              {t('workshops_team_description')}
             </p>
             <div className="w-full max-w-7xl mx-auto px-4 py-8">
               <div className="relative">
@@ -344,7 +345,7 @@ function Atelier() {
                       startAutoSlideEquipe();
                     }}
                     className="absolute left-0 z-10 -ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-100"
-                    aria-label="Previous slide"
+                    aria-label={t('previous')}
                   >
                     <svg
                       className="h-6 w-6"
@@ -381,7 +382,7 @@ function Atelier() {
                               <h3 className="text-xl font-semibold mb-2 text-[#8B4513]">
                                 {member.name}
                               </h3>
-                              <p className="text-[#8B4513]">{member.role}</p>
+                              <p className="text-[#8B4513]">{t(member.roleKey)}</p>
                             </div>
                           </div>
                         </div>
@@ -397,7 +398,7 @@ function Atelier() {
                       startAutoSlideEquipe();
                     }}
                     className="absolute right-0 z-10 -mr-4 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-100"
-                    aria-label="Next slide"
+                    aria-label={t('next')}
                   >
                     <svg
                       className="h-6 w-6"
@@ -426,7 +427,7 @@ function Atelier() {
                       className={`h-2 w-2 rounded-full transition-colors ${
                         currentIndexEquipe === index ? "bg-primary" : "bg-gray-300"
                       }`}
-                      aria-label={`Go to slide ${index + 1}`}
+                      aria-label={t('go_to_slide', { number: index + 1 })}
                     />
                   ))}
                 </div>

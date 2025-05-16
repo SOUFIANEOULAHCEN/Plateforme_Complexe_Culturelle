@@ -4,16 +4,19 @@ import { Autoplay } from "swiper/modules"
 import "swiper/css"
 import LogoOfppt from "../assets/Logo_ofppt.png"
 import municipalite from "../assets/municipalite.png"
+import { useTranslation } from 'react-i18next'
 
 export default function Footer() {
+  const { t } = useTranslation();
+  
   const logos = [
     {
       src: LogoOfppt,
-      alt: "OFPPT"
+      alt: t('footer_partner_ofppt')
     },
     {
       src: municipalite,
-      alt: "Municipalité"
+      alt: t('footer_partner_municipality')
     }
   ];
 
@@ -29,7 +32,7 @@ export default function Footer() {
       {/* Section des Logos */}
       <div className="bg-[#FDF8F5] py-8">
         <div className="container mx-auto px-4">
-          <h3 className="text-2xl font-serif text-[#8B4513] text-center mb-8">Nos Partenaires</h3>
+          <h3 className="text-2xl font-serif text-[#8B4513] text-center mb-8">{t('footer_partners')}</h3>
           <Swiper
             spaceBetween={30}
             slidesPerView={1}
@@ -68,31 +71,31 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Navigation rapide */}
             <div className="space-y-4">
-              <h4 className="text-xl font-semibold mb-4">Navigation rapide</h4>
+              <h4 className="text-xl font-semibold mb-4">{t('footer_quick_nav')}</h4>
               <ul className="space-y-2">
                 <li>
                   <button onClick={() => scrollToSection('hero')} className="hover:text-white">
-                    Accueil
+                    {t('home')}
                   </button>
                 </li>
                 <li>
                   <button onClick={() => scrollToSection('about')} className="hover:text-white">
-                    À propos
+                    {t('footer_about')}
                   </button>
                 </li>
                 <li>
                   <button onClick={() => scrollToSection('events')} className="hover:text-white">
-                    Événements
+                    {t('events')}
                   </button>
                 </li>
                 <li>
                   <button onClick={() => scrollToSection('workshops')} className="hover:text-white">
-                    Ateliers
+                    {t('workshops')}
                   </button>
                 </li>
                 <li>
                   <button onClick={() => scrollToSection('gallery')} className="hover:text-white">
-                    Galerie
+                    {t('gallery')}
                   </button>
                 </li>
               </ul>
@@ -100,18 +103,17 @@ export default function Footer() {
 
             {/* Contact */}
             <div className="space-y-4">
-              <h4 className="text-xl font-semibold mb-4">Contact</h4>
+              <h4 className="text-xl font-semibold mb-4">{t('contact')}</h4>
               <div className="space-y-2">
-                <p>Complexe Culturel OUARZAZATE</p>
-                <p>Hay Elwahda Ouarzazate, Maroc</p>
-                <p>Téléphone : (+212) 528-888-888</p>
-                <p>Email : complexe.culturel@ouarzazate.ma</p>
+                <p>{t('contact_address_details')}</p>
+                <p>{t('contact_phone_number')}</p>
+                <p>{t('contact_email')}: complexe.culturel@ouarzazate.ma</p>
               </div>
             </div>
 
             {/* Réseaux sociaux */}
             <div className="space-y-4">
-              <h4 className="text-xl font-semibold mb-4">Suivez-nous</h4>
+              <h4 className="text-xl font-semibold mb-4">{t('footer_follow_us')}</h4>
               <div className="flex gap-4">
                 <a href="#" className="text-[#FDF8F5] hover:text-[#1877F2] transition-colors">
                   <Facebook size={24} />
@@ -127,14 +129,14 @@ export default function Footer() {
                 </a>
               </div>
               <p className="mt-4 text-sm opacity-80">
-                Restez informé des derniers événements et actualités du complexe culturel
+                {t('footer_newsletter_text')}
               </p>
             </div>
           </div>
 
           {/* Copyright */}
           <div className="mt-12 pt-8 border-t border-[#FDF8F5] opacity-60 text-center text-sm">
-            <p>&copy; {new Date().getFullYear()} Complexe Culturel de Ouarzazate. Tous droits réservés.</p>
+            <p>&copy; {new Date().getFullYear()} {t('footer_copyright')}</p>
           </div>
         </div>
       </footer>

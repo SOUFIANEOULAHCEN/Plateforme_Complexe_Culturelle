@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react"
 import api from "../api"
 import Image_de_centre from '../assets/img/imgAtelier/Image_de_centre.jpeg'
+import { useTranslation } from "react-i18next"
 
 const Evenements = () => {
+  const { t, i18n } = useTranslation();
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -18,18 +20,18 @@ const Evenements = () => {
         setLoading(false)
       } catch (err) {
         console.error('Error fetching events:', err)
-        setError('Impossible de charger les événements')
+        setError(t('events_error'))
         setLoading(false)
       }
     }
 
     fetchEvents()
-  }, [])
+  }, [t])
 
   const formatDate = (dateString) => {
     if (!dateString) return ''
     const date = new Date(dateString)
-    return date.toLocaleDateString('fr-FR', {
+    return date.toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -91,7 +93,7 @@ const Evenements = () => {
         <div className="absolute inset-0">
           <img
             src={Image_de_centre}
-            alt="Centre Culturel Ouarzazate"
+            alt={t('events_hero_alt')}
             className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
           />
           <div className="absolute inset-0 bg-black/50" />
@@ -99,23 +101,23 @@ const Evenements = () => {
         <div className="relative z-10 flex h-full items-center justify-center text-center">
           <div className="px-4">
             <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl">
-              Nos Événements
+              {t('events_title')}
             </h1>
             <p className="text-lg text-white md:text-xl">
-              Découvrez notre programmation culturelle exceptionnelle
+              {t('events_subtitle')}
             </p>
             <div className="mt-6">
               <a
                 href="/accueil"
                 className="inline-block bg-[#8B4513] text-white font-semibold py-1 px-3 rounded-md hover:bg-[#6e3d20] transition duration-300"
               >
-                Accueil
+                {t('home')}
               </a>
               <a
                 href="/evenements"
                 className="ml-4 inline-block bg-[#8B4513] text-white font-semibold py-1 px-3 rounded-md hover:bg-[#6e3d20] transition duration-300"
               >
-                Événements
+                {t('events')}
               </a>
             </div>
           </div>
@@ -126,9 +128,9 @@ const Evenements = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Events Carousel */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-3 text-[#8B4513]">Événements à la une</h2>
+          <h2 className="text-3xl font-bold text-center mb-3 text-[#8B4513]">{t('events_featured')}</h2>
           <p className="text-gray-600 text-center max-w-2xl mx-auto mb-10">
-            Découvrez notre sélection d'événements culturels et artistiques.
+            {t('events_featured_description')}
           </p>
 
           {/* Carousel */}
@@ -166,7 +168,7 @@ const Evenements = () => {
             <button
               onClick={prevSlide}
               className="absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 z-10"
-              aria-label="Précédent"
+              aria-label={t('previous')}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -181,7 +183,7 @@ const Evenements = () => {
             <button
               onClick={nextSlide}
               className="absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 z-10"
-              aria-label="Suivant"
+              aria-label={t('next')}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -201,10 +203,9 @@ const Evenements = () => {
 
         {/* Calendar Section */}
         <section>
-          <h2 className="text-3xl font-bold text-center mb-3 text-[#8B4513]">Calendrier des Événements à Venir</h2>
+          <h2 className="text-3xl font-bold text-center mb-3 text-[#8B4513]">{t('events_calendar_title')}</h2>
           <p className="text-gray-600 text-center max-w-2xl mx-auto mb-10">
-            Consultez notre calendrier pour planifier votre participation aux prochains événements culturels et
-            artistiques.
+            {t('events_calendar_description')}
           </p>
 
           {/* Timeline */}
@@ -223,7 +224,7 @@ const Evenements = () => {
                   <div className={`w-1/2 ${index % 2 === 0 ? "text-right pr-8" : "text-left pl-8"}`}>
                     <div className="text-gray-500 text-sm">{formatDate(event.date_debut)}</div>
                     <div className="text-xs text-gray-400">
-                      {event.date_debut && new Date(event.date_debut).toLocaleDateString('fr-FR')}
+                      {event.date_debut && new Date(event.date_debut).toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR')}
                     </div>
                   </div>
 

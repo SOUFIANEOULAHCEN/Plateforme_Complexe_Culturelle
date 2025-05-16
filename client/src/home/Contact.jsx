@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Footer from "./Footer";
 import Header from "./Header";
 import complex_logo_final_white from '../assets/img/logo/complex_logo_final_white.png';
@@ -7,6 +8,7 @@ import api from "../api";
 import Toast from "../components/Toast";
 
 const Contact = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     nom: "",
     email: "",
@@ -31,7 +33,7 @@ const Contact = () => {
     try {
       await api.post("/contact", formData);
       setToast({
-        message: "Message envoyé avec succès !",
+        message: t('contact_success'),
         type: "success"
       });
       // Réinitialiser le formulaire
@@ -43,7 +45,7 @@ const Contact = () => {
       });
     } catch (error) {
       setToast({
-        message: error.response?.data?.message || "Une erreur est survenue",
+        message: error.response?.data?.message || t('contact_error'),
         type: "error"
       });
     } finally {
@@ -66,20 +68,20 @@ const Contact = () => {
         <div className="relative z-10 flex h-full items-center justify-center text-center">
           <div className="px-4">
             <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl">
-              Contact
+              {t('contact')}
             </h1>
             <div className="mt-6">
               <a
                 href="/accueil"
                 className="inline-block bg-[#8B4513] text-white font-semibold py-1 px-3 rounded-md hover:bg-[#6e3d20] transition duration-300"
               >
-                Accueil
+                {t('home')}
               </a>
               <a
                 href="/cc0"
                 className="ml-4 inline-block bg-[#8B4513] text-white font-semibold py-1 px-3 rounded-md hover:bg-[#6e3d20] transition duration-300"
               >
-                Contact
+                {t('contact')}
               </a>
             </div>
           </div>
@@ -88,9 +90,9 @@ const Contact = () => {
 
       {/* Section Contact */}
       <div className="text-[#8B4513] py-12">
-        <h2 className="text-3xl font-bold text-center mb-8">Contactez-nous</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">{t('contact_title')}</h2>
         <p className="text-max-w-3xl font-medium text-center mb-8">
-          Nous sommes à votre écoute ! N'hésitez pas à nous contacter pour toute question <br /> ou demande d'informations.
+          {t('contact_subtitle')}
         </p>
       </div>
 
@@ -100,7 +102,7 @@ const Contact = () => {
           {/* Formulaire de contact */}
           <div className="bg-white rounded-lg shadow-lg p-8">
             <h2 className="text-2xl font-bold mb-6" style={{ color: "#8B4513" }}>
-              Envoyez-nous un message
+              {t('contact_send_message')}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -108,7 +110,7 @@ const Contact = () => {
                   className="block text-sm font-medium"
                   style={{ color: "#8B4513" }}
                 >
-                  Nom *
+                  {t('contact_name')} *
                 </label>
                 <input
                   type="text"
@@ -117,7 +119,7 @@ const Contact = () => {
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#8B4513]"
-                  placeholder="Votre Nom"
+                  placeholder={t('contact_name_placeholder')}
                 />
               </div>
 
@@ -126,7 +128,7 @@ const Contact = () => {
                   className="block text-sm font-medium"
                   style={{ color: "#8B4513" }}
                 >
-                  Email *
+                  {t('contact_email')} *
                 </label>
                 <input
                   type="email"
@@ -135,7 +137,7 @@ const Contact = () => {
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#8B4513]"
-                  placeholder="Votre Email"
+                  placeholder={t('contact_email_placeholder')}
                 />
               </div>
 
@@ -144,7 +146,7 @@ const Contact = () => {
                   className="block text-sm font-medium"
                   style={{ color: "#8B4513" }}
                 >
-                  Téléphone
+                  {t('contact_phone')}
                 </label>
                 <input
                   type="tel"
@@ -152,7 +154,7 @@ const Contact = () => {
                   value={formData.telephone}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#8B4513]"
-                  placeholder="Votre Numéro de Téléphone"
+                  placeholder={t('contact_phone_placeholder')}
                 />
               </div>
 
@@ -161,7 +163,7 @@ const Contact = () => {
                   className="block text-sm font-medium"
                   style={{ color: "#8B4513" }}
                 >
-                  Message *
+                  {t('contact_message')} *
                 </label>
                 <textarea
                   name="message"
@@ -170,7 +172,7 @@ const Contact = () => {
                   required
                   rows="4"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#8B4513]"
-                  placeholder="Votre Message"
+                  placeholder={t('contact_message_placeholder')}
                 ></textarea>
               </div>
 
@@ -180,7 +182,7 @@ const Contact = () => {
                 className="w-full text-white py-2 px-4 rounded-lg font-semibold hover:bg-opacity-90 transition disabled:opacity-50"
                 style={{ backgroundColor: "#8B4513" }}
               >
-                {loading ? "Envoi en cours..." : "Envoyer"}
+                {loading ? t('contact_sending') : t('contact_send')}
               </button>
             </form>
           </div>
@@ -203,7 +205,7 @@ const Contact = () => {
             {/* Informations de contact */}
             <div className="bg-white rounded-lg shadow-lg p-8">
               <h2 className="text-2xl font-bold mb-6" style={{ color: "#8B4513" }}>
-                Nos coordonnées
+                {t('contact_info')}
               </h2>
               <div className="space-y-4">
                 <div className="flex items-start space-x-4">
@@ -227,11 +229,9 @@ const Contact = () => {
                     />
                   </svg>
                   <div>
-                    <h3 className="font-semibold">Adresse</h3>
+                    <h3 className="font-semibold">{t('contact_address')}</h3>
                     <p className="text-gray-600">
-                      Centre Culturel Ouarzazate<br />
-                      Avenue Mohammed V<br />
-                      Ouarzazate, Maroc
+                      {t('contact_address_details')}
                     </p>
                   </div>
                 </div>
@@ -251,28 +251,8 @@ const Contact = () => {
                     />
                   </svg>
                   <div>
-                    <h3 className="font-semibold">Téléphone</h3>
-                    <p className="text-gray-600">+212 5XX-XXXXXX</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <svg
-                    className="w-6 h-6 text-[#8B4513] mt-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <div>
-                    <h3 className="font-semibold">Email</h3>
-                    <p className="text-gray-600">ouarzazatecomplexe@gmail.com</p>
+                    <h3 className="font-semibold">{t('contact_phone')}</h3>
+                    <p className="text-gray-600">{t('contact_phone_number')}</p>
                   </div>
                 </div>
               </div>
@@ -281,9 +261,6 @@ const Contact = () => {
         </div>
       </div>
 
-    
-
-      {/* Toast notification */}
       {toast && (
         <Toast
           message={toast.message}
