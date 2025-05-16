@@ -1,12 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import DashboardLayout from "../components/DashboardLayout"
+import Toast from "../components/Toast"
+import api from "../api"
 
 export default function ConfigPage() {
   const [loading, setLoading] = useState(false)
+  const [toast, setToast] = useState(null)
   const [generalSettings, setGeneralSettings] = useState({
-    siteName: "Centre Culturel Ouarzazate",
+    platformName: "Centre Culturel Ouarzazate",
     contactEmail: "contact@culture-ouarzazate.ma",
     timezone: "Africa/Casablanca",
   })
@@ -19,10 +22,66 @@ export default function ConfigPage() {
     activityLogging: true,
   })
 
-  const handleSaveSettings = (e) => {
+  useEffect(() => {
+    fetchConfig()
+  }, [])
+
+  const fetchConfig = async () => {
+    try {
+      const response = await api.get("/config")
+      const config = response.data
+      
+      setGeneralSettings({
+        platformName: config.platformName,
+        contactEmail: config.contactEmail,
+        timezone: config.timezone,
+      })
+      
+      setNotificationSettings({
+        emailNotifications: config.emailNotifications,
+        weeklyReports: config.weeklyReports,
+      })
+      
+      setSecuritySettings({
+        sessionDuration: config.sessionDuration,
+        activityLogging: config.activityLogging,
+      })
+    } catch (error) {
+      setToast({
+        type: "error",
+        message: "Erreur lors du chargement de la configuration"
+      })
+    }
+  }
+
+  const handleSaveSettings = async (e) => {
     e.preventDefault()
-    // Implement settings save functionality here
-    alert("Paramètres enregistrés avec succès")
+    setLoading(true)
+
+    try {
+      const configData = {
+        platformName: generalSettings.platformName,
+        contactEmail: generalSettings.contactEmail,
+        timezone: generalSettings.timezone,
+        sessionDuration: securitySettings.sessionDuration,
+        emailNotifications: notificationSettings.emailNotifications,
+        weeklyReports: notificationSettings.weeklyReports,
+        activityLogging: securitySettings.activityLogging,
+      }
+
+      await api.put("/config", configData)
+      setToast({
+        type: "success",
+        message: "Configuration mise à jour avec succès"
+      })
+    } catch (error) {
+      setToast({
+        type: "error",
+        message: error.response?.data?.message || "Erreur lors de la mise à jour de la configuration"
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -48,8 +107,8 @@ export default function ConfigPage() {
                     <input
                       type="text"
                       className="w-full px-4 py-2 border border-[oklch(0.8_0_0)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
-                      value={generalSettings.siteName}
-                      onChange={(e) => setGeneralSettings({ ...generalSettings, siteName: e.target.value })}
+                      value={generalSettings.platformName}
+                      onChange={(e) => setGeneralSettings({ ...generalSettings, platformName: e.target.value })}
                     />
                   </div>
                   <div>
@@ -135,6 +194,8 @@ export default function ConfigPage() {
                         type="number"
                         className="w-full px-4 py-2 border border-[oklch(0.8_0_0)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
                         value={securitySettings.sessionDuration}
+                        min={15}
+                        max={240}
                         onChange={(e) =>
                           setSecuritySettings({
                             ...securitySettings,
@@ -146,7 +207,7 @@ export default function ConfigPage() {
                   </div>
                 </div>
                 <div>
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-medium text-[oklch(0.3_0_0)]">Journalisation des activités</h4>
                       <p className="text-sm text-[oklch(0.556_0_0)]">Enregistrer toutes les activités admin</p>
@@ -171,18 +232,24 @@ export default function ConfigPage() {
             </div>
 
             <div className="mt-8 flex justify-end">
-              <button className="px-6 py-2 bg-gray-200 text-[oklch(0.145_0_0)] rounded-lg shadow hover:bg-gray-300 transition-colors mr-4">
-                Annuler
-              </button>
-              <button
+              <button 
                 type="submit"
-                className="px-6 py-2 bg-[oklch(47.3%_0.137_46.201)] text-white rounded-lg shadow hover:bg-[oklch(50%_0.137_46.201)] transition-colors"
+                disabled={loading}
+                className={`px-6 py-2 bg-[oklch(47.3%_0.137_46.201)] text-white rounded-lg shadow hover:bg-[oklch(50%_0.137_46.201)] transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                Enregistrer les modifications
+                {loading ? 'Enregistrement...' : 'Enregistrer les modifications'}
               </button>
             </div>
           </form>
         </div>
+
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
       </div>
     </DashboardLayout>
   )

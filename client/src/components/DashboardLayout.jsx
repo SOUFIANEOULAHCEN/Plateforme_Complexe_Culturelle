@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react"
 import Sidebar from "./Sidebar"
 import NotificationsPanel from "../components/NotificationsPanel"
+import api from "../api"
+
+const POLLING_INTERVAL = 10000; // 10 secondes
 
 export default function DashboardLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
@@ -11,19 +14,26 @@ export default function DashboardLayout({ children }) {
   // Fonction pour mettre à jour le nombre de notifications non lues
   const handleUnreadCount = (count) => setUnreadCount(count)
 
+  // Fonction pour récupérer le nombre de notifications non lues
+  const fetchUnreadCount = async () => {
+    try {
+      const response = await api.get("/notification/unread-count");
+      setUnreadCount(response.data.count);
+    } catch (error) {
+      console.error("Error fetching unread count:", error);
+    }
+  };
+
   useEffect(() => {
-    // Récupérer le nombre de notifications non lues au chargement
-    const fetchUnread = async () => {
-      try {
-        const res = await fetch("/api/notification/unread-count");
-        const data = await res.json();
-        setUnreadCount(data.unreadCount || 0);
-      } catch {
-        setUnreadCount(0);
-      }
-    };
-    fetchUnread();
-  }, [])
+    // Initial fetch
+    fetchUnreadCount();
+
+    // Set up polling
+    const pollingInterval = setInterval(fetchUnreadCount, POLLING_INTERVAL);
+
+    // Clean up interval on unmount
+    return () => clearInterval(pollingInterval);
+  }, []);
 
   useEffect(() => {
     // Check if sidebar collapse state is saved in localStorage

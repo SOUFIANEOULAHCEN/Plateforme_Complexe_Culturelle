@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 
+const POLLING_INTERVAL = 10000; // 10 secondes
+
 const NotificationsPanel = ({ onClose, onUnreadCountChange }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -8,8 +10,16 @@ const NotificationsPanel = ({ onClose, onUnreadCountChange }) => {
 
   useEffect(() => {
     fetchNotifications();
-    // Mettre à jour le compteur au chargement
     updateUnreadCount();
+
+    // Mettre en place le polling
+    const pollingInterval = setInterval(() => {
+      fetchNotifications();
+      updateUnreadCount();
+    }, POLLING_INTERVAL);
+
+    // Nettoyer l'intervalle quand le composant est démonté
+    return () => clearInterval(pollingInterval);
   }, [activeTab]);
 
   const updateUnreadCount = async () => {

@@ -15,6 +15,7 @@ import userProfileRoutes from "./routes/userProfileRoutes.js";
 import {talentRoutes} from './routes/talentRoutes.js';
 import chatbotRoutes from "./routes/chatbotRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import complexeConfigRoutes from "./routes/complexeConfigRoutes.js";
 import path from "path";
 import { fileURLToPath } from 'url';
 
@@ -48,6 +49,7 @@ app.use("/api/profile", userProfileRoutes);
 app.use("/api/talent", talentRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/config", complexeConfigRoutes);
 
 // Servir les fichiers statiques du dossier public
 app.use(express.static('public'));
