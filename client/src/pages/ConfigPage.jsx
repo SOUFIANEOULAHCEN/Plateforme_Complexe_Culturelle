@@ -88,7 +88,7 @@ export default function ConfigPage() {
   const handleSendNewsletter = async () => {
     setSendingNewsletter(true);
     try {
-      const response = await api.post("/api/complexe-config/send-newsletter");
+      const response = await api.post("/complexe-config/send-newsletter");
       if (response.data.successCount > 0) {
         setToast({
           type: "success",

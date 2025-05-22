@@ -3,6 +3,7 @@ import Utilisateur from "../models/utilisateur.js";
 import TracageEvenement from '../models/tracageEvenement.js';
 import Notification from "../models/notification.js";
 import sendEmail from "../utils/sendEmail.js";
+import { Op } from 'sequelize';
 
 export const getEvenements = async (req, res) => {
   try {
@@ -41,7 +42,14 @@ export const getEvenements = async (req, res) => {
 const notifyUsersAboutEvent = async (evenement, isNewEvent = true) => {
   try {
     // Récupérer tous les utilisateurs
-    const users = await Utilisateur.findAll();
+    const users = await Utilisateur.findAll({
+      where: {
+        email: {
+          [Op.ne]: null,
+          [Op.ne]: ''
+        }
+      }
+    });
 
     // Pour chaque utilisateur
     for (const user of users) {

@@ -94,13 +94,16 @@ export const sendNewsletter = async (req, res) => {
 
     const users = await Utilisateur.findAll({
       where: {
-        email_notifications: true,
         email: {
           [Op.ne]: null,
           [Op.ne]: ''
         }
       }
     });
+
+    if (users.length === 0) {
+      return res.status(400).json({ message: "Aucun utilisateur trouvé avec une adresse email valide" });
+    }
 
     let newsletterContent = `Bonjour [Nom],\n\n`;
     newsletterContent += `Voici les prochains événements au ${config.platformName} :\n\n`;
@@ -120,6 +123,7 @@ export const sendNewsletter = async (req, res) => {
 
     let successCount = 0;
     let errorCount = 0;
+    let errors = [];
     
     for (const user of users) {
       try {
@@ -140,17 +144,32 @@ export const sendNewsletter = async (req, res) => {
       } catch (err) {
         console.error(`Erreur lors de l'envoi à ${user.email}:`, err);
         errorCount++;
+        errors.push({
+          email: user.email,
+          error: err.message
+        });
       }
-    } // Ajout de l'accolade manquante ici
+    }
+
+    if (successCount === 0) {
+      return res.status(500).json({ 
+        message: "Échec de l'envoi de la newsletter à tous les destinataires",
+        errors
+      });
+    }
 
     res.json({ 
       message: `Newsletter envoyée avec succès à ${successCount} utilisateurs${errorCount > 0 ? `, échec pour ${errorCount} utilisateurs` : ''}`,
       successCount,
-      errorCount
+      errorCount,
+      errors: errorCount > 0 ? errors : undefined
     });
 
   } catch (error) {
     console.error("Erreur lors de l'envoi de la newsletter:", error);
-    res.status(500).json({ message: "Erreur lors de l'envoi de la newsletter" });
+    res.status(500).json({ 
+      message: "Erreur lors de l'envoi de la newsletter",
+      error: error.message
+    });
   }
 };
