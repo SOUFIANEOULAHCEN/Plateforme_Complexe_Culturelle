@@ -12,6 +12,7 @@ export default function UserProfile() {
   const [editing, setEditing] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [events, setEvents] = useState([]);
   const [formData, setFormData] = useState({
     nom: "",
     email: "",
@@ -34,13 +35,16 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const [userResponse, notificationsResponse] = await Promise.all([
+        const [userResponse, notificationsResponse, eventsResponse] = await Promise.all([
           api.get(`/utilisateurs?email=${userEmail}`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
           api.get(`/reservations?utilisateurEmail=${userEmail}`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
+          api.get('/evenements', {
+            headers: { Authorization: `Bearer ${token}` }
+          })
         ]);
 
         const utilisateur = userResponse.data.find(u => u.email === userEmail);
@@ -60,6 +64,7 @@ export default function UserProfile() {
         });
 
         setNotifications(notificationsResponse.data);
+        setEvents(eventsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
         setToast({
@@ -73,6 +78,28 @@ export default function UserProfile() {
 
     fetchUserData();
   }, [userEmail, token]);
+
+  useEffect(() => {
+    if (activeTab === 'notifications' && notifications.some(notif => !notif.is_read)) {
+      markAllNotificationsAsRead();
+    }
+  }, [activeTab, notifications]);
+
+  const markAllNotificationsAsRead = async () => {
+    try {
+      await api.put('/notification/mark-all-read', {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Update local state to reflect that notifications are read
+      setNotifications(notifications.map(notif => ({ ...notif, is_read: true })));
+    } catch (error) {
+      console.error("Error marking notifications as read:", error);
+      setToast({
+        message: "Erreur lors de la mise à jour des notifications",
+        type: "error",
+      });
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -223,10 +250,11 @@ export default function UserProfile() {
 
   const navItems = [
     { id: "profile", icon: User, label: "Profil", emoji: "👤" },
-    // { id: "reservations", icon: Calendar, label: "Réservations", emoji: "📅" },
     { id: "notifications", icon: Bell, label: "Notifications", emoji: "🔔" },
     { id: "security", icon: Lock, label: "Sécurité", emoji: "🔒" },
   ];
+
+  const unreadNotificationsCount = notifications.filter(notif => !notif.is_read).length;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -301,9 +329,9 @@ export default function UserProfile() {
                       >
                         <item.icon className="h-5 w-5 mr-3" />
                         <span>{item.emoji} {item.label}</span>
-                        {item.id === "notifications" && notifications.length > 0 && (
+                        {item.id === "notifications" && unreadNotificationsCount > 0 && (
                           <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                            {notifications.length}
+                            {unreadNotificationsCount}
                           </span>
                         )}
                       </button>
@@ -592,37 +620,41 @@ export default function UserProfile() {
                 <div className="p-6 border-b border-gray-200">
                   <h2 className="text-xl font-bold text-gray-900">🔔 Notifications</h2>
                 </div>
-                <div className="divide-y divide-gray-200">
-                  {notifications.length > 0 ? (
-                    notifications.map((notification) => (
-                      <div key={notification.id} className="p-4 hover:bg-gray-50 transition-all duration-200">
-                        <div className="flex items-start">
-                          <div className="flex-shrink-0 pt-1">
-                            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                              <Bell className="h-5 w-5 text-blue-600" />
+                <div className="p-6 border-t border-gray-200">
+                  <div className="space-y-4">
+                    {events.length > 0 ? (
+                      events
+                        .filter(event => new Date(event.date_debut) > new Date())
+                        .sort((a, b) => new Date(a.date_debut) - new Date(b.date_debut))
+                        .slice(0, 5)
+                        .map((event) => (
+                          <div key={event.id} className="flex items-start p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-200">
+                            <div className="flex-shrink-0">
+                              <div className="h-12 w-12 rounded-lg bg-[oklch(47.3%_0.137_46.201)] flex items-center justify-center text-white">
+                                <Calendar className="h-6 w-6" />
+                              </div>
+                            </div>
+                            <div className="ml-4 flex-1">
+                              <div className="flex items-center justify-between">
+                                <h4 className="text-sm font-medium text-gray-900">{event.titre}</h4>
+                                <span className="text-xs text-gray-500">
+                                  {new Date(event.date_debut).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-600 mt-1">{event.description}</p>
+                              <div className="mt-2 flex items-center text-xs text-gray-500">
+                                <MapPin className="h-4 w-4 mr-1" />
+                                <span>{event.type}</span>
+                              </div>
                             </div>
                           </div>
-                          <div className="ml-3 flex-1">
-                            <div className="flex items-center justify-between">
-                              <h3 className="text-sm font-medium">{notification.titre}</h3>
-                              <span className="text-xs text-gray-500">
-                                {new Date(notification.date).toLocaleDateString()}
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
-                          </div>
-                        </div>
+                        ))
+                    ) : (
+                      <div className="text-center py-4 text-gray-500">
+                        Aucun événement à venir
                       </div>
-                    ))
-                  ) : (
-                    <div className="p-8 text-center">
-                      <Bell className="h-12 w-12 mx-auto text-gray-400" />
-                      <h3 className="mt-2 text-sm font-medium text-gray-900">📭 Aucune notification</h3>
-                      <p className="mt-1 text-sm text-gray-500">
-                        Vous n'avez aucune notification pour le moment.
-                      </p>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             )}

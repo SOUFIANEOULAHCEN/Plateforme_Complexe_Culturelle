@@ -1,39 +1,34 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-  Outlet
-} from "react-router-dom";
-import AuthForms from "./pages/AuthForms";
-import DashboardAdmin from "./pages/DashboardAdmin";
-import DashboardSuperAdmin from "./pages/DashboardSuperAdmin";
-import ReservationsPage from "./pages/ReservationsPage";
-import EventsPage from "./pages/EventsPage";
-import TalentsPage from "./pages/TalentsPage";
-import UsersPage from "./pages/UsersPage";
-import EspacesPage from "./pages/EspacesPage";
-import CommentairesPage from "./pages/CommentairesPage";
-import ReportsPage from "./pages/ReportsPage";
-import SocialPage from "./pages/SocialPage";
-import ConfigPage from "./pages/ConfigPage";
-import ProtectedRoute from "./components/ProtectedRoute";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import UserProfil from "./pages/UserProfil";
-import TalentProfil from "./pages/TalentProfil";
-import EventProposalsPage from "./pages/EventProposalsPage";
-import ContactMessagesPage from "./pages/ContactMessagesPage";
-import ChatbotQAPage from "./pages/ChatbotQAPage";
-import Home from "./pages/Home";
-import AboutSection from "./home/AboutSection";
-import EventSlider from "./home/EventSlider";
-import WorkshopSlider from "./home/WorkshopSlider";
-import Gallery from "./home/Gallery";
-import Header from "./home/Header";
-import Footer from "./home/Footer";
-import Contact from "./home/Contact";
-import Evenements from "./home/Evenements";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom"
+import AuthForms from "./pages/AuthForms"
+import DashboardAdmin from "./pages/DashboardAdmin"
+import DashboardSuperAdmin from "./pages/DashboardSuperAdmin"
+import ReservationsPage from "./pages/ReservationsPage"
+import EventsPage from "./pages/EventsPage"
+import TalentsPage from "./pages/TalentsPage"
+import UsersPage from "./pages/UsersPage"
+import EspacesPage from "./pages/EspacesPage"
+import CommentairesPage from "./pages/CommentairesPage"
+import ReportsPage from "./pages/ReportsPage"
+import SocialPage from "./pages/SocialPage"
+import ConfigPage from "./pages/ConfigPage"
+import ProtectedRoute from "./components/ProtectedRoute"
+import ForgotPassword from "./pages/ForgotPassword"
+import ResetPassword from "./pages/ResetPassword"
+import UserProfil from "./pages/UserProfil"
+import TalentProfil from "./pages/TalentProfil"
+import EventProposalsPage from "./pages/EventProposalsPage"
+import ContactMessagesPage from "./pages/ContactMessagesPage"
+import ChatbotQAPage from "./pages/ChatbotQAPage"
+import Home from "./pages/Home"
+import Header from "./home/Header"
+import Contact from "./home/Contact"
+
+// Mini Home Pages
+import CCO from "./home/miniHomePage/CCO"
+import Atelier from "./home/miniHomePage/Atelier"
+import Evenements from "./home/miniHomePage/Evenements"
+import Bibliotheque from "./home/miniHomePage/Bibliotheque"
+import Espaces from "./home/miniHomePage/Espaces"
 
 // Layout component pour les pages publiques
 function PublicLayout() {
@@ -41,9 +36,8 @@ function PublicLayout() {
     <>
       <Header />
       <Outlet />
-      <Footer />
     </>
-  );
+  )
 }
 
 function App() {
@@ -53,17 +47,13 @@ function App() {
         {/* Public layout routes */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/CCO" element={<AboutSection />} />
-          <Route path="/Evenements" element={<EventSlider />} />
-          <Route path="/Ateliers" element={<WorkshopSlider />} />
-          <Route path="/Gallery" element={<Gallery />} />
-          <Route path="/Contact" element={<Contact />} />
-        <Route path="/evenementsInfo" element={<Evenements />} />
-
+          <Route path="/cco" element={<CCO />} />
+          <Route path="/evenements" element={<Evenements />} />
+          <Route path="/ateliers" element={<Atelier />} />
+          <Route path="/bibliotheque" element={<Bibliotheque />} />
+          <Route path="/espaces" element={<Espaces />} />
+          <Route path="/contact" element={<Contact />} />
         </Route>
-        
-        {/* Route de réservation */}
-        {/* <Route path="/reservation" element={<ReservationFormPage />} /> */}
 
         {/* Auth routes */}
         <Route path="/login" element={<AuthForms />} />
@@ -74,7 +64,7 @@ function App() {
         <Route
           path="/UserProfil"
           element={
-            <ProtectedRoute allowedRoles={['utilisateur', 'admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["utilisateur", "admin", "superadmin"]}>
               <UserProfil />
             </ProtectedRoute>
           }
@@ -84,7 +74,7 @@ function App() {
         <Route
           path="/TalentProfil"
           element={
-            <ProtectedRoute allowedRoles={['talent', 'admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["talent", "admin", "superadmin"]}>
               <TalentProfil />
             </ProtectedRoute>
           }
@@ -94,7 +84,7 @@ function App() {
         <Route
           path="/dashboard/admin"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <DashboardAdmin />
             </ProtectedRoute>
           }
@@ -102,14 +92,15 @@ function App() {
         <Route
           path="/dashboard/messages"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <ContactMessagesPage />
             </ProtectedRoute>
           }
-        />        <Route
+        />
+        <Route
           path="/dashboard/reservations"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <ReservationsPage />
             </ProtectedRoute>
           }
@@ -117,7 +108,7 @@ function App() {
         <Route
           path="/dashboard/events"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <EventsPage />
             </ProtectedRoute>
           }
@@ -125,7 +116,7 @@ function App() {
         <Route
           path="/dashboard/talents"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <TalentsPage />
             </ProtectedRoute>
           }
@@ -133,7 +124,7 @@ function App() {
         <Route
           path="/dashboard/users"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <UsersPage />
             </ProtectedRoute>
           }
@@ -141,7 +132,7 @@ function App() {
         <Route
           path="/dashboard/espaces"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <EspacesPage />
             </ProtectedRoute>
           }
@@ -149,7 +140,7 @@ function App() {
         <Route
           path="/dashboard/commentaires"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <CommentairesPage />
             </ProtectedRoute>
           }
@@ -157,7 +148,7 @@ function App() {
         <Route
           path="/dashboard/reports"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <ReportsPage />
             </ProtectedRoute>
           }
@@ -165,7 +156,7 @@ function App() {
         <Route
           path="/dashboard/social"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <SocialPage />
             </ProtectedRoute>
           }
@@ -173,7 +164,7 @@ function App() {
         <Route
           path="/dashboard/event-proposals"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <EventProposalsPage />
             </ProtectedRoute>
           }
@@ -181,7 +172,7 @@ function App() {
         <Route
           path="/dashboard/chatbot"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <ChatbotQAPage />
             </ProtectedRoute>
           }
@@ -191,14 +182,15 @@ function App() {
         <Route
           path="/dashboard/superadmin"
           element={
-            <ProtectedRoute allowedRoles={['superadmin']}>
+            <ProtectedRoute allowedRoles={["superadmin"]}>
               <DashboardSuperAdmin />
             </ProtectedRoute>
           }
-        />       <Route
+        />
+        <Route
           path="/dashboard/config"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <ConfigPage />
             </ProtectedRoute>
           }
@@ -208,7 +200,7 @@ function App() {
         <Route
           path="/events/:id"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
               <EventsPage />
             </ProtectedRoute>
           }
@@ -279,13 +271,12 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/UserProfil" element={<UserProfil />} />
-        <Route path="/TalentProfil" element={<TalentProfil />} />
+
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App
