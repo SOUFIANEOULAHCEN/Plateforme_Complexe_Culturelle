@@ -1,9 +1,14 @@
 import { FaEye, FaBullseye, FaBuilding } from "react-icons/fa"
 import { useTranslation } from "react-i18next"
 import Footer from "../Footer"
-import theater5 from "../../assets/theater5.jpg"
-import municipalite from "../../assets/municipalite.png"
-import adminImg from "../../assets/img/admin_img.jpeg"
+import complexeCulturel from "../../assets/img/IMGCCO/complexeculturel.jpg"
+import ouarzazate from "../../assets/img/IMGCCO/ouarzazate.webp"
+import teamMember1 from "../../assets/img/IMGCCO/Нужен профессиональный деловой портрет_ Выезжаю в офис_.jpeg"
+import teamMember2 from "../../assets/img/IMGCCO/Photographie _ Portrait corporate femme avec fond clair.jpeg"
+import teamMember3 from "../../assets/img/IMGCCO/bf4cf03b-f6fa-48f6-9e20-01b37312d549.jpeg"
+import teamMember4 from "../../assets/img/IMGCCO/ba64a0ab-62a7-455d-8dff-6b0f4e58f7f3.jpeg"
+import teamMember5 from "../../assets/img/IMGCCO/ea63fa89-026a-4ff4-8691-02db157a6cb2.jpeg"
+import director from "../../assets/img/IMGCCO/fc213b55-3fdd-4b20-a0b6-478bf8174c83.jpeg"
 
 export default function CCO() {
   const { t } = useTranslation()
@@ -12,27 +17,27 @@ export default function CCO() {
     {
       name: "Ahmed Alami",
       role: "Responsable Événements",
-      image: adminImg,
+      image: teamMember1,
     },
     {
       name: "Fatima Zahra",
       role: "Coordinatrice Culturelle",
-      image: adminImg,
+      image: teamMember2,
     },
     {
       name: "Karim Mansouri",
       role: "Technicien Audiovisuel",
-      image: adminImg,
+      image: teamMember3,
     },
     {
       name: "Nadia Benani",
       role: "Responsable Communication",
-      image: adminImg,
+      image: teamMember4,
     },
     {
       name: "Youssef Tahiri",
       role: "Administrateur",
-      image: adminImg,
+      image: teamMember5,
     },
   ]
 
@@ -42,7 +47,7 @@ export default function CCO() {
       <div className="relative h-[70vh] overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src={theater5}
+            src={complexeCulturel}
             alt="CCO Ouarzazate"
             className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
           />
@@ -77,7 +82,7 @@ export default function CCO() {
             {/* Vidéo du Complexe */}
             <div className="flex justify-center">
               <video
-                src="/src/assets/videos/complexe_culturel.mp4"
+                src="/src/assets/img/IMGCCO/video5798505470813541954.mp4"
                 width={600}
                 height={600}
                 controls
@@ -151,7 +156,7 @@ export default function CCO() {
             </div>
             <div className="flex justify-center">
               <img
-                src={municipalite}
+                src={ouarzazate}
                 alt="Logo Municipalité"
                 width={500}
                 height={500}
@@ -176,7 +181,7 @@ export default function CCO() {
             {team.map((member, index) => (
               <div key={index} className="group relative overflow-hidden rounded-xl bg-white shadow-lg">
                 <img
-                  src={member.image || "/placeholder.svg"}
+                  src={member.image}
                   alt={member.name}
                   width={300}
                   height={400}
@@ -199,7 +204,7 @@ export default function CCO() {
           <div className="grid items-center gap-8 md:grid-cols-2">
             <div className="flex justify-center">
               <img
-                src="/src/assets/img/admin_img.jpeg"
+                src={director}
                 alt="Directeur du Complexe Culturel Ouarzazate"
                 className="rounded-xl transition-all hover:scale-105"
                 width={300}

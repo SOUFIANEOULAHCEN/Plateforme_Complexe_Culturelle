@@ -2,19 +2,18 @@ import { Facebook, Instagram, Youtube, Twitter } from "lucide-react";
 import { Swiper, SwiperSlide } from 'swiper/react';  // ✅ Correct (Swiper v10)
 import { Autoplay } from 'swiper/modules';           // ✅ Correct (Swiper v10)
 import 'swiper/css';                                 // ✅ Correct (Swiper v10)
+import LogoOfppt from "../assets/Logo_ofppt.png";
+import Municipalite from "../assets/municipalite.png";
+import LogoAlliance from "../assets/logo_alliance.png";
 
 export default function Footer() {
   const logos = [
-    "/src/assets/Logo_ofppt.png",
-    "/src/assets/municipalite.png",
-    "src/assets/logo_alliance.png",
-    "/src/assets/Logo_ofppt.png",
-    "/src/assets/municipalite.png",
-    "src/assets/logo_alliance.png",
-    "/src/assets/Logo_ofppt.png",
-    "/src/assets/municipalite.png",
-    "src/assets/logo_alliance.png",
-    
+    LogoOfppt,
+    Municipalite,
+    LogoAlliance,
+    LogoOfppt,
+    Municipalite,
+    LogoAlliance,
   ];
 
   return (

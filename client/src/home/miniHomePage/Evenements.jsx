@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import api from "../../api"
 import ImageDeCentre from '../../assets/img/imgAtelier/Image_de_centre.jpeg'
 import { useTranslation } from "react-i18next"
+import Footer from "../Footer"
 
 const Evenements = () => {
   const { t, i18n } = useTranslation();
@@ -250,6 +251,7 @@ const Evenements = () => {
           </div>
         </section>
       </div>
+      <Footer />
     </div>
   )
 }

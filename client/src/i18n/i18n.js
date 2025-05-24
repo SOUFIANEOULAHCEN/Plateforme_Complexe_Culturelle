@@ -179,6 +179,29 @@ const resources = {
       auth_register_success: "Inscription réussie ! Vous pouvez maintenant vous connecter.",
       auth_login_error: "Erreur lors de la connexion",
       auth_register_error: "Erreur lors de l'inscription",
+
+      // CCO Page Translations
+      cco_title: 'CCO',
+      cco_subtitle: 'Bienvenue au cœur de la culture à Ouarzazate. Un espace dédié à l\'art, à la créativité et au partage culturel dans notre belle ville.',
+      video_not_supported: 'Votre navigateur ne supporte pas la balise vidéo',
+      cco_complex_title: 'Le Complexe Culturel Ouarzazate',
+      cco_complex_description: 'Le Complexe Culturel Ouarzazate est un lieu unique qui fusionne l\'art, l\'histoire et la culture de la région. Il offre un espace de rencontre pour les artistes locaux et internationaux, avec des expositions, des ateliers créatifs, des événements culturels et des spectacles. Notre mission est de préserver et de promouvoir les traditions tout en accueillant les innovations culturelles modernes.',
+      cco_complex_description_2: 'Situé dans le cœur de la ville, il est facilement accessible à tous, des habitants aux touristes, en passant par les étudiants et les professionnels du domaine artistique. Il incarne l\'âme culturelle de la ville et offre un cadre idéal pour les événements culturels divers, tout en contribuant au développement social et économique de la région.',
+      our_vision: 'Notre Vision',
+      vision_description: 'Faire du Complexe Culturel d\'Ouarzazate un phare de la culture régionale, un espace d\'échange et de création artistique qui rayonne sur tout le Sud marocain.',
+      our_mission: 'Notre Mission',
+      mission_description: 'Promouvoir la culture locale, encourager les talents artistiques et offrir un espace d\'expression culturelle accessible à tous les citoyens.',
+      municipality_title: 'Municipalité de Ouarzazate',
+      municipality_description: 'La Municipalité d\'Ouarzazate s\'engage à promouvoir la culture et les arts à travers le Complexe Culturel, contribuant ainsi au développement culturel et social de notre ville. Notre engagement reflète notre vision d\'une ville dynamique et culturellement riche.',
+      our_team: 'Notre Équipe',
+      team_description: 'Découvrez notre équipe dévouée et professionnelle qui travaille avec passion pour atteindre nos objectifs.',
+      director_title: 'Directeur du Complexe Culturel Ouarzazate',
+      director_description: 'M. Abde ElMalek, notre directeur visionnaire, est un leader passionné par la culture et l\'art. Sous sa direction, le Complexe Culturel Ouarzazate s\'est transformé en un espace dynamique pour les artistes locaux et internationaux. M. Abde ElMalek met un accent particulier sur l\'innovation, l\'accessibilité et la diversité culturelle, cherchant toujours à promouvoir la richesse de notre patrimoine tout en ouvrant de nouvelles voies pour l\'expression artistique contemporaine.',
+      director_description_2: 'Grâce à son leadership, le complexe continue de jouer un rôle essentiel dans la promotion des arts et de la culture à Ouarzazate, attirant des talents du monde entier et contribuant à la prospérité culturelle de la région.',
+
+      // Bibliotheque Page Translations
+      library_description: 'Découvrez notre vaste collection de livres dans divers domaines. Notre bibliothèque offre un espace calme pour la lecture et l\'étude, avec une collection variée de livres en arabe et en français. Des livres religieux à la littérature mondiale, nous vous offrons un monde de connaissances et de culture.',
+      read_more: 'Lire plus',
     }
   },
   ar: {
@@ -356,6 +379,48 @@ const resources = {
       auth_register_success: "تم التسجيل بنجاح! يمكنك الآن تسجيل الدخول.",
       auth_login_error: "خطأ في تسجيل الدخول",
       auth_register_error: "خطأ في التسجيل",
+
+      // CCO Page Translations
+      cco_title: 'مركز الثقافة',
+      cco_subtitle: 'مرحباً بكم في قلب الثقافة في ورزازات. مساحة مخصصة للفن والإبداع وتبادل الثقافات في مدينتنا الجميلة.',
+      video_not_supported: 'متصفحك لا يدعم تشغيل الفيديو',
+      cco_complex_title: 'المجمع الثقافي ورزازات',
+      cco_complex_description: 'المجمع الثقافي ورزازات هو مكان فريد يجمع بين الفن والتاريخ وثقافة المنطقة. يوفر مساحة للقاء بين الفنانين المحليين والدوليين، مع معارض وورش عمل إبداعية وفعاليات ثقافية وعروض. مهمتنا هي الحفاظ على التقاليد وتعزيزها مع استقبال الابتكارات الثقافية الحديثة.',
+      cco_complex_description_2: 'يقع في قلب المدينة، وهو سهل الوصول للجميع، من السكان إلى السياح، مروراً بالطلاب والمهنيين في المجال الفني. يجسد الروح الثقافية للمدينة ويوفر إطاراً مثالياً للفعاليات الثقافية المتنوعة، مع المساهمة في التنمية الاجتماعية والاقتصادية للمنطقة.',
+      our_vision: 'رؤيتنا',
+      vision_description: 'جعل المجمع الثقافي ورزازات منارة للثقافة الإقليمية، ومساحة لتبادل الأفكار والإبداع الفني الذي يشع على كامل جنوب المغرب.',
+      our_mission: 'مهمتنا',
+      mission_description: 'تعزيز الثقافة المحلية، وتشجيع المواهب الفنية، وتوفير مساحة للتعبير الثقافي متاحة لجميع المواطنين.',
+      municipality_title: 'بلدية ورزازات',
+      municipality_description: 'تلتزم بلدية ورزازات بتعزيز الثقافة والفنون من خلال المجمع الثقافي، مما يساهم في التنمية الثقافية والاجتماعية لمدينتنا. يعكس التزامنا رؤيتنا لمدينة ديناميكية وغنية ثقافياً.',
+      our_team: 'فريقنا',
+      team_description: 'اكتشفوا فريقنا المتفاني والمهني الذي يعمل بشغف لتحقيق أهدافنا.',
+      director_title: 'مدير المجمع الثقافي ورزازات',
+      director_description: 'السيد عبد المالك، مديرنا الرؤيوي، هو قائد شغوف بالثقافة والفن. تحت قيادته، تحول المجمع الثقافي ورزازات إلى مساحة ديناميكية للفنانين المحليين والدوليين. يركز السيد عبد المالك بشكل خاص على الابتكار وإمكانية الوصول والتنوع الثقافي، سعياً دائماً لتعزيز ثراء تراثنا مع فتح طرق جديدة للتعبير الفني المعاصر.',
+      director_description_2: 'بفضل قيادته، يواصل المجمع لعب دور أساسي في تعزيز الفنون والثقافة في ورزازات، جاذباً المواهب من جميع أنحاء العالم ومساهماً في الازدهار الثقافي للمنطقة.',
+
+      // Espaces Page Translations
+      spaces: 'المساحات',
+      space_theater_hall: 'قاعة المسرح',
+      space_theater_description: 'قاعة مسرح حديثة مجهزة بأحدث التقنيات الصوتية والإضاءة، مثالية للعروض المسرحية والحفلات الموسيقية والفعاليات الثقافية.',
+      space_exhibition_hall: 'قاعة المعارض',
+      space_exhibition_description: 'مساحة واسعة لعرض الأعمال الفنية والمعارض الثقافية، مع إضاءة طبيعية واصطناعية مثالية لعرض مختلف أنواع الفنون.',
+      space_library: 'المكتبة',
+      space_library_description: 'مكتبة شاملة تضم مجموعة متنوعة من الكتب والمراجع في مختلف المجالات، مع مساحات هادئة للقراءة والدراسة.',
+      space_computer_room: 'قاعة الحاسوب',
+      space_computer_description: 'قاعة مجهزة بأحدث أجهزة الحاسوب والإنترنت، مخصصة للدورات التدريبية في مجال التكنولوجيا والمعلوماتية.',
+      space_music_room: 'قاعة الموسيقى',
+      space_music_description: 'استوديو موسيقى مجهز بأحدث المعدات الصوتية والآلات الموسيقية، مثالي للتدريب والعزف.',
+      space_meeting_room: 'قاعة الاجتماعات',
+      space_meeting_description: 'قاعة متعددة الاستخدامات مجهزة بأحدث التقنيات، مناسبة للاجتماعات والمؤتمرات والندوات.',
+      space_cultural_cafe: 'المقهى الثقافي',
+      space_cafe_description: 'مساحة مريحة للراحة والقراءة والمناقشات الثقافية، مع خدمة مشروبات ووجبات خفيفة.',
+      space_painting_room: 'قاعة الرسم',
+      space_painting_description: 'استوديو فني مجهز بجميع المعدات اللازمة للرسم والفنون التشكيلية، مع إضاءة طبيعية مثالية.',
+
+      // Bibliotheque Page Translations
+      library_description: 'اكتشفوا مجموعتنا الواسعة من الكتب في مختلف المجالات. مكتبتنا توفر مساحة هادئة للقراءة والدراسة، مع مجموعة متنوعة من الكتب باللغتين العربية والفرنسية. من الكتب الدينية إلى الأدب العالمي، نقدم لكم عالماً من المعرفة والثقافة.',
+      read_more: 'اقرأ المزيد',
     }
   }
 };

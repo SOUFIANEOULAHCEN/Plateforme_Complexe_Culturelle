@@ -22,7 +22,7 @@ import ChatbotQAPage from "./pages/ChatbotQAPage"
 import Home from "./pages/Home"
 import Header from "./home/Header"
 import Contact from "./home/Contact"
-
+// import Library from "./home/Library"
 // Mini Home Pages
 import CCO from "./home/miniHomePage/CCO"
 import Atelier from "./home/miniHomePage/Atelier"
@@ -53,6 +53,7 @@ function App() {
           <Route path="/bibliotheque" element={<Bibliotheque />} />
           <Route path="/espaces" element={<Espaces />} />
           <Route path="/contact" element={<Contact />} />
+          {/* <Route path="/library" element={<Library />} /> */}
         </Route>
 
         {/* Auth routes */}

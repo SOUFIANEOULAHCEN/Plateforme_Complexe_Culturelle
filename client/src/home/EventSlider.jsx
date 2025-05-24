@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Navigation, Pagination, Autoplay } from "swiper/modules"
-import { Link } from "react-router-dom"
+import { Link , useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import "swiper/css"
 import "swiper/css/navigation"
@@ -86,7 +86,7 @@ const EventModal = ({ isOpen, onClose, event }) => {
         {/* Event image (full cover background) */}
         <div className="relative w-full h-[85vh]">
           <img 
-            src={event?.affiche_url ? `http://localhost:3000${event.affiche_url}` : "/default-event.jpg"}
+            src={event?.affiche_url ? `http://localhost:3000${event.affiche_url}` : "/placeholder.svg"}
             alt={event?.title || event?.titre || t('event')} 
             className="w-full h-full object-cover"
           />
@@ -177,6 +177,7 @@ const EventSlider = () => {
   const [loading, setLoading] = useState(true)
   const [selectedEvent, setSelectedEvent] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetch("http://localhost:3000/api/evenements")
@@ -211,10 +212,9 @@ const EventSlider = () => {
   );
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-[#FDF8F5]">
       <div className="container mx-auto px-4">
-        <h2 className="text-5xl font-bold text-[#8B4513] text-center mb-6">{t('events_title')}</h2>
-        <p className="text-gray-600 text-center max-w-2xl mx-auto mb-12">{t('events_subtitle')}</p>
+        <h2 className="text-4xl font-serif text-[#8B4513] text-center mb-12">{t('events_title')}</h2>
         
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
@@ -222,49 +222,31 @@ const EventSlider = () => {
           slidesPerView={1}
           navigation
           pagination={{ clickable: true }}
-          autoplay={{ delay: 3500, disableOnInteraction: false }}
+          autoplay={{ delay: 3000, disableOnInteraction: false }}
           breakpoints={{
             640: { slidesPerView: 2 },
             1024: { slidesPerView: 3 },
+            1280: { slidesPerView: 4 },
           }}
-          className="event-slider !pb-12"
+          className="event-slider"
         >
           {events.map((event) => (
             <SwiperSlide key={event.id || event._id}>
-              <div className="bg-white rounded-xl overflow-hidden shadow-xl group hover:shadow-2xl transition-all duration-300">
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={event.affiche_url ? `http://localhost:3000${event.affiche_url}` : "/default-event.jpg"}
-                    alt={event.title || event.titre}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent">
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <h3 className="text-white text-2xl font-bold mb-1">{event.title || event.titre}</h3>
-                      <div className="flex items-center text-white/80 mb-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-[#D2691E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        {event.date ? new Date(event.date).toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR') : 
-                         event.date_debut ? new Date(event.date_debut).toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR') : ""}
-                      </div>
-                      <div className="flex items-center text-white/80">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-[#D2691E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        {event.lieu || event.location || t('location_tbc')}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <p className="text-gray-600 line-clamp-2 mb-4">
-                    {event.description}
+              <div className="relative group cursor-pointer">
+                <img
+                  src={event.affiche_url ? `http://localhost:3000${event.affiche_url}` : "/placeholder.svg"}
+                  alt={event.title || event.titre}
+                  className="w-full h-[400px] object-cover rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex flex-col items-center justify-center text-white">
+                  <h3 className="text-xl font-semibold mb-2">{event.title || event.titre}</h3>
+                  <p className="mb-4">
+                    {event.date ? new Date(event.date).toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR') : 
+                     event.date_debut ? new Date(event.date_debut).toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR') : ""}
                   </p>
                   <button
-                     onClick={() => window.location.href = '/evenementsInfo'}
-                    className="w-full bg-[#8B4513] text-white py-2 px-4 rounded-lg hover:bg-[#6f3610] transition-colors duration-300"
+                    onClick={() => navigate('/evenements')}
+                    className="bg-[#8B4513] text-white py-2 px-4 rounded-lg hover:bg-[#6f3610] transition-colors duration-300"
                   >
                     {t('events_details')}
                   </button>
