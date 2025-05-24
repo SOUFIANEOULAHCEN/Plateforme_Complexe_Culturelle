@@ -5,6 +5,7 @@ import 'swiper/css';                                 // ✅ Correct (Swiper v10)
 import LogoOfppt from "../assets/Logo_ofppt.png";
 import Municipalite from "../assets/municipalite.png";
 import LogoAlliance from "../assets/logo_alliance.png";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   const logos = [
@@ -65,16 +66,16 @@ export default function Footer() {
                 Un espace dédié à la promotion de la culture et des arts dans la région de Ouarzazate.
               </p>
               <div className="flex space-x-4">
-                <a href="#" className="text-[#FDF8F5] hover:text-[#D4A017] transition-colors duration-300">
+                <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="text-[#FDF8F5] hover:text-[#D4A017] transition-colors duration-300">
                   <Facebook size={20} />
                 </a>
-                <a href="#" className="text-[#FDF8F5] hover:text-[#D4A017] transition-colors duration-300">
+                <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer" className="text-[#FDF8F5] hover:text-[#D4A017] transition-colors duration-300">
                   <Twitter size={20} />
                 </a>
-                <a href="#" className="text-[#FDF8F5] hover:text-[#D4A017] transition-colors duration-300">
+                <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="text-[#FDF8F5] hover:text-[#D4A017] transition-colors duration-300">
                   <Instagram size={20} />
                 </a>
-                <a href="#" className="text-[#FDF8F5] hover:text-[#D4A017] transition-colors duration-300">
+                <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="text-[#FDF8F5] hover:text-[#D4A017] transition-colors duration-300">
                   <Youtube size={20} />
                 </a>
               </div>
@@ -84,10 +85,12 @@ export default function Footer() {
             <div className="space-y-4">
               <h3 className="text-xl font-bold border-b-2 border-[#D4A017] pb-2">Liens rapides</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-[#D4A017] transition-colors duration-300">Accueil</a></li>
-                <li><a href="#" className="hover:text-[#D4A017] transition-colors duration-300">Événements</a></li>
-                <li><a href="#" className="hover:text-[#D4A017] transition-colors duration-300">Ateliers</a></li>
-                <li><a href="#" className="hover:text-[#D4A017] transition-colors duration-300">Réservations</a></li>
+                <li><Link to="/accueil" className="hover:text-[#D4A017] transition-colors duration-300">Accueil</Link></li>
+                <li><Link to="/evenements" className="hover:text-[#D4A017] transition-colors duration-300">Événements</Link></li>
+                <li><Link to="/ateliers" className="hover:text-[#D4A017] transition-colors duration-300">Ateliers</Link></li>
+                <li><Link to="/reservations" className="hover:text-[#D4A017] transition-colors duration-300">Réservations</Link></li>
+                <li><Link to="/bibliotheque" className="hover:text-[#D4A017] transition-colors duration-300">Bibliothèque</Link></li>
+                <li><Link to="/contact" className="hover:text-[#D4A017] transition-colors duration-300">Contact</Link></li>
               </ul>
             </div>
 

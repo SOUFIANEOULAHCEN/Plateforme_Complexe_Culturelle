@@ -268,6 +268,9 @@ const Contact = () => {
           onClose={() => setToast(null)}
         />
       )}
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

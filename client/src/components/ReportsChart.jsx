@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import api from "../api";
 import { Pie } from "react-chartjs-2";
+import { Chart } from "chart.js/auto";
 
 export default function ReportsChart() {
   const [pieData, setPieData] = useState(null);
+  const chartRef = useRef(null);
 
   useEffect(() => {
     const fetchPieData = async () => {
@@ -62,6 +64,13 @@ export default function ReportsChart() {
     };
 
     fetchPieData();
+
+    // Cleanup function
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
   }, []);
 
   if (!pieData) {
@@ -79,6 +88,7 @@ export default function ReportsChart() {
       </h3>
       <div className="h-64">
         <Pie
+          ref={chartRef}
           data={pieData}
           options={{
             responsive: true,

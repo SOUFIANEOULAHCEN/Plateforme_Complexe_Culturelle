@@ -23,7 +23,6 @@ export default function ReservationModal({ isOpen, onClose }) {
 
   const handleAcceptTerms = () => {
     setAcceptedTerms(true);
-    setStep("email");
   };
 
   const handleEmailSubmit = async () => {
@@ -99,34 +98,44 @@ export default function ReservationModal({ isOpen, onClose }) {
               >
                 Fermer
               </button>
-              <button
-                onClick={handleAcceptTerms}
-                className="bg-[#824B26] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#6e3d20] transition duration-300"
-              >
-                J'accepte les conditions
-              </button>
-            </div>
-          ) : step === "email" ? (
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={handleClose}
-                className="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300"
-              >
-                Fermer
-              </button>
-              <button
-                onClick={handleEmailSubmit}
-                disabled={loading || !email}
-                className="bg-[#824B26] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#6e3d20] transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Vérification..." : "Continuer"}
-              </button>
+              {!acceptedTerms ? (
+                <button
+                  onClick={handleAcceptTerms}
+                  className="bg-[#824B26] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#6e3d20] transition duration-300"
+                >
+                  J'accepte les conditions
+                </button>
+              ) : (
+                <button
+                  onClick={handleEmailSubmit}
+                  disabled={loading || !email}
+                  className="bg-[#824B26] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#6e3d20] transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Vérification..." : "Continuer"}
+                </button>
+              )}
             </div>
           ) : null
         }
       >
         {step === "terms" && (
           <div className="space-y-6 text-[#333333]">
+            {acceptedTerms && (
+              <div className="mb-6 border-b pb-6 border-gray-200">
+                <h3 className="text-lg font-semibold mb-4 text-[#824B26]">Veuillez entrer votre email pour continuer</h3>
+                <div className="space-y-2">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Votre adresse email"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
+                    required
+                  />
+                  {error && <p className="text-red-500 text-sm">{error}</p>}
+                </div>
+              </div>
+            )}
             <div>
               <h3 className="text-lg font-semibold mb-2 text-[#824B26]">Termes et conditions</h3>
               <p className="mb-4">
@@ -163,22 +172,6 @@ export default function ReservationModal({ isOpen, onClose }) {
               <p className="text-sm italic">
                 En cliquant sur "J'accepte les conditions", vous confirmez avoir lu et accepté les termes et conditions ci-dessus.
               </p>
-            </div>
-          </div>
-        )}
-        {step === "email" && (
-          <div className="mb-6 border-b pb-6 border-gray-200">
-            <h3 className="text-lg font-semibold mb-4 text-[#824B26]">Veuillez entrer votre email pour continuer</h3>
-            <div className="space-y-2">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Votre adresse email"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-                required
-              />
-              {error && <p className="text-red-500 text-sm">{error}</p>}
             </div>
           </div>
         )}
