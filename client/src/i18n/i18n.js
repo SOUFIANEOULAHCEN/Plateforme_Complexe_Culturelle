@@ -151,6 +151,24 @@ const resources = {
       music: 'Studio de musique',
       art: 'Atelier d\'art',
 
+      // Espaces translations
+      space_theater_hall: 'Salle de Théâtre',
+      space_theater_description: 'Une salle de théâtre moderne et polyvalente, équipée pour accueillir des spectacles, des représentations théâtrales et des événements culturels. Capacité d\'accueil de 200 personnes.',
+      space_exhibition_hall: 'Salle d\'Exposition',
+      space_exhibition_description: 'Un espace lumineux et adapté pour présenter des expositions d\'art, des installations et des œuvres de différents artistes. Idéal pour les vernissages et les événements artistiques.',
+      space_library: 'Bibliothèque',
+      space_library_description: 'Une bibliothèque spacieuse offrant un large éventail de livres, de magazines et de ressources numériques. Un espace calme pour la lecture et l\'étude.',
+      space_computer_room: 'Salle Informatique',
+      space_computer_description: 'Une salle équipée d\'ordinateurs modernes et d\'une connexion internet haut débit, idéale pour les cours d\'informatique et l\'accès aux ressources numériques.',
+      space_music_room: 'Salle de Musique',
+      space_music_description: 'Un espace acoustiquement optimisé pour les cours de musique, les répétitions et les enregistrements. Équipé d\'instruments de musique et de matériel d\'enregistrement.',
+      space_meeting_room: 'Salle de Réunion',
+      space_meeting_description: 'Une salle de réunion moderne et confortable, équipée de matériel de présentation et pouvant accueillir jusqu\'à 30 personnes.',
+      space_cultural_cafe: 'Café Culturel',
+      space_cafe_description: 'Un espace convivial où se mêlent culture et gastronomie. Idéal pour les rencontres, les discussions et les événements informels.',
+      space_painting_room: 'Atelier de Peinture',
+      space_painting_description: 'Un atelier lumineux et spacieux dédié à la peinture et aux arts visuels, équipé de tout le matériel nécessaire pour les artistes de tous niveaux.',
+
       // Traductions pour les formulaires d'authentification
       auth_welcome: "Bienvenue",
       auth_join_us: "Rejoignez-nous",
@@ -477,6 +495,24 @@ const resources = {
       library: 'المكتبة',
       music: 'استوديو الموسيقى',
       art: 'ورشة الفن',
+
+      // Espaces translations
+      space_theater_hall: 'قاعة المسرح',
+      space_theater_description: 'قاعة مسرح حديثة مجهزة بأحدث التقنيات الصوتية والإضاءة، مثالية للعروض المسرحية والحفلات الموسيقية والفعاليات الثقافية.',
+      space_exhibition_hall: 'قاعة المعارض',
+      space_exhibition_description: 'مساحة واسعة لعرض الأعمال الفنية والمعارض الثقافية، مع إضاءة طبيعية واصطناعية مثالية لعرض مختلف أنواع الفنون.',
+      space_library: 'المكتبة',
+      space_library_description: 'مكتبة شاملة تضم مجموعة متنوعة من الكتب والمراجع في مختلف المجالات، مع مساحات هادئة للقراءة والدراسة.',
+      space_computer_room: 'قاعة الحاسوب',
+      space_computer_description: 'قاعة مجهزة بأحدث أجهزة الحاسوب والإنترنت، مخصصة للدورات التدريبية في مجال التكنولوجيا والمعلوماتية.',
+      space_music_room: 'قاعة الموسيقى',
+      space_music_description: 'استوديو موسيقى مجهز بأحدث المعدات الصوتية والآلات الموسيقية، مثالي للتدريب والعزف.',
+      space_meeting_room: 'قاعة الاجتماعات',
+      space_meeting_description: 'قاعة متعددة الاستخدامات مجهزة بأحدث التقنيات، مناسبة للاجتماعات والمؤتمرات والندوات.',
+      space_cultural_cafe: 'المقهى الثقافي',
+      space_cafe_description: 'مساحة مريحة للراحة والقراءة والمناقشات الثقافية، مع خدمة مشروبات ووجبات خفيفة.',
+      space_painting_room: 'قاعة الرسم',
+      space_painting_description: 'استوديو فني مجهز بجميع المعدات اللازمة للرسم والفنون التشكيلية، مع إضاءة طبيعية مثالية.',
 
       // Traductions pour les formulaires d'authentification
       auth_welcome: "مرحباً",
