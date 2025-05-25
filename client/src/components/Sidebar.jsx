@@ -1,58 +1,59 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import Cookies from "js-cookie";
+import { useState, useEffect } from "react"
+import { Link, useLocation } from "react-router-dom"
+import Cookies from "js-cookie"
 
+import complex_logo_final_white from "../assets/img/logo/complex_logo_final_white.png"
 export default function Sidebar({ isOpen, setIsOpen }) {
-  const location = useLocation();
-  const [userRole, setUserRole] = useState("");
-  const [userName, setUserName] = useState("");
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const location = useLocation()
+  const [userRole, setUserRole] = useState("")
+  const [userName, setUserName] = useState("")
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
   useEffect(() => {
-    const role = Cookies.get("userRole");
-    const email = Cookies.get("userEmail");
+    const role = Cookies.get("userRole")
+    const email = Cookies.get("userEmail")
 
-    setUserRole(role || "");
-    setUserName(email || "");
+    setUserRole(role || "")
+    setUserName(email || "")
 
     // Check if sidebar collapse state is saved in localStorage
-    const savedState = localStorage.getItem("sidebarCollapsed");
+    const savedState = localStorage.getItem("sidebarCollapsed")
     if (savedState) {
-      setIsCollapsed(savedState === "true");
+      setIsCollapsed(savedState === "true")
     }
-  }, []);
+  }, [])
 
   const toggleCollapse = () => {
-    const newState = !isCollapsed;
-    setIsCollapsed(newState);
-    localStorage.setItem("sidebarCollapsed", String(newState));
-  };
+    const newState = !isCollapsed
+    setIsCollapsed(newState)
+    localStorage.setItem("sidebarCollapsed", String(newState))
+  }
 
   const isActive = (path) => {
-    return location.pathname.includes(path);
-  };
+    return location.pathname.includes(path)
+  }
 
   const closeSidebar = () => {
     if (window.innerWidth < 768) {
-      setIsOpen(false);
+      setIsOpen(false)
     }
-  };
+  }
 
   const handleLogout = () => {
-    Cookies.remove("jwt");
-    Cookies.remove("userRole");
-    Cookies.remove("userName");
-    Cookies.remove("userId");
-    window.location.href = "/";
-  };
+    Cookies.remove("jwt")
+    Cookies.remove("userRole")
+    Cookies.remove("userName")
+    Cookies.remove("userId")
+    window.location.href = "/"
+  }
 
   // Get user initials for avatar
   const getInitials = () => {
-    if (!userName) return "U";
-    return userName.charAt(0).toUpperCase();
-  };
+    if (!userName) return "U"
+    return userName.charAt(0).toUpperCase()
+  }
 
   return (
     <>
@@ -66,7 +67,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-30 h-screen bg-gradient-to-br from-[oklch(47.3%_0.137_46.201)] to-[oklch(37.3%_0.137_46.201)] shadow-lg transition-all duration-300 ease-in-out flex flex-col ${
+        className={`fixed top-0 left-0 z-30 h-screen bg-gradient-to-br from-amber-900 via-amber-800 to-orange-900 shadow-2xl transition-all duration-300 ease-in-out flex flex-col ${
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         } ${isCollapsed ? "w-16" : "w-64"}`}
       >
@@ -74,49 +75,48 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           {/* Collapse toggle button */}
           <button
             onClick={toggleCollapse}
-            className="absolute -right-3 top-20 bg-[oklch(47.3%_0.137_46.201)] text-white rounded-full p-1 shadow-md z-50 hidden md:block"
+            className="absolute -right-3 top-20 bg-amber-800 hover:bg-amber-700 text-white rounded-full p-1.5 shadow-lg z-50 hidden md:block transition-colors duration-200"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className={`h-4 w-4 transition-transform duration-300 ${
-                isCollapsed ? "rotate-180" : ""
-              }`}
+              className={`h-4 w-4 transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              strokeWidth={2}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
 
-          {/* Logo */}
+          {/* Logo Section - Modernized */}
           <div
-            className={`flex items-center h-16 border-b border-white/10 px-4 ${
-              isCollapsed ? "justify-center" : "justify-between"
-            }`}
+            className={`flex items-center justify-center border-b border-white/20 bg-gradient-to-r from-amber-800/50 to-orange-800/50 backdrop-blur-sm ${
+              isCollapsed ? "h-20 px-2" : "h-32 px-6"
+            } transition-all duration-300`}
           >
-            {!isCollapsed && (
-              <Link
-                to="/"
-                className="text-xl font-bold text-[oklch(1_0_0)] truncate"
-              >
-                Centre Culturel
-              </Link>
-            )}
-            {isCollapsed && (
-              <Link to="/" className="text-xl font-bold text-[oklch(1_0_0)]">
-                C
-              </Link>
-            )}
+            <Link to="/" className="relative group">
+              <div className="relative">
+                {/* Glow effect behind logo */}
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-400/30 to-orange-400/30 rounded-xl blur-md group-hover:blur-lg transition-all duration-300"></div>
+
+                {/* Logo image */}
+                <img
+                  src={complex_logo_final_white}
+                  alt="Centre Culturel Logo"
+                  className={`relative z-10 transition-all duration-300 filter drop-shadow-lg group-hover:drop-shadow-xl ${
+                    isCollapsed ? "h-12 w-auto" : "h-20 w-auto"
+                  }`}
+                />
+
+                {/* Subtle border glow */}
+                <div className="absolute inset-0 rounded-xl border border-white/10 group-hover:border-white/20 transition-all duration-300"></div>
+              </div>
+            </Link>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto py-4 px-3">
+          <nav className="flex-1 overflow-y-auto py-6 px-3">
             <ul className="space-y-2">
               {/* Dashboard */}
               <li>
@@ -124,123 +124,123 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                   to="/dashboard/admin"
                   className={`group flex items-center ${
                     isCollapsed ? "justify-center" : ""
-                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
+                  } px-3 py-3 text-white rounded-xl transition-all duration-200 hover:bg-white/15 hover:shadow-lg relative ${
                     location.pathname === "/dashboard/admin"
-                      ? "bg-white/20 font-medium"
+                      ? "bg-white/20 shadow-lg font-medium border border-white/20"
                       : ""
                   }`}
                   onClick={closeSidebar}
                 >
                   <span className="inline-flex items-center justify-center w-6 h-6">
+                    {/* Home icon - Modern Lucide style */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      strokeWidth={2}
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                        d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
                       />
+                      <polyline points="9,22 9,12 15,12 15,22" />
                     </svg>
                   </span>
 
-                  {!isCollapsed && (
-                    <span className="ml-3 transition-opacity duration-200">
-                      Tableau de bord
-                    </span>
-                  )}
+                  {!isCollapsed && <span className="ml-3 transition-opacity duration-200">Tableau de bord</span>}
 
                   {/* Tooltip for collapsed state */}
                   {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white rounded-lg shadow-xl text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-700">
                       Tableau de bord
                     </div>
                   )}
                 </Link>
               </li>
+
               {/* Users */}
               <li>
                 <Link
                   to="/dashboard/users"
                   className={`group flex items-center ${
                     isCollapsed ? "justify-center" : ""
-                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
-                    isActive("/users") ? "bg-white/20 font-medium" : ""
+                  } px-3 py-3 text-white rounded-xl transition-all duration-200 hover:bg-white/15 hover:shadow-lg relative ${
+                    isActive("/users") ? "bg-white/20 shadow-lg font-medium border border-white/20" : ""
                   }`}
                   onClick={closeSidebar}
                 >
                   <span className="inline-flex items-center justify-center w-6 h-6">
+                    {/* Users icon - Modern Lucide style */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      strokeWidth={2}
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+                      />
+                      <circle cx="9" cy="7" r="4" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m22 21-3-3m0 0a2 2 0 0 0-3-3 2 2 0 0 0-3 3 2 2 0 0 0 3 3 2 2 0 0 0 3-3Z"
                       />
                     </svg>
                   </span>
 
-                  {!isCollapsed && (
-                    <span className="ml-3 transition-opacity duration-200">
-                      Utilisateurs
-                    </span>
-                  )}
+                  {!isCollapsed && <span className="ml-3 transition-opacity duration-200">Utilisateurs</span>}
 
-                  {/* Tooltip for collapsed state */}
                   {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white rounded-lg shadow-xl text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-700">
                       Utilisateurs
                     </div>
                   )}
                 </Link>
               </li>
+
               {/* Talents */}
               <li>
                 <Link
                   to="/dashboard/talents"
                   className={`group flex items-center ${
                     isCollapsed ? "justify-center" : ""
-                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
-                    isActive("/talents") ? "bg-white/20 font-medium" : ""
+                  } px-3 py-3 text-white rounded-xl transition-all duration-200 hover:bg-white/15 hover:shadow-lg relative ${
+                    isActive("/talents") ? "bg-white/20 shadow-lg font-medium border border-white/20" : ""
                   }`}
                   onClick={closeSidebar}
                 >
                   <span className="inline-flex items-center justify-center w-6 h-6">
+                    {/* UserCheck icon - Modern Lucide style */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      strokeWidth={2}
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                        d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
                       />
+                      <circle cx="8.5" cy="7" r="4" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m17 11 2 2 4-4" />
                     </svg>
                   </span>
 
-                  {!isCollapsed && (
-                    <span className="ml-3 transition-opacity duration-200">
-                      Talents
-                    </span>
-                  )}
+                  {!isCollapsed && <span className="ml-3 transition-opacity duration-200">Talents</span>}
 
-                  {/* Tooltip for collapsed state */}
                   {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white rounded-lg shadow-xl text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-700">
                       Talents
                     </div>
                   )}
@@ -253,123 +253,115 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                   to="/dashboard/reservations"
                   className={`group flex items-center ${
                     isCollapsed ? "justify-center" : ""
-                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
-                    isActive("/reservations") ? "bg-white/20 font-medium" : ""
+                  } px-3 py-3 text-white rounded-xl transition-all duration-200 hover:bg-white/15 hover:shadow-lg relative ${
+                    isActive("/reservations") ? "bg-white/20 shadow-lg font-medium border border-white/20" : ""
                   }`}
                   onClick={closeSidebar}
                 >
                   <span className="inline-flex items-center justify-center w-6 h-6">
+                    {/* Calendar icon - Modern Lucide style */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      strokeWidth={2}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 2v4m8-4v4" />
+                      <rect width="18" height="18" x="3" y="4" rx="2" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m9 16 2 2 4-4" />
                     </svg>
                   </span>
 
-                  {!isCollapsed && (
-                    <span className="ml-3 transition-opacity duration-200">
-                      Réservations
-                    </span>
-                  )}
+                  {!isCollapsed && <span className="ml-3 transition-opacity duration-200">Réservations</span>}
 
-                  {/* Tooltip for collapsed state */}
                   {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white rounded-lg shadow-xl text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-700">
                       Réservations
                     </div>
                   )}
                 </Link>
               </li>
+
               {/* Event Proposals */}
               <li>
                 <Link
                   to="/dashboard/event-proposals"
                   className={`group flex items-center ${
                     isCollapsed ? "justify-center" : ""
-                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
-                    isActive("/event-proposals")
-                      ? "bg-white/20 font-medium"
-                      : ""
+                  } px-3 py-3 text-white rounded-xl transition-all duration-200 hover:bg-white/15 hover:shadow-lg relative ${
+                    isActive("/event-proposals") ? "bg-white/20 shadow-lg font-medium border border-white/20" : ""
                   }`}
                   onClick={closeSidebar}
                 >
                   <span className="inline-flex items-center justify-center w-6 h-6">
+                    {/* Lightbulb icon - Modern Lucide style */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      strokeWidth={2}
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 16l-4-4m0 0l4-4m-4 4h16"
+                        d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"
                       />
                     </svg>
                   </span>
 
                   {!isCollapsed && (
-                    <span className="ml-3 transition-opacity duration-200">
-                      Propositions d'événements
-                    </span>
+                    <span className="ml-3 transition-opacity duration-200">Propositions d'événements</span>
                   )}
 
-                  {/* Tooltip for collapsed state */}
                   {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white rounded-lg shadow-xl text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-700">
                       Propositions d'événements
                     </div>
                   )}
                 </Link>
               </li>
+
               {/* Events */}
               <li>
                 <Link
                   to="/dashboard/events"
                   className={`group flex items-center ${
                     isCollapsed ? "justify-center" : ""
-                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
-                    isActive("/events") ? "bg-white/20 font-medium" : ""
+                  } px-3 py-3 text-white rounded-xl transition-all duration-200 hover:bg-white/15 hover:shadow-lg relative ${
+                    isActive("/events") ? "bg-white/20 shadow-lg font-medium border border-white/20" : ""
                   }`}
                   onClick={closeSidebar}
                 >
                   <span className="inline-flex items-center justify-center w-6 h-6">
+                    {/* CalendarDays icon - Modern Lucide style */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      strokeWidth={2}
                     >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 2v4m8-4v4" />
+                      <rect width="18" height="18" x="3" y="4" rx="2" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18" />
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"
                       />
                     </svg>
                   </span>
 
-                  {!isCollapsed && (
-                    <span className="ml-3 transition-opacity duration-200">
-                      Événements
-                    </span>
-                  )}
+                  {!isCollapsed && <span className="ml-3 transition-opacity duration-200">Événements</span>}
 
-                  {/* Tooltip for collapsed state */}
                   {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white rounded-lg shadow-xl text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-700">
                       Événements
                     </div>
                   )}
@@ -382,128 +374,76 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                   to="/dashboard/espaces"
                   className={`group flex items-center ${
                     isCollapsed ? "justify-center" : ""
-                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
-                    isActive("/espaces") ? "bg-white/20 font-medium" : ""
+                  } px-3 py-3 text-white rounded-xl transition-all duration-200 hover:bg-white/15 hover:shadow-lg relative ${
+                    isActive("/espaces") ? "bg-white/20 shadow-lg font-medium border border-white/20" : ""
                   }`}
                   onClick={closeSidebar}
                 >
                   <span className="inline-flex items-center justify-center w-6 h-6">
+                    {/* Building icon - Modern Lucide style */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      strokeWidth={2}
                     >
+                      <rect width="16" height="20" x="4" y="2" rx="2" ry="2" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 22v-4h6v4" />
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                        d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"
                       />
                     </svg>
                   </span>
 
-                  {!isCollapsed && (
-                    <span className="ml-3 transition-opacity duration-200">
-                      Espaces
-                    </span>
-                  )}
+                  {!isCollapsed && <span className="ml-3 transition-opacity duration-200">Espaces</span>}
 
-                  {/* Tooltip for collapsed state */}
                   {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white rounded-lg shadow-xl text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-700">
                       Espaces
                     </div>
                   )}
                 </Link>
               </li>
 
-              {/* Comments */}
               {/* Messages */}
               <li>
                 <Link
                   to="/dashboard/messages"
                   className={`group flex items-center ${
                     isCollapsed ? "justify-center" : ""
-                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
-                    isActive("/messages") ? "bg-white/20 font-medium" : ""
+                  } px-3 py-3 text-white rounded-xl transition-all duration-200 hover:bg-white/15 hover:shadow-lg relative ${
+                    isActive("/messages") ? "bg-white/20 shadow-lg font-medium border border-white/20" : ""
                   }`}
                   onClick={closeSidebar}
                 >
                   <span className="inline-flex items-center justify-center w-6 h-6">
+                    {/* Mail icon - Modern Lucide style */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      strokeWidth={2}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
+                      <rect width="20" height="16" x="2" y="4" rx="2" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m22 7-10 5L2 7" />
                     </svg>
                   </span>
 
-                  {!isCollapsed && (
-                    <span className="ml-3 transition-opacity duration-200">
-                      Messages
-                    </span>
-                  )}
+                  {!isCollapsed && <span className="ml-3 transition-opacity duration-200">Messages</span>}
 
-                  {/* Tooltip for collapsed state */}
                   {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white rounded-lg shadow-xl text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-700">
                       Messages
                     </div>
                   )}
                 </Link>
               </li>
-
-              {/* Comments */}
-              {/* <li>
-                <Link
-                  to="/dashboard/commentaires"
-                  className={`group flex items-center ${
-                    isCollapsed ? "justify-center" : ""
-                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
-                    isActive("/commentaires") ? "bg-white/20 font-medium" : ""
-                  }`}
-                  onClick={closeSidebar}
-                >
-                  <span className="inline-flex items-center justify-center w-6 h-6">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-                      />
-                    </svg>
-                  </span>
-
-                  {!isCollapsed && (
-                    <span className="ml-3 transition-opacity duration-200">
-                      Commentaires
-                    </span>
-                  )}
-
-                  {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                      Commentaires
-                    </div>
-                  )}
-                </Link>
-              </li> */}
 
               {/* Reports */}
               <li>
@@ -511,79 +451,67 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                   to="/dashboard/reports"
                   className={`group flex items-center ${
                     isCollapsed ? "justify-center" : ""
-                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
-                    isActive("/reports") ? "bg-white/20 font-medium" : ""
+                  } px-3 py-3 text-white rounded-xl transition-all duration-200 hover:bg-white/15 hover:shadow-lg relative ${
+                    isActive("/reports") ? "bg-white/20 shadow-lg font-medium border border-white/20" : ""
                   }`}
                   onClick={closeSidebar}
                 >
                   <span className="inline-flex items-center justify-center w-6 h-6">
+                    {/* BarChart3 icon - Modern Lucide style */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      strokeWidth={2}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v18h18" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18 17V9l-5 5-4-4-4 4" />
                     </svg>
                   </span>
 
-                  {!isCollapsed && (
-                    <span className="ml-3 transition-opacity duration-200">
-                      Rapports
-                    </span>
-                  )}
+                  {!isCollapsed && <span className="ml-3 transition-opacity duration-200">Rapports</span>}
 
-                  {/* Tooltip for collapsed state */}
                   {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white rounded-lg shadow-xl text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-700">
                       Rapports
                     </div>
                   )}
                 </Link>
               </li>
-                {/* Chatbot */}
+
+              {/* Chatbot */}
               <li>
                 <Link
                   to="/dashboard/chatbot"
                   className={`group flex items-center ${
                     isCollapsed ? "justify-center" : ""
-                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
-                    isActive("/chatbot") ? "bg-white/20 font-medium" : ""
+                  } px-3 py-3 text-white rounded-xl transition-all duration-200 hover:bg-white/15 hover:shadow-lg relative ${
+                    isActive("/chatbot") ? "bg-white/20 shadow-lg font-medium border border-white/20" : ""
                   }`}
                   onClick={closeSidebar}
                 >
                   <span className="inline-flex items-center justify-center w-6 h-6">
+                    {/* Bot icon - Modern Lucide style */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      strokeWidth={2}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8V4l3 3-3 3zm0 0v8" />
+                      <circle cx="12" cy="12" r="3" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 1v6m0 6v6" />
                     </svg>
                   </span>
 
-                  {!isCollapsed && (
-                    <span className="ml-3 transition-opacity duration-200">
-                      Chatbot
-                    </span>
-                  )}
+                  {!isCollapsed && <span className="ml-3 transition-opacity duration-200">Chatbot</span>}
 
-                  {/* Tooltip for collapsed state */}
                   {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white rounded-lg shadow-xl text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-700">
                       Chatbot
                     </div>
                   )}
@@ -591,78 +519,68 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               </li>
 
               {/* Configuration */}
-              <li>                
+              <li>
                 <Link
                   to="/dashboard/config"
                   className={`group flex items-center ${
                     isCollapsed ? "justify-center" : ""
-                  } px-3 py-2 text-white rounded-lg transition-all duration-200 hover:bg-white/10 relative ${
-                    isActive("/config") ? "bg-white/20 font-medium" : ""
+                  } px-3 py-3 text-white rounded-xl transition-all duration-200 hover:bg-white/15 hover:shadow-lg relative ${
+                    isActive("/config") ? "bg-white/20 shadow-lg font-medium border border-white/20" : ""
                   }`}
                   onClick={closeSidebar}
                 >
                   <span className="inline-flex items-center justify-center w-6 h-6">
+                    {/* Settings icon - Modern Lucide style */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      strokeWidth={2}
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                        d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
                       />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
+                      <circle cx="12" cy="12" r="3" />
                     </svg>
                   </span>
-                  {!isCollapsed && (
-                    <span className="ml-3 transition-opacity duration-200">
-                      Configuration
-                    </span>
-                  )}
+
+                  {!isCollapsed && <span className="ml-3 transition-opacity duration-200">Configuration</span>}
+
                   {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] rounded shadow-lg text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white rounded-lg shadow-xl text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-700">
                       Configuration
                     </div>
                   )}
                 </Link>
               </li>
-          
             </ul>
           </nav>
 
-          {/* User profile section */}
+          {/* User profile section - Enhanced */}
           <div
-            className={`mt-auto border-t border-white/10 p-4 ${
-              isCollapsed ? "text-center" : ""
+            className={`mt-auto border-t border-white/20 bg-gradient-to-r from-amber-800/30 to-orange-800/30 backdrop-blur-sm ${
+              isCollapsed ? "p-3" : "p-4"
             }`}
           >
             {!isCollapsed ? (
               <div className="flex items-center space-x-3">
                 <div className="flex-shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] flex items-center justify-center font-medium text-lg">
+                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center font-semibold text-lg shadow-lg border-2 border-white/20">
                     {getInitials()}
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">
-                    {userName}
-                  </p>
-                  <p className="text-xs text-white/60 truncate capitalize">
-                    {userRole}
-                  </p>
+                  <p className="text-sm font-medium text-white truncate">{userName}</p>
+                  <p className="text-xs text-white/70 truncate capitalize">{userRole}</p>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="p-1.5 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors"
+                  className="p-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all duration-200 hover:shadow-lg border border-white/10 hover:border-white/20"
+                  title="Déconnexion"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -670,24 +588,22 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    strokeWidth={2}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16,17 21,12 16,7" />
+                    <line x1="21" x2="9" y1="12" y2="12" />
                   </svg>
                 </button>
               </div>
             ) : (
               <div className="flex flex-col items-center space-y-3">
-                <div className="w-8 h-8 rounded-full bg-[oklch(1_0_0)] text-[oklch(47.3%_0.137_46.201)] flex items-center justify-center font-medium text-sm">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center font-semibold text-sm shadow-lg border-2 border-white/20">
                   {getInitials()}
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="p-1.5 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors"
+                  className="p-1.5 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all duration-200 hover:shadow-lg border border-white/10 hover:border-white/20"
                   title="Déconnexion"
                 >
                   <svg
@@ -696,13 +612,11 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    strokeWidth={2}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16,17 21,12 16,7" />
+                    <line x1="21" x2="9" y1="12" y2="12" />
                   </svg>
                 </button>
               </div>
@@ -711,5 +625,5 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         </div>
       </aside>
     </>
-  );
+  )
 }

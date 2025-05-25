@@ -11,7 +11,7 @@ const EventProposalsTable = ({ limit }) => {
   const [processingAction, setProcessingAction] = useState(false);
   const [commentaire, setCommentaire] = useState("");
   const [toast, setToast] = useState(null);
-  // Ajout des états pour la pagination
+  const [modalType, setModalType] = useState(null); // 'view', 'approve', 'reject'
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
@@ -55,10 +55,18 @@ const EventProposalsTable = ({ limit }) => {
 
   const handleViewDetails = (proposal) => {
     setSelectedProposal(proposal);
+    setModalType('view');
   };
 
   const handleCloseModal = () => {
     setSelectedProposal(null);
+    setModalType(null);
+    setCommentaire("");
+  };
+
+  const handleActionClick = (proposal, action) => {
+    setSelectedProposal(proposal);
+    setModalType(action);
     setCommentaire("");
   };
 
@@ -316,10 +324,7 @@ const EventProposalsTable = ({ limit }) => {
                         {proposal.statut === "en_attente" && (
                           <>
                             <button
-                              onClick={() => {
-                                setSelectedProposal(proposal);
-                                setCommentaire("");
-                              }}
+                              onClick={() => handleActionClick(proposal, 'approve')}
                               className="text-green-600 hover:text-green-800"
                             >
                               <svg
@@ -337,10 +342,7 @@ const EventProposalsTable = ({ limit }) => {
                               </svg>
                             </button>
                             <button
-                              onClick={() => {
-                                setSelectedProposal(proposal);
-                                setCommentaire("");
-                              }}
+                              onClick={() => handleActionClick(proposal, 'reject')}
                               className="text-red-600 hover:text-red-800"
                             >
                               <svg
@@ -445,12 +447,83 @@ const EventProposalsTable = ({ limit }) => {
         </>
       )}
 
-      {/* Modal de traitement */}
-      {selectedProposal && (
+      {/* Modal de visualisation */}
+      {selectedProposal && modalType === 'view' && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8 font-inter">
+            <div className="flex justify-between items-start mb-6">
+              <h3 className="text-2xl font-bold text-[#a94c0f]">
+                {selectedProposal.titre}
+              </h3>
+              <button
+                onClick={handleCloseModal}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div>
+                <h4 className="font-semibold text-gray-700 mb-2">Informations générales</h4>
+                <div className="space-y-2">
+                  <p><span className="font-medium">Type:</span> {getTypeBadge(selectedProposal.type)}</p>
+                  <p><span className="font-medium">Statut:</span> {getStatusBadge(selectedProposal.statut)}</p>
+                  <p><span className="font-medium">Date de début:</span> {formatDate(selectedProposal.date_debut)}</p>
+                  <p><span className="font-medium">Date de fin:</span> {formatDate(selectedProposal.date_fin)}</p>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-700 mb-2">Proposeur</h4>
+                <div className="space-y-2">
+                  <p><span className="font-medium">Nom:</span> {selectedProposal.proposeur_nom}</p>
+                  <p><span className="font-medium">Email:</span> {selectedProposal.proposeur_email}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <h4 className="font-semibold text-gray-700 mb-2">Description</h4>
+              <p className="text-gray-600">{selectedProposal.description}</p>
+            </div>
+
+            {selectedProposal.commentaire_admin && (
+              <div className="mb-6">
+                <h4 className="font-semibold text-gray-700 mb-2">Commentaire administrateur</h4>
+                <p className="text-gray-600">{selectedProposal.commentaire_admin}</p>
+              </div>
+            )}
+
+            <div className="flex justify-end gap-3">
+              {selectedProposal.statut === "en_attente" && (
+                <>
+                  <button
+                    onClick={() => handleActionClick(selectedProposal, 'approve')}
+                    className="rounded-lg px-6 py-2 font-semibold bg-[#a94c0f] text-white border-2 border-[#a94c0f] hover:bg-[#7a370b] hover:border-[#7a370b] transition"
+                  >
+                    Approuver
+                  </button>
+                  <button
+                    onClick={() => handleActionClick(selectedProposal, 'reject')}
+                    className="rounded-lg px-6 py-2 font-semibold border-2 border-[#a94c0f] text-[#a94c0f] bg-white hover:bg-[#a94c0f] hover:text-white transition"
+                  >
+                    Rejeter
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de traitement (Approuver/Rejeter) */}
+      {selectedProposal && (modalType === 'approve' || modalType === 'reject') && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 font-inter">
             <h3 className="text-xl font-bold mb-4 text-[#a94c0f]">
-              Traiter la proposition
+              {modalType === 'approve' ? 'Approuver la proposition' : 'Rejeter la proposition'}
             </h3>
             <textarea
               value={commentaire}
@@ -467,19 +540,16 @@ const EventProposalsTable = ({ limit }) => {
                 Annuler
               </button>
               <button
-                onClick={() => handleProcessProposal('rejete')}
-                className="rounded-lg px-6 py-2 font-semibold border-2 border-[#a94c0f] text-[#a94c0f] bg-white hover:bg-[#a94c0f] hover:text-white transition"
+                onClick={() => handleProcessProposal(modalType === 'approve' ? 'approuve' : 'rejete')}
+                disabled={processingAction}
+                className={`rounded-lg px-6 py-2 font-semibold ${
+                  modalType === 'approve'
+                    ? 'bg-[#a94c0f] text-white border-2 border-[#a94c0f] hover:bg-[#7a370b] hover:border-[#7a370b]'
+                    : 'border-2 border-[#a94c0f] text-[#a94c0f] bg-white hover:bg-[#a94c0f] hover:text-white'
+                } ${processingAction ? 'opacity-50 cursor-not-allowed' : ''} transition`}
               >
-                Rejeter
+                {processingAction ? 'Traitement...' : 'Confirmer'}
               </button>
-              {selectedProposal?.statut !== 'rejete' && (
-                <button
-                  onClick={() => handleProcessProposal('approuve')}
-                  className="rounded-lg px-6 py-2 font-semibold bg-[#a94c0f] text-white border-2 border-[#a94c0f] hover:bg-[#7a370b] hover:border-[#7a370b] transition"
-                >
-                  Approuver
-                </button>
-              )}
             </div>
           </div>
         </div>

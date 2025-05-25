@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import DashboardLayout from "../components/DashboardLayout"
 import Toast from "../components/Toast"
 import api from "../api"
+import Cookies from "js-cookie"
 
 export default function ConfigPage() {
   const [loading, setLoading] = useState(false)
@@ -26,6 +27,8 @@ export default function ConfigPage() {
   useEffect(() => {
     fetchConfig()
   }, [])
+
+  const userRole = Cookies.get("userRole")
 
   const fetchConfig = async () => {
     try {
@@ -115,13 +118,15 @@ export default function ConfigPage() {
             <h1 className="text-2xl md:text-3xl font-bold text-[oklch(0.145_0_0)]">Configuration du système</h1>
             <p className="text-[oklch(0.556_0_0)] mt-1">Gérez les paramètres du système</p>
           </div>
-          <button
-            onClick={handleSendNewsletter}
-            disabled={sendingNewsletter}
-            className={`px-6 py-2 mt-4 md:mt-0 bg-[oklch(47.3%_0.137_46.201)] text-white rounded-lg shadow hover:bg-[oklch(50%_0.137_46.201)] transition-colors ${sendingNewsletter ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            {sendingNewsletter ? 'Envoi en cours...' : 'Envoyer une newsletter'}
-          </button>
+          {userRole === 'superadmin' && (
+            <button
+              onClick={handleSendNewsletter}
+              disabled={sendingNewsletter}
+              className={`px-6 py-2 mt-4 md:mt-0 bg-[oklch(47.3%_0.137_46.201)] text-white rounded-lg shadow hover:bg-[oklch(50%_0.137_46.201)] transition-colors ${sendingNewsletter ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {sendingNewsletter ? 'Envoi en cours...' : 'Envoyer une newsletter'}
+            </button>
+          )}
         </div>
 
         {/* Main Content */}
