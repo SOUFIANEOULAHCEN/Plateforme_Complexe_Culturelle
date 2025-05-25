@@ -16,9 +16,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
     proposeur_email: "",
     proposeur_nom: "",
     proposeur_telephone: "",
-    prix: 0,
-    statut: "en_attente",
-    commentaires: ""
+    statut: "en_attente"
   });
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
@@ -136,9 +134,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         proposeur_email: Cookies.get("userEmail") || "",
         proposeur_nom: "",
         proposeur_telephone: "",
-        prix: 0,
-        statut: "en_attente",
-        commentaires: ""
+        statut: "en_attente"
       });
       
       // Marquer le formulaire comme soumis avec succès
@@ -333,27 +329,6 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
               type="text"
               name="proposeur_telephone"
               value={form.proposeur_telephone}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm font-medium text-[#824B26]">Prix (en Dh)</label>
-            <input
-              type="number"
-              name="prix"
-              value={form.prix}
-              onChange={handleChange}
-              min="0"
-              step="0.01"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm font-medium text-[#824B26]">Commentaires</label>
-            <textarea
-              name="commentaires"
-              value={form.commentaires}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
             />

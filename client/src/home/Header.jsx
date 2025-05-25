@@ -30,7 +30,7 @@ export default function Header() {
   }
 
   const handleReservationClick = () => {
-    setReservationModalOpen(true)
+    navigate('/reservations')
   }
 
   const toggleCcoDropdown = () => {

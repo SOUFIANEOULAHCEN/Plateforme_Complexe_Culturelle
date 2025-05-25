@@ -11,6 +11,7 @@ export default function ReservationForm({
   onClose,
   reservation = null,
   onSuccess,
+  type = "evenement"
 }) {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -30,7 +31,8 @@ export default function ReservationForm({
     documents_paths: {},
     materiel_additionnel: "",
     statut: "en_attente",
-    commentaires: ""
+    commentaires: "",
+    type_reservation: type
   });
   const [espaces, setEspaces] = useState([]);
 
@@ -92,14 +94,15 @@ export default function ReservationForm({
           documents_paths: {},
           materiel_additionnel: "",
           statut: "en_attente",
-          commentaires: ""
+          commentaires: "",
+          type_reservation: type
         });
         await fetchEspaces();
       }
     };
 
     initializeForm();
-  }, [isOpen, reservation]);
+  }, [isOpen, reservation, type]);
 
   function formatDateForInput(date) {
     return date.toISOString().slice(0, 16);
@@ -174,7 +177,7 @@ export default function ReservationForm({
 
       const payload = {
         ...formReservation,
-        type_reservation: "standard", // Toujours standard
+        type_reservation: type,
         utilisateur_id: userId
       };
 
@@ -233,7 +236,7 @@ export default function ReservationForm({
       <Modal
         isOpen={modalVisible && isOpen}
         onClose={handleModalClose}
-        title={reservation ? "Modifier la réservation" : "Nouvelle réservation"}
+        title={reservation ? "Modifier la réservation" : `Nouvelle réservation - ${type === "evenement" ? "Événement" : "Espace"}`}
         footer={
           <>
             <button
@@ -346,10 +349,10 @@ export default function ReservationForm({
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
                 required
               >
-                <option value="">Sélectionner un espace</option>
+                <option value="">Sélectionnez un espace</option>
                 {espaces.map((espace) => (
                   <option key={espace.id} value={espace.id}>
-                    {espace.nom} - {espace.type} {espace.sous_type ? `(${espace.sous_type})` : ''}
+                    {espace.nom}
                   </option>
                 ))}
               </select>
@@ -357,7 +360,7 @@ export default function ReservationForm({
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Nombre de places
+                Nombre de places *
               </label>
               <input
                 type="number"
@@ -366,6 +369,7 @@ export default function ReservationForm({
                 onChange={handleChange}
                 min="1"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
+                required
               />
             </div>
 

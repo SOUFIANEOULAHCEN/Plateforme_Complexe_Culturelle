@@ -32,6 +32,7 @@ const Atelier = lazy(() => import("./home/miniHomePage/Atelier"))
 const Evenements = lazy(() => import("./home/miniHomePage/Evenements"))
 const Bibliotheque = lazy(() => import("./home/miniHomePage/Bibliotheque"))
 const Espaces = lazy(() => import("./home/miniHomePage/Espaces"))
+const ReservationsChois = lazy(() => import("./home/miniHomePage/ReservationsChois"))
 
 // Loading component
 const LoadingSpinner = () => (
@@ -66,6 +67,7 @@ function App() {
             <Route path="/bibliotheque" element={<Bibliotheque />} />
             <Route path="/espaces" element={<Espaces />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/reservations" element={<ReservationsChois />} />
           </Route>
 
           {/* Auth routes */}
