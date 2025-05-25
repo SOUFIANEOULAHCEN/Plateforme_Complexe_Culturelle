@@ -74,9 +74,22 @@ export default function ReservationDetails({ isOpen, onClose, reservation, onEdi
             </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-medium text-gray-500">Email de l'utilisateur</h3>
-            <p className="mt-1 text-sm text-gray-900">{reservation.utilisateur?.email || reservation.utilisateur_email || "N/A"}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Utilisateur</h3>
+              <p className="mt-1 text-sm text-gray-900">
+                {reservation.utilisateur?.nom || reservation.utilisateur_nom || "N/A"}
+              </p>
+              <p className="mt-1 text-sm text-gray-500">
+                {reservation.utilisateur?.email || reservation.utilisateur_email || "N/A"}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Espace</h3>
+              <p className="mt-1 text-sm text-gray-900">
+                {reservation.espace?.nom || reservation.evenement_titre || reservation.espace_nom || "N/A"}
+              </p>
+            </div>
           </div>
 
           <div>
@@ -86,43 +99,55 @@ export default function ReservationDetails({ isOpen, onClose, reservation, onEdi
 
           <div>
             <h3 className="text-sm font-medium text-gray-500">Description</h3>
-            <p className="mt-1 text-sm text-gray-900">{reservation.description}</p>
+            <p className="mt-1 text-sm text-gray-900">{reservation.description || "Aucune description"}</p>
           </div>
 
-          <div>
-            <h3 className="text-sm font-medium text-gray-500">Type d'organisateur</h3>
-            <p className="mt-1 text-sm text-gray-900">{reservation.type_organisateur}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Type d'organisateur</h3>
+              <p className="mt-1 text-sm text-gray-900">
+                {reservation.type_organisateur === 'individu' ? 'Individu' :
+                 reservation.type_organisateur === 'association' ? 'Association' :
+                 reservation.type_organisateur === 'entreprise' ? 'Entreprise' : 'N/A'}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Nombre de places</h3>
+              <p className="mt-1 text-sm text-gray-900">{reservation.nombre_places || 1}</p>
+            </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-medium text-gray-500">Date de début</h3>
-            <p className="mt-1 text-sm text-gray-900">{formatDate(reservation.date_debut)}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Date de début</h3>
+              <p className="mt-1 text-sm text-gray-900">{formatDate(reservation.date_debut)}</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Date de fin</h3>
+              <p className="mt-1 text-sm text-gray-900">{formatDate(reservation.date_fin)}</p>
+            </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-medium text-gray-500">Date de fin</h3>
-            <p className="mt-1 text-sm text-gray-900">{formatDate(reservation.date_fin)}</p>
-          </div>
+          {reservation.materiel_additionnel && (
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Matériel additionnel</h3>
+              <p className="mt-1 text-sm text-gray-900">{reservation.materiel_additionnel}</p>
+            </div>
+          )}
 
-          <div>
-            <h3 className="text-sm font-medium text-gray-500">Espace</h3>
-            <p className="mt-1 text-sm text-gray-900">{reservation.evenement_titre || reservation.espace_nom || reservation.espace_id || "N/A"}</p>
-          </div>
+          {reservation.commentaires && (
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Commentaires</h3>
+              <p className="mt-1 text-sm text-gray-900">{reservation.commentaires}</p>
+            </div>
+          )}
 
-          <div>
-            <h3 className="text-sm font-medium text-gray-500">Nombre de places</h3>
-            <p className="mt-1 text-sm text-gray-900">{reservation.nombre_places}</p>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-medium text-gray-500">Matériel additionnel</h3>
-            <p className="mt-1 text-sm text-gray-900">{reservation.materiel_additionnel || "Aucun"}</p>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-medium text-gray-500">Commentaires</h3>
-            <p className="mt-1 text-sm text-gray-900">{reservation.commentaires || "Aucun"}</p>
-          </div>
+          {reservation.date_annulation && (
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Date d'annulation</h3>
+              <p className="mt-1 text-sm text-gray-900">{formatDate(reservation.date_annulation)}</p>
+            </div>
+          )}
         </div>
       ) : (
         <div className="text-center py-4 text-gray-500">Aucune information disponible</div>

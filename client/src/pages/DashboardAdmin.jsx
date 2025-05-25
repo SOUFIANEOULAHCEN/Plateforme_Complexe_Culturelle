@@ -43,7 +43,7 @@ export default function DashboardAdmin() {
           setStats([
             {
               label: "Réservations",
-              value: summaryResponse.data.reservations || 0,
+              value: statsResponse.data.confirmedReservations || 0,
             },
             {
               label: "Événements",

@@ -175,38 +175,39 @@ export default function AdminReservationForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+    setError("");
 
     try {
-      const user = users.find(u => u.email === selectedUser);
-      if (!user) {
-        setError("Utilisateur non trouvé");
-        setLoading(false);
-        return;
-      }
-
       const payload = {
         ...formReservation,
-        utilisateur_id: user.id
+        utilisateur_id: selectedUser ? users.find(u => u.email === selectedUser)?.id : null
       };
 
-
       let response;
-      // if (reservation?.id) {
-      //   console.log("Updating reservation with ID:", reservation.id); // Debug log
-      //   response = await api.put(`/reservations/${reservation.id}`, payload);
-      //   console.log("Update response:", response.data); // Debug log
-      // } else {
-      //   console.log("Creating new reservation"); // Debug log
-      //   response = await api.post("/reservations", payload);
-      //   console.log("Create response:", response.data); // Debug log
-      // }
+      if (reservation?.id) {
+        console.log("Updating reservation with ID:", reservation.id);
+        response = await api.put(`/reservations/${reservation.id}`, payload);
+        console.log("Update response:", response.data);
+      } else {
+        console.log("Creating new reservation");
+        response = await api.post("/reservations", payload);
+        console.log("Create response:", response.data);
+      }
+
+      setToast({
+        message: reservation?.id ? "Réservation mise à jour avec succès" : "Réservation créée avec succès",
+        type: "success"
+      });
 
       onSuccess();
       onClose();
     } catch (error) {
-      console.error("Error details:", error.response?.data); // Debug log
+      console.error("Error details:", error.response?.data);
       setError(error.response?.data?.message || "Une erreur est survenue");
+      setToast({
+        message: error.response?.data?.message || "Une erreur est survenue",
+        type: "error"
+      });
     } finally {
       setLoading(false);
     }

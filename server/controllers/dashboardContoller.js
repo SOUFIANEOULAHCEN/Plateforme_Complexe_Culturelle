@@ -50,7 +50,7 @@ export const getSummaryData = async (req, res) => {
 export const getDashboardStats = async (req, res) => {
   try {
     // Correction de l'ordre des requêtes
-    const [utilisateurs, talents, admins, superadmins, acceptedEvents] = await Promise.all([
+    const [utilisateurs, talents, admins, superadmins, acceptedEvents, confirmedReservations] = await Promise.all([
       // Utilisateurs normaux (is_talent = false)
       Utilisateur.count({
         where: {
@@ -69,8 +69,10 @@ export const getDashboardStats = async (req, res) => {
       Utilisateur.count({ where: { role: "admin" } }),
       // Super Admins
       Utilisateur.count({ where: { role: "superadmin" } }),
-      // Nouveauté : Événements acceptés
+      // Événements acceptés (planifie ou confirme)
       Evenement.count({ where: { statut: ["planifie", "confirme"] } }),
+      // Réservations confirmées
+      Reservation.count({ where: { statut: 'confirme' } }),
     ]);
 
     // Récupération des données mensuelles
@@ -135,6 +137,7 @@ export const getDashboardStats = async (req, res) => {
       },
       monthlyData,
       acceptedEvents,
+      confirmedReservations,
     });
   } catch (error) {
     console.error("Error fetching dashboard stats:", error);

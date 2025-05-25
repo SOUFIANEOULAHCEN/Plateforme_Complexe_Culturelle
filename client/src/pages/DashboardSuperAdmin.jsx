@@ -34,7 +34,7 @@ export default function DashboardSuperAdmin() {
           setStats([
             {
               label: "Réservations",
-              value: statsResponse.data.reservations || 0,
+              value: statsResponse.data.confirmedReservations || 0,
             },
             { label: "Événements", value: statsResponse.data.events || 0 },
             { label: "Talents", value: statsResponse.data.talents || 0 },

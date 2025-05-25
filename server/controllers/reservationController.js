@@ -153,8 +153,8 @@ export const createReservation = async (req, res) => {
 export const updateReservation = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("Updating reservation with ID:", id); // Debug log
-    console.log("Update payload:", req.body); // Debug log
+    console.log("Updating reservation with ID:", id);
+    console.log("Update payload:", req.body);
 
     // Vérifier que l'ID est un nombre valide
     if (isNaN(parseInt(id))) {
@@ -171,10 +171,7 @@ export const updateReservation = async (req, res) => {
       ]
     });
 
-    console.log("Found reservation:", reservation); // Debug log
-
     if (!reservation) {
-      console.log("Reservation not found with ID:", id); // Debug log
       return res.status(404).json({ 
         message: "Réservation non trouvée",
         id: id,
@@ -183,12 +180,13 @@ export const updateReservation = async (req, res) => {
     }
 
     // Vérifier si la date de début est modifiée
-    if (req.body.date_debut && req.body.date_debut !== reservation.date_debut) {
+    if (req.body.date_debut && new Date(req.body.date_debut).getTime() !== new Date(reservation.date_debut).getTime()) {
       const dateReservation = new Date(req.body.date_debut);
       const aujourdhui = new Date();
       const joursAvantReservation = Math.ceil((dateReservation - aujourdhui) / (1000 * 60 * 60 * 24));
 
-      if (joursAvantReservation < DELAI_RESERVATION) {
+      // Si la réservation est déjà confirmée, on ne vérifie pas le délai de 15 jours
+      if (reservation.statut !== 'confirme' && joursAvantReservation < DELAI_RESERVATION) {
         return res.status(400).json({
           message: `La réservation doit être faite au moins ${DELAI_RESERVATION} jours à l'avance`
         });
@@ -234,8 +232,6 @@ export const updateReservation = async (req, res) => {
       where: { id }
     });
 
-    console.log("Update result:", updated); // Debug log
-
     if (updated) {
       const updatedReservation = await Reservation.findByPk(id, {
         include: [
@@ -243,10 +239,36 @@ export const updateReservation = async (req, res) => {
           { model: Espace, as: 'espace' }
         ]
       });
-      console.log("Updated reservation:", updatedReservation); // Debug log
+
+      // Si la date a été modifiée et que la réservation est confirmée, envoyer un email
+      if (req.body.date_debut && reservation.statut === 'confirme' && 
+          new Date(req.body.date_debut).getTime() !== new Date(reservation.date_debut).getTime()) {
+        try {
+          await sendEmail({
+            to: updatedReservation.utilisateur.email,
+            subject: 'Modification de votre réservation',
+            text: `Bonjour ${updatedReservation.utilisateur.nom || ''},
+
+Votre réservation a été modifiée.
+
+Nouveaux détails de la réservation :
+- Titre : ${updatedReservation.titre}
+- Date de début : ${new Date(updatedReservation.date_debut).toLocaleDateString()}
+- Date de fin : ${new Date(updatedReservation.date_fin).toLocaleDateString()}
+
+Merci de votre compréhension.
+
+Cordialement,
+L'équipe de gestion des réservations`
+          });
+        } catch (emailError) {
+          console.error("Erreur lors de l'envoi de l'email:", emailError);
+          // On continue même si l'email échoue
+        }
+      }
+
       res.json(updatedReservation);
     } else {
-      console.log("No rows updated for ID:", id); // Debug log
       res.status(404).json({ 
         message: "Réservation non trouvée",
         id: id,
@@ -305,16 +327,41 @@ export const getReservations = async (req, res) => {
         return res.json([]); // Return empty array if user not found
       }
       
-      // Then find reservations by user ID
+      // Then find reservations by user ID with relations
       const reservations = await Reservation.findAll({
-        where: { utilisateur_id: user.id }
+        where: { utilisateur_id: user.id },
+        include: [
+          { 
+            model: Utilisateur,
+            as: 'utilisateur',
+            attributes: ['id', 'nom', 'email']
+          },
+          {
+            model: Espace,
+            as: 'espace',
+            attributes: ['id', 'nom']
+          }
+        ]
       });
       
       return res.json(reservations);
     }
     
-    // If no email filter, return all reservations
-    const reservations = await Reservation.findAll();
+    // If no email filter, return all reservations with relations
+    const reservations = await Reservation.findAll({
+      include: [
+        { 
+          model: Utilisateur,
+          as: 'utilisateur',
+          attributes: ['id', 'nom', 'email']
+        },
+        {
+          model: Espace,
+          as: 'espace',
+          attributes: ['id', 'nom']
+        }
+      ]
+    });
     
     res.json(reservations);
   } catch (err) {

@@ -20,7 +20,7 @@ router.get("/", verifyToken, async (req, res) => {
 });
 
 // GET /api/utilisateurs/email/:email
-router.get("/email/:email", verifyToken, getUtilisateurByEmail);
+router.get("/email/:email", getUtilisateurByEmail);
 
 // GET /api/utilisateurs/check-email - Vérifier si un email existe (pas besoin d'authentification)
 router.get("/check-email", async (req, res) => {
