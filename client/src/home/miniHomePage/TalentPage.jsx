@@ -1,7 +1,20 @@
 import { FaStar, FaHandsHelping, FaUsers, FaMicrophoneAlt, FaPalette } from 'react-icons/fa';
-// import Footer from "../components/Footer";
+import Footer from "../Footer"
+import talentHero from "../../assets/img/IMGCCO/telents-hero.jpg"
+import AuthForms from "../../pages/AuthForms"
+import { useState } from "react"
 
 export default function TalentPage() {
+    const [isConnexionModalOpen, setConnexionModalOpen] = useState(false)
+
+    const openConnexionModal = () => {
+        setConnexionModalOpen(true)
+    }
+
+    const closeConnexionModal = () => {
+        setConnexionModalOpen(false)
+    }
+
     const benefits = [
         {
             icon: <FaStar className="h-8 w-8" />,
@@ -36,7 +49,7 @@ export default function TalentPage() {
             <div className="relative h-[70vh] overflow-hidden">
                 <div className="absolute inset-0">
                     <img
-                        src="/IMGCCO/talent-hero.jpg"
+                        src={talentHero}
                         alt="Talent au Palais de la Culture"
                         className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                     />
@@ -138,17 +151,21 @@ export default function TalentPage() {
                         <p className="mx-auto mb-8 max-w-2xl text-gray-200">
                             Soumettez votre candidature dès aujourd'hui et faites partie de notre communauté artistique dynamique.
                         </p>
-                        <a
-                            href="/contact"
+                        <button
+                            onClick={openConnexionModal}
                             className="inline-block bg-white text-[#8B4513] font-semibold py-2 px-8 rounded-md hover:bg-gray-100 transition duration-300"
                         >
                             Postuler maintenant
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            {/* <Footer /> */}
+            {/* Modal de Connexion/Inscription */}
+            <AuthForms isOpen={isConnexionModalOpen} onClose={closeConnexionModal} />
+
+            <Footer />
+
         </div>
     );
 }

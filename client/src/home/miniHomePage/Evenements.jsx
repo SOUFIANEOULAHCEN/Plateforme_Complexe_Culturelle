@@ -17,7 +17,11 @@ const Evenements = () => {
     const fetchEvents = async () => {
       try {
         const response = await api.get('/evenements')
-        setEvents(response.data)
+        // Trier les événements par date de début
+        const sortedEvents = response.data.sort((a, b) => 
+          new Date(a.date_debut) - new Date(b.date_debut)
+        );
+        setEvents(sortedEvents)
         setLoading(false)
       } catch (err) {
         console.error('Error fetching events:', err)
@@ -146,7 +150,7 @@ const Evenements = () => {
                   transform: `translateX(-${currentSlide * 25}%)`,
                 }}
               >
-                {events.slice(0, 8).map((event) => (
+                {events.map((event) => (
                   <div key={event.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0 px-3">
                     <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2">
                       <div className="relative overflow-hidden">
@@ -155,7 +159,12 @@ const Evenements = () => {
                           alt={event.titre}
                           className="w-full h-64 object-cover transition-transform duration-700 hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
+                          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                            <p className="text-sm font-medium">{formatDate(event.date_debut)}</p>
+                            <p className="text-xs opacity-75">{event.type}</p>
+                          </div>
+                        </div>
                       </div>
                       <div className="p-6">
                         <h3 className="text-lg font-semibold text-[#8B4513] mb-2">{event.titre}</h3>
@@ -164,6 +173,17 @@ const Evenements = () => {
                           {event.description?.slice(0, 100)}
                           {event.description?.length > 100 ? '...' : ''}
                         </p>
+                        <div className="mt-4 flex justify-between items-center">
+                          <span className="text-xs text-gray-500">{formatDate(event.date_debut)}</span>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            event.statut === 'confirme' ? 'bg-green-100 text-green-800' :
+                            event.statut === 'planifie' ? 'bg-blue-100 text-blue-800' :
+                            event.statut === 'en_attente' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {event.statut}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -225,7 +245,7 @@ const Evenements = () => {
 
             {/* Timeline Events */}
             <div className="space-y-16">
-              {events.slice(0, 5).map((event, index) => (
+              {events.map((event, index) => (
                 <div
                   key={event.id}
                   className={`flex items-center ${index % 2 === 0 ? "flex-row" : "flex-row-reverse"} transform transition-all duration-500 hover:scale-105`}
@@ -249,9 +269,22 @@ const Evenements = () => {
                       <div className="text-xs text-[#8B4513] font-semibold mb-2 uppercase tracking-wider">
                         {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-800">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
                         {event.titre}
                       </h3>
+                      <p className="text-sm text-gray-600 line-clamp-2">
+                        {event.description}
+                      </p>
+                      <div className="mt-4 flex justify-between items-center">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          event.statut === 'confirme' ? 'bg-green-100 text-green-800' :
+                          event.statut === 'planifie' ? 'bg-blue-100 text-blue-800' :
+                          event.statut === 'en_attente' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {event.statut}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>

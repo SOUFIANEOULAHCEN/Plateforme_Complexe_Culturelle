@@ -50,7 +50,7 @@ export const getSummaryData = async (req, res) => {
 export const getDashboardStats = async (req, res) => {
   try {
     // Correction de l'ordre des requêtes
-    const [utilisateurs, talents, admins, superadmins, acceptedEvents, confirmedReservations] = await Promise.all([
+    const [utilisateurs, talents, admins, superadmins, allEvents, allReservations] = await Promise.all([
       // Utilisateurs normaux (is_talent = false)
       Utilisateur.count({
         where: {
@@ -69,10 +69,10 @@ export const getDashboardStats = async (req, res) => {
       Utilisateur.count({ where: { role: "admin" } }),
       // Super Admins
       Utilisateur.count({ where: { role: "superadmin" } }),
-      // Événements acceptés (planifie ou confirme)
-      Evenement.count({ where: { statut: ["planifie", "confirme"] } }),
-      // Réservations confirmées
-      Reservation.count({ where: { statut: 'confirme' } }),
+      // Tous les événements
+      Evenement.count(),
+      // Toutes les réservations
+      Reservation.count({where: {statut: "confirme"}}),
     ]);
 
     // Récupération des données mensuelles
@@ -128,16 +128,17 @@ export const getDashboardStats = async (req, res) => {
       events: eventsData.find((e) => e.month === month)?.events || 0,
       reservationTitles: titlesMap[month] || [],
     }));
+
     res.json({
       userRoles: {
-        utilisateurs, // 1
-        talents, // 2
-        admins, // 1
-        superadmins, // 1
+        utilisateurs,
+        talents,
+        admins,
+        superadmins,
       },
       monthlyData,
-      acceptedEvents,
-      confirmedReservations,
+      totalEvents: allEvents,
+      totalReservations: allReservations,
     });
   } catch (error) {
     console.error("Error fetching dashboard stats:", error);

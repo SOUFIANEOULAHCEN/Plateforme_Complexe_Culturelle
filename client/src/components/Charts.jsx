@@ -32,6 +32,56 @@ const COLOR_PALETTE = {
   secondary: "oklch(55% 0.12 46.2)", // Version plus claire
   tertiary: "oklch(40% 0.15 46.2)", // Version plus sombre
   complementary: "oklch(47% 0.13 226.2)", // Couleur complémentaire
+  // Ajout de nouvelles couleurs pour plus de variété
+  success: "oklch(65% 0.15 142.5)",
+  warning: "oklch(75% 0.15 85.5)",
+  info: "oklch(60% 0.15 250.5)",
+};
+
+// Configuration commune pour tous les graphiques
+const commonOptions = {
+  maintainAspectRatio: false,
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "bottom",
+      labels: {
+        padding: 20,
+        usePointStyle: true,
+        pointStyle: "circle",
+        font: {
+          size: 12,
+          family: "'Inter', sans-serif"
+        }
+      }
+    },
+    tooltip: {
+      backgroundColor: "rgba(255, 255, 255, 0.9)",
+      titleColor: "#1a1a1a",
+      bodyColor: "#4a4a4a",
+      borderColor: "#e5e7eb",
+      borderWidth: 1,
+      padding: 12,
+      cornerRadius: 8,
+      displayColors: true,
+      usePointStyle: true,
+      boxPadding: 4,
+      callbacks: {
+        label: function(context) {
+          let label = context.dataset.label || '';
+          if (label) {
+            label += ': ';
+          }
+          if (context.parsed.y !== undefined) {
+            label += context.parsed.y;
+          } else if (context.parsed !== undefined) {
+            label += context.parsed;
+          }
+          return label;
+        }
+      }
+    }
+  }
 };
 
 export default function Charts({ stats }) {
@@ -134,28 +184,103 @@ export default function Charts({ stats }) {
     ],
   };
 
-  // Options pour afficher les titres au-dessus des barres de réservation
-  const barOptions = {
-    maintainAspectRatio: false,
-    responsive: true,
+  // Mise à jour des options du graphique circulaire
+  const pieOptions = {
+    ...commonOptions,
+    plugins: {
+      ...commonOptions.plugins,
+      tooltip: {
+        ...commonOptions.plugins.tooltip,
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            const value = context.raw || 0;
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const percentage = Math.round((value / total) * 100);
+            return `${label}: ${value} (${percentage}%)`;
+          }
+        }
+      }
+    },
+    cutout: '40%',
+    radius: '90%'
+  };
+
+  // Mise à jour des options du graphique linéaire
+  const lineOptions = {
+    ...commonOptions,
     scales: {
       x: {
-        ticks: {
-          maxRotation: 0,
-          minRotation: 0,
-          font: { size: 12 },
+        grid: {
+          display: false
         },
-        afterFit: (scale) => {
-          scale.height = 80;
+        ticks: {
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif"
+          }
         }
       },
-      y: { beginAtZero: true },
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)'
+        },
+        ticks: {
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif"
+          }
+        }
+      }
+    },
+    elements: {
+      line: {
+        tension: 0.4
+      },
+      point: {
+        radius: 4,
+        hoverRadius: 6
+      }
+    }
+  };
+
+  // Mise à jour des options du graphique à barres
+  const barOptions = {
+    ...commonOptions,
+    scales: {
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          maxRotation: 45,
+          minRotation: 45,
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif"
+          }
+        }
+      },
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)'
+        },
+        ticks: {
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif"
+          }
+        }
+      }
     },
     plugins: {
+      ...commonOptions.plugins,
       tooltip: {
+        ...commonOptions.plugins.tooltip,
         callbacks: {
           title: (context) => {
-            // Affiche le mois + les titres de réservation dans le tooltip
             const idx = context[0].dataIndex;
             const titles = stats.monthlyData[idx]?.reservationTitles || [];
             if (context[0].datasetIndex === 0 && titles.length > 0) {
@@ -163,71 +288,50 @@ export default function Charts({ stats }) {
             }
             return context[0].label;
           },
-        },
-      },
-      datalabels: {
-        display: true,
-        align: 'end',
-        anchor: 'end',
-        formatter: (value, context) => {
-          // Affiche les titres au-dessus des barres de réservation uniquement
-          if (context.datasetIndex === 0) {
-            const idx = context.dataIndex;
-            const titles = stats.monthlyData[idx]?.reservationTitles || [];
-            return titles.length > 0 ? titles.join('\n') : '';
+          label: function(context) {
+            let label = context.dataset.label || '';
+            if (label) {
+              label += ': ';
+            }
+            label += context.parsed.y;
+            return label;
           }
-          return '';
-        },
-        font: {
-          size: 10,
-        },
-        color: '#333',
-      },
-    },
+        }
+      }
+    }
   };
 
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Graphique circulaire */}
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h3 className="text-lg font-semibold mb-4">
+        <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">
             Répartition des utilisateurs
           </h3>
           <div className="h-80">
             <Pie
               data={pieData}
-              options={{
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { position: "bottom" },
-                },
-              }}
+              options={pieOptions}
             />
           </div>
         </div>
 
         {/* Graphique linéaire */}
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h3 className="text-lg font-semibold mb-4">Activité mensuelle</h3>
+        <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">Activité mensuelle</h3>
           <div className="h-80">
             <Line
               data={lineData}
-              options={{
-                maintainAspectRatio: false,
-                responsive: true,
-                scales: {
-                  y: { beginAtZero: true },
-                },
-              }}
+              options={lineOptions}
             />
           </div>
         </div>
       </div>
 
       {/* Graphique à barres */}
-      <div className="bg-white p-6 rounded-xl shadow-md">
-        <h3 className="text-lg font-semibold mb-4">Comparaison mensuelle</h3>
+      <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+        <h3 className="text-lg font-semibold mb-4 text-gray-800">Comparaison mensuelle</h3>
         <div className="h-96">
           <Bar
             data={barData}

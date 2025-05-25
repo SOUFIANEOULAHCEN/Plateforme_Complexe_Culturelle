@@ -11,4 +11,9 @@ export default defineConfig({
       interval: 1000, // Check for changes every second
     },
   },
+  resolve: {
+    alias: {
+      '@': '/src',
+    },
+  },
 });

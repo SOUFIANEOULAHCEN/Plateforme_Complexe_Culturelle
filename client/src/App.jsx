@@ -32,6 +32,7 @@ const Atelier = lazy(() => import("./home/miniHomePage/Atelier"))
 const Evenements = lazy(() => import("./home/miniHomePage/Evenements"))
 const Bibliotheque = lazy(() => import("./home/miniHomePage/Bibliotheque"))
 const Espaces = lazy(() => import("./home/miniHomePage/Espaces"))
+const TalentPage = lazy(() => import("./home/miniHomePage/TalentPage"))
 const ReservationsChois = lazy(() => import("./home/miniHomePage/ReservationsChois"))
 
 // Loading component
@@ -68,6 +69,7 @@ function App() {
             <Route path="/espaces" element={<Espaces />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/reservations" element={<ReservationsChois />} />
+            <Route path="/talent" element={<TalentPage />} />
           </Route>
 
           {/* Auth routes */}
