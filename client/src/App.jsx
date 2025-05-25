@@ -152,6 +152,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* Route des commentaires temporairement désactivée
           <Route
             path="/dashboard/commentaires"
             element={
@@ -160,6 +161,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          */}
           <Route
             path="/dashboard/reports"
             element={

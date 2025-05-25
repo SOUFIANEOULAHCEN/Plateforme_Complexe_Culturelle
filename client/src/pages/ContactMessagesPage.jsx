@@ -60,7 +60,7 @@ export default function ContactMessagesPage() {
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto">
+      <div className="max-w-full mx-auto">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-[oklch(0.145_0_0)]">Messages de contact</h1>
