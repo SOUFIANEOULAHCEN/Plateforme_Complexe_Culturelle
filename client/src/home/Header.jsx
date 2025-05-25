@@ -116,27 +116,36 @@ export default function Header() {
             </button>
 
             {isCcoDropdownOpen && (
-              <div className="absolute left-0 mt-2 w-56 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                <div className="py-1">
+              <div className="absolute left-0 mt-2 w-64 origin-top-right bg-white rounded-xl shadow-2xl ring-1 ring-[#824B26]/10 focus:outline-none z-50 transform transition-all duration-200 ease-out backdrop-blur-sm">
+                <div className="py-2">
                   <Link
                     to="/cco"
-                    className="block px-4 py-2 text-sm text-[#824B26] hover:bg-[#F8F1E9]"
+                    className="flex items-center px-4 py-3 text-sm text-[#824B26] hover:bg-[#F8F1E9] transition-all duration-200 group/item"
                     onClick={() => setIsCcoDropdownOpen(false)}
                   >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-[#824B26]/70 group-hover/item:text-[#824B26] transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                     {t("about_us")}
                   </Link>
                   <Link
                     to="/espaces"
-                    className="block px-4 py-2 text-sm text-[#824B26] hover:bg-[#F8F1E9]"
+                    className="flex items-center px-4 py-3 text-sm text-[#824B26] hover:bg-[#F8F1E9] transition-all duration-200 group/item"
                     onClick={() => setIsCcoDropdownOpen(false)}
                   >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-[#824B26]/70 group-hover/item:text-[#824B26] transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
                     {t("spaces")}
                   </Link>
                   <Link
                     to="/bibliotheque"
-                    className="block px-4 py-2 text-sm text-[#824B26] hover:bg-[#F8F1E9]"
+                    className="flex items-center px-4 py-3 text-sm text-[#824B26] hover:bg-[#F8F1E9] transition-all duration-200 group/item"
                     onClick={() => setIsCcoDropdownOpen(false)}
                   >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-[#824B26]/70 group-hover/item:text-[#824B26] transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
                     {t("library")}
                   </Link>
                 </div>
@@ -223,26 +232,35 @@ export default function Header() {
               </button>
 
               {isCcoDropdownOpen && (
-                <div className="pl-6 mt-1 space-y-1">
+                <div className="pl-6 mt-1 space-y-1 bg-[#F8F1E9]/50 rounded-xl py-2 backdrop-blur-sm">
                   <Link
                     to="/cco"
-                    className="block py-2 text-sm hover:text-[#6e3d20]"
+                    className="flex items-center py-2 text-sm hover:text-[#6e3d20] transition-all duration-200 group/item"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-[#824B26]/70 group-hover/item:text-[#824B26] transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                     {t("about_us")}
                   </Link>
                   <Link
                     to="/espaces"
-                    className="block py-2 text-sm hover:text-[#6e3d20]"
+                    className="flex items-center py-2 text-sm hover:text-[#6e3d20] transition-all duration-200 group/item"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-[#824B26]/70 group-hover/item:text-[#824B26] transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
                     {t("spaces")}
                   </Link>
                   <Link
                     to="/bibliotheque"
-                    className="block py-2 text-sm hover:text-[#6e3d20]"
+                    className="flex items-center py-2 text-sm hover:text-[#6e3d20] transition-all duration-200 group/item"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-[#824B26]/70 group-hover/item:text-[#824B26] transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
                     {t("library")}
                   </Link>
                 </div>

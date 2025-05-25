@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
 import api from "../api";
 import Toast from "./Toast";
@@ -8,6 +9,7 @@ import Cookies from "js-cookie";
 import AuthForms from "../pages/AuthForms";
 
 export default function ReservationModal({ isOpen, onClose, onSuccess, type = "evenement" }) {
+  const { t } = useTranslation();
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,11 +24,11 @@ export default function ReservationModal({ isOpen, onClose, onSuccess, type = "e
 
   const handleEmailSubmit = async () => {
     if (!email) {
-      setError("Veuillez entrer votre adresse email");
+      setError(t("reservation_modal_email_required"));
       return;
     }
     if (!/^\S+@\S+\.\S+$/.test(email)) {
-      setError("Veuillez entrer une adresse email valide");
+      setError(t("reservation_modal_email_invalid"));
       return;
     }
     setLoading(true);
@@ -35,19 +37,19 @@ export default function ReservationModal({ isOpen, onClose, onSuccess, type = "e
       const response = await api.get(`/utilisateurs/check-email?email=${encodeURIComponent(email)}`);
       if (response.data.exists) {
         Cookies.set("userEmail", email, { secure: true, sameSite: "strict", expires: 1 });
-        setToast({ message: "Vous pouvez maintenant réserver", type: "success" });
+        setToast({ message: t("reservation_modal_reservation_success"), type: "success" });
         setTimeout(() => {
           onSuccess();
         }, 1000);
       } else {
         setPendingEmail(email);
         setShowAuthModal(true);
-        setError("Vous devez créer un compte avant de pouvoir réserver");
+        setError(t("reservation_modal_auth_required"));
       }
     } catch (error) {
       console.error("Erreur lors de la vérification de l'email:", error);
-      setToast({ message: "Une erreur est survenue lors de la vérification de l'email", type: "error" });
-      setError("Une erreur est survenue. Veuillez réessayer.");
+      setToast({ message: t("reservation_modal_email_error"), type: "error" });
+      setError(t("reservation_modal_email_error"));
     } finally {
       setLoading(false);
     }
@@ -57,7 +59,7 @@ export default function ReservationModal({ isOpen, onClose, onSuccess, type = "e
     if (pendingEmail) {
       Cookies.set("userEmail", pendingEmail, { secure: true, sameSite: "strict", expires: 1 });
       setShowAuthModal(false);
-      setToast({ message: "Inscription réussie. Vous pouvez maintenant réserver.", type: "success" });
+      setToast({ message: t("reservation_modal_auth_success"), type: "success" });
       setTimeout(() => {
         onSuccess();
       }, 1000);
@@ -76,21 +78,21 @@ export default function ReservationModal({ isOpen, onClose, onSuccess, type = "e
       <Modal
         isOpen={isOpen}
         onClose={handleClose}
-        title={type === "evenement" ? "Création d'événement" : "Réservation d'espace"}
+        title={type === "evenement" ? t("reservation_modal_title") : t("reservation_modal_space_title")}
         footer={
           <div className="flex justify-end space-x-3">
             <button
               onClick={handleClose}
               className="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300"
             >
-              Fermer
+              {t("reservation_modal_close")}
             </button>
             {!acceptedTerms ? (
               <button
                 onClick={handleAcceptTerms}
                 className="bg-[#824B26] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#6e3d20] transition duration-300"
               >
-                J'accepte les conditions
+                {t("reservation_modal_accept_terms")}
               </button>
             ) : (
               <button
@@ -98,7 +100,7 @@ export default function ReservationModal({ isOpen, onClose, onSuccess, type = "e
                 disabled={loading || !email}
                 className="bg-[#824B26] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#6e3d20] transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? "Vérification..." : "Continuer"}
+                {loading ? t("reservation_modal_verifying") : t("reservation_modal_continue")}
               </button>
             )}
           </div>
@@ -107,13 +109,13 @@ export default function ReservationModal({ isOpen, onClose, onSuccess, type = "e
         <div className="space-y-6 text-[#333333]">
           {acceptedTerms && (
             <div className="mb-6 border-b pb-6 border-gray-200">
-              <h3 className="text-lg font-semibold mb-4 text-[#824B26]">Veuillez entrer votre email pour continuer</h3>
+              <h3 className="text-lg font-semibold mb-4 text-[#824B26]">{t("reservation_modal_email_title")}</h3>
               <div className="space-y-2">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Votre adresse email"
+                  placeholder={t("reservation_modal_email_placeholder")}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
                   required
                 />
@@ -122,29 +124,29 @@ export default function ReservationModal({ isOpen, onClose, onSuccess, type = "e
             </div>
           )}
           <div>
-            <h3 className="text-lg font-semibold mb-2 text-[#824B26]">Termes et conditions</h3>
+            <h3 className="text-lg font-semibold mb-2 text-[#824B26]">{t("reservation_modal_terms_title")}</h3>
             <p className="mb-4">
-              Bienvenue sur notre plateforme de réservation d'espaces et de création d'événements. Veuillez lire attentivement les conditions suivantes avant de procéder.
+              {t("reservation_modal_welcome")}
             </p>
           </div>
           <div>
-            <h4 className="font-medium mb-2 text-[#824B26]">Réservation d'espaces</h4>
+            <h4 className="font-medium mb-2 text-[#824B26]">{t("reservation_modal_space_conditions")}</h4>
             <ul className="list-disc pl-5 space-y-2">
-              <li>Les réservations sont soumises à disponibilité et doivent être effectuées au moins 48 heures à l'avance.</li>
-              <li>Un acompte de 30% est requis pour confirmer votre réservation.</li>
-              <li>L'annulation est possible jusqu'à 24 heures avant la date réservée avec remboursement partiel.</li>
-              <li>Les espaces doivent être rendus dans l'état où ils ont été trouvés.</li>
-              <li>Tout dommage causé aux installations sera facturé.</li>
+              <li>{t("reservation_terms_space_1")}</li>
+              <li>{t("reservation_terms_space_2")}</li>
+              <li>{t("reservation_terms_space_3")}</li>
+              <li>{t("reservation_terms_space_4")}</li>
+              <li>{t("reservation_terms_space_5")}</li>
             </ul>
           </div>
           <div>
-            <h4 className="font-medium mb-2 text-[#824B26]">Création d'événements</h4>
+            <h4 className="font-medium mb-2 text-[#824B26]">{t("reservation_modal_event_conditions")}</h4>
             <ul className="list-disc pl-5 space-y-2">
-              <li>Les propositions d'événements doivent être soumises au moins 2 semaines avant la date prévue.</li>
-              <li>Chaque proposition sera examinée par notre équipe dans un délai de 72 heures.</li>
-              <li>Nous nous réservons le droit de refuser tout événement qui ne correspond pas à nos valeurs.</li>
-              <li>L'organisateur est responsable de l'obtention de toutes les autorisations nécessaires.</li>
-              <li>Un contrat détaillé sera établi pour chaque événement approuvé.</li>
+              <li>{t("reservation_terms_event_1")}</li>
+              <li>{t("reservation_terms_event_2")}</li>
+              <li>{t("reservation_terms_event_3")}</li>
+              <li>{t("reservation_terms_event_4")}</li>
+              <li>{t("reservation_terms_event_5")}</li>
             </ul>
           </div>
         </div>

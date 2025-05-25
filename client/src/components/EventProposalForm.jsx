@@ -1,10 +1,14 @@
+"use client";
+
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
 import api from "../api";
 import Toast from "./Toast";
 import Cookies from "js-cookie";
 
 export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     titre: "",
     description: "",
@@ -33,9 +37,9 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         .catch((error) => {
           setEspaces([]);
           if (error.response && error.response.status === 401) {
-            showToast("Vous devez être connecté pour proposer un événement.", "error");
+            showToast(t("event_proposal_error_connection"), "error");
           } else {
-            showToast("Erreur lors du chargement des espaces.", "error");
+            showToast(t("event_proposal_error_loading"), "error");
           }
         });
       
@@ -45,7 +49,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         setForm(prev => ({...prev, proposeur_email: email }));
       }
     }
-  }, [isOpen]);
+  }, [isOpen, t]);
 
   // Utiliser un useEffect pour gérer la fermeture après succès
   useEffect(() => {
@@ -81,17 +85,17 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
     const missingFields = requiredFields.filter(field => !form[field]);
     
     if (missingFields.length > 0) {
-      showToast(`Veuillez remplir les champs obligatoires: ${missingFields.join(', ')}`, "error");
+      showToast(t("event_proposal_error_missing", { fields: missingFields.join(', ') }), "error");
       return false;
     }
     
     if (new Date(form.date_debut) >= new Date(form.date_fin)) {
-      showToast("La date de fin doit être après la date de début", "error");
+      showToast(t("event_proposal_error_date"), "error");
       return false;
     }
     
     if (!form.proposeur_email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      showToast("Veuillez entrer une adresse email valide", "error");
+      showToast(t("event_proposal_error_email"), "error");
       return false;
     }
     
@@ -115,12 +119,12 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         }
       });
       
-      await api.post("/event-proposals", formData, { 
+      const response = await api.post("/event-proposals", formData, { 
         headers: { 'Content-Type': 'multipart/form-data' } 
       });
       
       // Afficher le toast de succès
-      showToast("Proposition envoyée avec succès", "success", 5000);
+      showToast(t("event_proposal_success"), "success", 5000);
       
       // Réinitialiser le formulaire après succès
       setForm({
@@ -144,11 +148,11 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
       // La fermeture sera gérée par le useEffect
       
     } catch (error) {
-      let errorMessage = "Une erreur est survenue, veuillez réessayer";
+      let errorMessage = t("event_proposal_error_generic");
       
       if (error.response) {
         if (error.response.status === 401) {
-          errorMessage = "Vous devez être connecté pour proposer un événement";
+          errorMessage = t("event_proposal_error_connection");
         } else if (error.response.data && error.response.data.message) {
           errorMessage = error.response.data.message;
         }
@@ -192,28 +196,28 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
       <Modal
         isOpen={modalVisible && isOpen}
         onClose={handleModalClose}
-        title="Proposer un événement culturel"
+        title={t("event_proposal_title")}
         footer={
           <div className="flex justify-end space-x-3">
             <button
               onClick={handleModalClose}
               className="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300"
             >
-              Annuler
+              {t("event_proposal_cancel")}
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="bg-[#824B26] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#6e3d20] transition duration-300 disabled:opacity-50"
+              className="bg-[#824B26] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#6e3d20] transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Envoi..." : "Envoyer"}
+              {loading ? t("event_proposal_submitting") : t("event_proposal_submit")}
             </button>
           </div>
         }
       >
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="block mb-1 text-sm font-medium text-[#824B26]">Titre de l'événement</label>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">{t("event_proposal_title_label")}</label>
             <input
               type="text"
               name="titre"
@@ -224,7 +228,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
             />
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium text-[#824B26]">Description</label>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">{t("event_proposal_description_label")}</label>
             <textarea
               name="description"
               value={form.description}
@@ -235,7 +239,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block mb-1 text-sm font-medium text-[#824B26]">Date de début</label>
+              <label className="block mb-1 text-sm font-medium text-[#824B26]">{t("event_proposal_start_date")}</label>
               <input
                 type="datetime-local"
                 name="date_debut"
@@ -247,7 +251,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
               />
             </div>
             <div>
-              <label className="block mb-1 text-sm font-medium text-[#824B26]">Date de fin</label>
+              <label className="block mb-1 text-sm font-medium text-[#824B26]">{t("event_proposal_end_date")}</label>
               <input
                 type="datetime-local"
                 name="date_fin"
@@ -260,7 +264,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
             </div>
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium text-[#824B26]">Espace</label>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">{t("event_proposal_space")}</label>
             <select
               name="espace_id"
               value={form.espace_id}
@@ -268,29 +272,29 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
             >
-              <option value="">Sélectionner un espace</option>
+              <option value="">{t("event_proposal_select_space")}</option>
               {espaces.map(espace => (
                 <option key={espace.id} value={espace.id}>{espace.nom}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium text-[#824B26]">Type d'événement</label>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">{t("event_proposal_type")}</label>
             <select
               name="type"
               value={form.type}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#824B26]"
             >
-              <option value="spectacle">Spectacle</option>
-              <option value="atelier">Atelier</option>
-              <option value="conference">Conférence</option>
-              <option value="exposition">Exposition</option>
-              <option value="rencontre">Rencontre</option>
+              <option value="spectacle">{t("event_proposal_type_show")}</option>
+              <option value="atelier">{t("event_proposal_type_workshop")}</option>
+              <option value="conference">{t("event_proposal_type_conference")}</option>
+              <option value="exposition">{t("event_proposal_type_exhibition")}</option>
+              <option value="rencontre">{t("event_proposal_type_meeting")}</option>
             </select>
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium text-[#824B26]">Affiche de l'événement (optionnel)</label>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">{t("event_proposal_poster")}</label>
             <input
               type="file"
               name="affiche"
@@ -301,7 +305,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block mb-1 text-sm font-medium text-[#824B26]">Nom du proposeur</label>
+              <label className="block mb-1 text-sm font-medium text-[#824B26]">{t("event_proposal_organizer_name")}</label>
               <input
                 type="text"
                 name="proposeur_nom"
@@ -312,7 +316,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
               />
             </div>
             <div>
-              <label className="block mb-1 text-sm font-medium text-[#824B26]">Email du proposeur</label>
+              <label className="block mb-1 text-sm font-medium text-[#824B26]">{t("event_proposal_organizer_email")}</label>
               <input
                 type="email"
                 name="proposeur_email"
@@ -324,7 +328,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
             </div>
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium text-[#824B26]">Téléphone du proposeur</label>
+            <label className="block mb-1 text-sm font-medium text-[#824B26]">{t("event_proposal_organizer_phone")}</label>
             <input
               type="text"
               name="proposeur_telephone"

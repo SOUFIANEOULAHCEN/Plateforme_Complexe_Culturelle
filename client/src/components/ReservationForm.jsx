@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
 import api from "../api";
 import Toast from "./Toast";
@@ -13,6 +14,7 @@ export default function ReservationForm({
   onSuccess,
   type = "evenement"
 }) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
@@ -35,6 +37,7 @@ export default function ReservationForm({
     type_reservation: type
   });
   const [espaces, setEspaces] = useState([]);
+  const [error, setError] = useState("");
 
   // Gérer la fermeture après succès
   useEffect(() => {
@@ -115,7 +118,7 @@ export default function ReservationForm({
     } catch (error) {
       console.error("Error fetching espaces:", error);
       setToast({
-        message: "Erreur lors de la récupération des espaces",
+        message: t("reservation_form_error_loading_spaces"),
         type: "error",
       });
     }
@@ -137,7 +140,7 @@ export default function ReservationForm({
 
     if (joursAvantReservation < 15) {
       setToast({
-        message: "La réservation doit être faite au moins 15 jours à l'avance",
+        message: t("reservation_form_error_date"),
         type: "error"
       });
       return false;
@@ -145,7 +148,7 @@ export default function ReservationForm({
 
     if (!formReservation.titre || !formReservation.date_debut || !formReservation.date_fin || !formReservation.espace_id) {
       setToast({
-        message: "Veuillez remplir tous les champs obligatoires",
+        message: t("reservation_form_error_required_fields"),
         type: "error"
       });
       return false;
@@ -158,6 +161,7 @@ export default function ReservationForm({
     e.preventDefault();
     setSaving(true);
     setToast(null);
+    setError("");
 
     if (!validateReservation()) {
       setSaving(false);
@@ -167,12 +171,7 @@ export default function ReservationForm({
     try {
       const userId = await getUserId();
       if (!userId) {
-        setToast({
-          message: "Vous devez être connecté pour faire une réservation",
-          type: "error"
-        });
-        setSaving(false);
-        return;
+        throw new Error(t("reservation_form_error_no_user"));
       }
 
       const payload = {
@@ -188,15 +187,16 @@ export default function ReservationForm({
       }
       
       // Afficher le toast de succès et marquer comme soumis
-      setToast({ message: "Réservation enregistrée avec succès", type: "success" });
+      setToast({ message: t("reservation_form_success"), type: "success" });
       setFormSubmitted(true);
       
       // NE PAS fermer le modal immédiatement, laisser le toast s'afficher
       // Le useEffect s'occupera de fermer le modal après que le toast soit fermé
     } catch (error) {
       console.error("Error saving reservation:", error);
+      setError(error.response?.data?.message || t("reservation_form_error_generic"));
       setToast({
-        message: error.response?.data?.message || "Erreur lors de l'enregistrement de la réservation",
+        message: error.response?.data?.message || t("reservation_form_error_generic"),
         type: "error"
       });
     } finally {
@@ -236,7 +236,7 @@ export default function ReservationForm({
       <Modal
         isOpen={modalVisible && isOpen}
         onClose={handleModalClose}
-        title={reservation ? "Modifier la réservation" : `Nouvelle réservation - ${type === "evenement" ? "Événement" : "Espace"}`}
+        title={reservation ? t("reservation_form_edit_title") : t("reservation_form_title")}
         footer={
           <>
             <button
@@ -244,14 +244,14 @@ export default function ReservationForm({
               className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
               disabled={saving}
             >
-              Annuler
+              {t("reservation_form_cancel")}
             </button>
             <button
               onClick={handleSubmit}
               className="px-4 py-2 bg-[oklch(47.3%_0.137_46.201)] text-white rounded-lg hover:bg-[oklch(50%_0.137_46.201)] disabled:opacity-50"
               disabled={saving}
             >
-              {saving ? "Enregistrement..." : "Enregistrer"}
+              {saving ? t("reservation_form_saving") : t("reservation_form_save")}
             </button>
           </>
         }
@@ -261,10 +261,14 @@ export default function ReservationForm({
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[oklch(47.3%_0.137_46.201)]"></div>
           </div>
         ) : (
-          <form className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="text-red-500 text-sm">{error}</div>
+            )}
+
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Titre *
+                {t("reservation_form_title_label")} *
               </label>
               <input
                 type="text"
@@ -278,7 +282,7 @@ export default function ReservationForm({
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Description
+                {t("reservation_form_description")}
               </label>
               <textarea
                 name="description"
@@ -290,7 +294,7 @@ export default function ReservationForm({
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Type d'organisateur *
+                {t("reservation_form_organizer_type")} *
               </label>
               <select
                 name="type_organisateur"
@@ -299,15 +303,15 @@ export default function ReservationForm({
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
                 required
               >
-                <option value="individu">Individu</option>
-                <option value="association">Association</option>
-                <option value="entreprise">Entreprise</option>
+                <option value="individu">{t("reservation_form_organizer_type_individual")}</option>
+                <option value="association">{t("reservation_form_organizer_type_association")}</option>
+                <option value="entreprise">{t("reservation_form_organizer_type_company")}</option>
               </select>
             </div>
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Date de début *
+                {t("reservation_form_start_date")} *
               </label>
               <input
                 type="datetime-local"
@@ -319,13 +323,13 @@ export default function ReservationForm({
                 required
               />
               <p className="text-sm text-gray-500 mt-1">
-                La réservation doit être faite au moins 15 jours à l'avance
+                {t("reservation_form_min_days_notice")}
               </p>
             </div>
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Date de fin *
+                {t("reservation_form_end_date")} *
               </label>
               <input
                 type="datetime-local"
@@ -340,7 +344,7 @@ export default function ReservationForm({
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Espace *
+                {t("reservation_form_space")} *
               </label>
               <select
                 name="espace_id"
@@ -349,7 +353,7 @@ export default function ReservationForm({
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)]"
                 required
               >
-                <option value="">Sélectionnez un espace</option>
+                <option value="">{t("reservation_form_select_space")}</option>
                 {espaces.map((espace) => (
                   <option key={espace.id} value={espace.id}>
                     {espace.nom}
@@ -360,7 +364,7 @@ export default function ReservationForm({
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Nombre de places *
+                {t("reservation_form_places")} *
               </label>
               <input
                 type="number"
@@ -375,30 +379,30 @@ export default function ReservationForm({
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Matériel additionnel
+                {t("reservation_form_additional_equipment")}
               </label>
               <textarea
                 name="materiel_additionnel"
                 value={formReservation.materiel_additionnel}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] h-20"
-                placeholder="Décrivez le matériel dont vous avez besoin..."
+                placeholder={t("reservation_form_additional_equipment_placeholder")}
               />
               <p className="text-sm text-gray-500 mt-1">
-                Le matériel supplémentaire peut être payant
+                {t("reservation_form_additional_equipment_notice")}
               </p>
             </div>
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
-                Commentaires
+                {t("reservation_form_comments")}
               </label>
               <textarea
                 name="commentaires"
                 value={formReservation.commentaires}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] h-20"
-                placeholder="Ajoutez des commentaires supplémentaires..."
+                placeholder={t("reservation_form_comments_placeholder")}
               />
             </div>
           </form>
