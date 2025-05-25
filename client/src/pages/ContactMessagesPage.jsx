@@ -59,7 +59,7 @@ export default function ContactMessagesPage() {
   };
 
   return (
-    <DashboardLayout>
+    <DashboardLayout> 
       <div className="max-w-full mx-auto">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>

@@ -70,7 +70,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
 // POST /api/utilisateurs - Créer un nouvel utilisateur
 router.post("/", verifyToken, async (req, res) => {
   try {
-    const { nom, prenom, email, password, role, is_talent } = req.body;
+    const { nom, prenom, email, password, role, is_talent, domaine_artiste, description_talent } = req.body;
     
     // Vérifier si l'email existe déjà
     const existingUser = await Utilisateur.findOne({ where: { email } });
@@ -85,7 +85,9 @@ router.post("/", verifyToken, async (req, res) => {
       email,
       password, // Note: Assurez-vous que le modèle hash le mot de passe
       role: role || 'user', // Valeur par défaut si non spécifiée
-      is_talent: is_talent || false
+      is_talent: is_talent || false,
+      domaine_artiste,
+      description_talent
     });
 
     // Ne pas renvoyer le mot de passe dans la réponse
