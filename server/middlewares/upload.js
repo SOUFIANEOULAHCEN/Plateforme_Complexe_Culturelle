@@ -12,7 +12,7 @@ const __dirname = dirname(__filename);
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let uploadPath;
-      // Déterminer le dossier de destination en fonction du type de fichier
+    // Déterminer le dossier de destination en fonction du type de fichier
     const destPath = file.fieldname === 'image_profil' ? 'profiles' : 'EventAffiche';
     uploadPath = path.join(__dirname, '../public/uploads', destPath);
     
@@ -52,4 +52,20 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
+// Middleware pour gérer les erreurs de Multer
+const handleMulterError = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json({
+        message: "Le fichier est trop volumineux. La taille maximale autorisée est de 5MB."
+      });
+    }
+    return res.status(400).json({
+      message: "Erreur lors du téléchargement du fichier: " + err.message
+    });
+  }
+  next(err);
+};
+
+export { upload, handleMulterError };
 export default upload;
