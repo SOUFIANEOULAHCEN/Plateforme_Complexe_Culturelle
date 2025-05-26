@@ -28,17 +28,21 @@ export default function ReportsChart() {
             {
               data: orderedValues,
               backgroundColor: [
-                "#36A2EB", // Utilisateurs
-                "#FF6384", // Admins
-                "#4BC0C0", // Super Admins
-                "#FFCE56", // Talents
+                '#667EEA', // Bleu violet pour Utilisateurs
+                '#F17C66', // Orange corail pour Admins
+                '#4FD1C5', // Turquoise pour Super Admins
+                '#FEB2B2', // Rose pâle pour Talents
               ],
+              borderColor: '#ffffff', // Bordure blanche pour un meilleur contraste
+              borderWidth: 2,
               hoverBackgroundColor: [
-                "#36A2EB",
-                "#FF6384",
-                "#4BC0C0",
-                "#FFCE56",
+                '#5A67D8',
+                '#E56250',
+                '#48C7B8',
+                '#FBD38D',
               ],
+              hoverBorderColor: '#ffffff',
+              hoverBorderWidth: 2,
             },
           ],
         });
@@ -50,13 +54,12 @@ export default function ReportsChart() {
           datasets: [
             {
               data: [120, 5, 2, 18],
-              backgroundColor: ["#36A2EB", "#FF6384", "#FFCE56", "#4BC0C0"],
-              hoverBackgroundColor: [
-                "#36A2EB",
-                "#FF6384",
-                "#FFCE56",
-                "#4BC0C0",
-              ],
+              backgroundColor: ['#667EEA', '#F17C66', '#4FD1C5', '#FEB2B2'],
+              borderColor: '#ffffff',
+              borderWidth: 2,
+              hoverBackgroundColor: ['#5A67D8', '#E56250', '#48C7B8', '#FBD38D'],
+              hoverBorderColor: '#ffffff',
+              hoverBorderWidth: 2,
             },
           ],
         });
@@ -96,6 +99,11 @@ export default function ReportsChart() {
             plugins: {
               legend: {
                 position: "right",
+                labels: {
+                  font: {
+                    size: 14 // Augmenter la taille de la police de la légende
+                  }
+                }
               },
               tooltip: {
                 callbacks: {
@@ -110,8 +118,15 @@ export default function ReportsChart() {
                     return `${label}: ${value} (${percentage}%)`;
                   },
                 },
+                bodyFont: { // Augmenter la taille de la police du tooltip
+                  size: 14
+                }
               },
             },
+            animation: { // Ajouter des animations
+              animateRotate: true,
+              animateScale: true
+            }
           }}
         />
       </div>

@@ -16,6 +16,7 @@ const resources = {
       contact: 'Contact',
       login: 'Connexion',
       reserve: 'Réserver',
+      about_us: 'À propos de nous',
 
       // Hero Section
       hero_title: 'Complexe Culturel OUARZAZATE',
@@ -394,6 +395,7 @@ const resources = {
       contact: 'اتصل بنا',
       login: 'تسجيل الدخول',
       reserve: 'حجز',
+      about_us: 'من نحن',
 
       // Hero Section
       hero_title: 'المجمع الثقافي ورزازات',

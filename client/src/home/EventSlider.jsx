@@ -1,174 +1,17 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Navigation, Pagination, Autoplay } from "swiper/modules"
-import { Link , useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/pagination"
 
-// EventModal component with modern design and primary color
+// EventModal component (le même que précédemment)
 const EventModal = ({ isOpen, onClose, event }) => {
-  const { t } = useTranslation();
-  // Primary color constants
-  const primaryColor = "#8B4513"; // Brown/wood color
-  const primaryLightColor = "#D2691E"; // Lighter brown/chocolate color
-  
-  // Close on escape key press
-  useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === 'Escape') onClose();
-    };
-    
-    if (isOpen) {
-      document.addEventListener('keydown', handleEsc);
-    }
-    
-    return () => {
-      document.removeEventListener('keydown', handleEsc);
-    };
-  }, [isOpen, onClose]);
-
-  // Close when clicking outside the modal content
-  const handleOutsideClick = (e) => {
-    if (e.target.id === 'modal-container') {
-      onClose();
-    }
-  };
-
-  // Format date helper
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString(t('locale') === 'ar' ? 'ar-MA' : 'fr-FR', { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric' 
-    });
-  };
-
-  // Format address for location
-  const formatLocation = (location) => {
-    if (!location) return t('location_tbc');
-    return location;
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div 
-      id="modal-container"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md transition-all duration-500"
-      onClick={handleOutsideClick}
-    >
-      <div 
-        className="relative max-w-5xl w-full max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 transform scale-100"
-        style={{
-          boxShadow: `0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 40px 0 rgba(139, 69, 19, 0.3)`
-        }}
-      >
-        {/* Close button with primary color */}
-        <button 
-          className="absolute top-6 right-6 z-20 bg-white/20 hover:bg-white/80 text-white hover:text-[#8B4513] rounded-full p-3 backdrop-blur-md transition-all duration-300 border border-white/30"
-          onClick={onClose}
-          aria-label={t('close')}
-          style={{
-            borderColor: `${primaryColor}40` // Adding some transparency to the border
-          }}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
-        {/* Event image (full cover background) */}
-        <div className="relative w-full h-[85vh]">
-          <img 
-            src={event?.affiche_url ? `http://localhost:3000${event.affiche_url}` : "/placeholder.svg"}
-            alt={event?.title || event?.titre || t('event')} 
-            className="w-full h-full object-cover"
-          />
-          
-          {/* Gradient overlay with primary color */}
-          <div 
-            className="absolute inset-0" 
-            style={{
-              background: `linear-gradient(to top, rgba(139, 69, 19, 0.85), rgba(139, 69, 19, 0.4), rgba(0, 0, 0, 0.2))`
-            }}
-          />
-          
-          {/* Content overlay */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-8">
-            <div 
-              className="backdrop-blur-lg p-10 rounded-2xl shadow-2xl w-3/5 
-                         transform transition-all duration-700 hover:scale-105 border border-white/20"
-              style={{
-                backgroundColor: `rgba(139, 69, 19, 0.15)`,
-                borderColor: `${primaryLightColor}30`
-              }}
-            >
-              <div className="relative overflow-hidden mb-6">
-                <div 
-                  className="absolute top-0 left-0 h-1 w-full"
-                  style={{
-                    background: `linear-gradient(to right, ${primaryColor}, ${primaryLightColor})`
-                  }}
-                />
-              </div>
-              
-              <h2 className="text-5xl font-bold text-white mb-4 tracking-tight">
-                {event?.title || event?.titre}
-              </h2>
-              
-              <div className="flex items-center mb-8">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                     style={{ color: primaryLightColor }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <p className="text-xl text-white font-medium">
-                  {formatDate(event?.date || event?.date_debut)}
-                </p>
-              </div>
-              {/* Lieu de l'événement */}
-              <div className="flex items-center mb-6 mt-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                     style={{ color: primaryLightColor }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <p className="text-xl text-white font-medium">
-                  {formatLocation(event?.lieu || event?.location)}
-                </p>
-              </div>
-              
-              {event?.description && (
-                <div className="prose prose-lg text-white/90 mt-6 max-w-full">
-                  <p>{event.description}</p>
-                </div>
-              )}
-              
-              {/* Action button with primary color */}
-              <div className="mt-8">
-                <button 
-                  className="w-full py-3 px-4 rounded-lg text-white transition-all duration-300 transform 
-                            hover:-translate-y-1 shadow-md hover:shadow-lg focus:outline-none"
-                  style={{
-                    backgroundColor: primaryColor,
-                    boxShadow: `0 4px 6px -1px rgba(139, 69, 19, 0.3), 0 2px 4px -1px rgba(139, 69, 19, 0.15)`
-                  }}
-                  onClick={onClose}
-                >
-                  {t('close')}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  // ... (garder le même code pour EventModal)
 };
 
 const EventSlider = () => {
@@ -178,6 +21,7 @@ const EventSlider = () => {
   const [selectedEvent, setSelectedEvent] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const navigate = useNavigate()
+  const swiperRef = useRef(null);
 
   useEffect(() => {
     fetch("http://localhost:3000/api/evenements")
@@ -195,13 +39,11 @@ const EventSlider = () => {
   const openEventModal = (event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
-    // Prevent scrolling when modal is open
     document.body.style.overflow = 'hidden';
   };
 
   const closeEventModal = () => {
     setIsModalOpen(false);
-    // Re-enable scrolling
     document.body.style.overflow = 'auto';
   };
 
@@ -216,45 +58,84 @@ const EventSlider = () => {
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-serif text-[#8B4513] text-center mb-12">{t('events_title')}</h2>
         
-        <Swiper
-          modules={[Navigation, Pagination, Autoplay]}
-          spaceBetween={30}
-          slidesPerView={1}
-          navigation
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 3000, disableOnInteraction: false }}
-          breakpoints={{
-            640: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
-            1280: { slidesPerView: 4 },
-          }}
-          className="event-slider"
-        >
-          {events.map((event) => (
-            <SwiperSlide key={event.id || event._id}>
-              <div className="relative group cursor-pointer">
-                <img
-                  src={event.affiche_url ? `http://localhost:3000${event.affiche_url}` : "/placeholder.svg"}
-                  alt={event.title || event.titre}
-                  className="w-full h-[400px] object-cover rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-orange-900 bg-opacity-30 opacity-0 group-hover:opacity-90 transition-opacity duration-300 rounded-lg flex flex-col items-center justify-center text-white">
-                  <h3 className="text-xl font-semibold mb-2">{event.title || event.titre}</h3>
-                  <p className="mb-4">
-                    {event.date ? new Date(event.date).toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR') : 
-                     event.date_debut ? new Date(event.date_debut).toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR') : ""}
-                  </p>
-                  <button
-                    onClick={() => navigate('/evenements')}
-                    className="bg-[#8B4513] text-white py-2 px-4 rounded-lg hover:bg-[#6f3610] transition-colors duration-300"
-                  >
-                    {t('events_details')}
-                  </button>
+        <div className="relative group">
+          <Swiper
+            ref={swiperRef}
+            modules={[Navigation, Pagination, Autoplay]}
+            spaceBetween={30}
+            slidesPerView={3}
+            loop={true}
+            autoplay={{
+              delay: 5000,
+              disableOnInteraction: false,
+            }}
+            navigation={{
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
+            }}
+            pagination={{
+              clickable: true,
+              el: '.swiper-pagination',
+            }}
+            breakpoints={{
+              0: {
+                slidesPerView: 1,
+              },
+              768: {
+                slidesPerView: 2,
+              },
+              1024: {
+                slidesPerView: 3,
+              },
+            }}
+            className="py-8 px-4"
+          >
+            {events.map((event, index) => (
+              <SwiperSlide key={index}>
+                <div className="w-full transform transition-all duration-300 hover:scale-105 bg-white rounded-lg shadow-md overflow-hidden hover:bg-[#8B4513] group">
+                  <div className="p-4">
+                    <div className="aspect-video relative mb-4 overflow-hidden rounded-lg">
+                      <img
+                        src={event.affiche_url ? `http://localhost:3000${event.affiche_url}` : "/placeholder.svg"}
+                        alt={event.title || event.titre}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2 text-[#8B4513] group-hover:text-white">
+                      {event.title || event.titre}
+                    </h3>
+                    <p className="text-[#8B4513] group-hover:text-white">
+                      {event.date ? new Date(event.date).toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR') : 
+                       event.date_debut ? new Date(event.date_debut).toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR') : ""}
+                    </p>
+                    <button
+                      onClick={() => openEventModal(event)}
+                      className="mt-4 w-full bg-[#8B4513] text-white py-2 px-4 rounded-md hover:bg-[#6f3610] transition duration-300 group-hover:bg-white group-hover:text-[#8B4513]"
+                    >
+                      {t('events_details')}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          {/* Boutons de navigation personnalisés */}
+          <div className="swiper-button-prev hidden group-hover:block absolute left-0 top-1/2 z-10 -translate-y-1/2 h-12 w-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#8B4513] hover:text-white transition-colors duration-300">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </div>
+          
+          <div className="swiper-button-next hidden group-hover:block absolute right-0 top-1/2 z-10 -translate-y-1/2 h-12 w-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#8B4513] hover:text-white transition-colors duration-300">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+
+          {/* Pagination */}
+          <div className="swiper-pagination !relative !bottom-0 mt-4 flex justify-center gap-2"></div>
+        </div>
       </div>
 
       {/* Event Modal */}

@@ -25,7 +25,7 @@ export const getSummaryData = async (req, res) => {
     }
 
     // Logique normale pour les autres données
-    const reservations = await Reservation.count();
+    const reservations = await Reservation.count({ where: { statut: "confirme" } });
     const events = await Evenement.count();
     const users = await Utilisateur.count();
     const comments = await Commentaire.count();
@@ -139,6 +139,7 @@ export const getDashboardStats = async (req, res) => {
       monthlyData,
       totalEvents: allEvents,
       totalReservations: allReservations,
+      confirmedReservations: allReservations
     });
   } catch (error) {
     console.error("Error fetching dashboard stats:", error);

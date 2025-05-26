@@ -10,10 +10,10 @@ import { verifyToken, isSuperAdmin } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', verifyToken, getReservations);
+router.get('/', getReservations);
 router.put('/:id', verifyToken, updateReservation);
 router.delete('/:id', verifyToken, isSuperAdmin, deleteReservation);
-router.post('/', verifyToken, createReservation);
+router.post('/', createReservation);
 router.put('/:id/decision', verifyToken, decisionReservation);
 
 export default router;

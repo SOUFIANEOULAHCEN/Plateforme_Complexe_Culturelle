@@ -104,7 +104,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                 <img
                   src={complex_logo_final_white}
                   alt="Centre Culturel Logo"
-                  className={`relative z-10 transition-all duration-300 filter drop-shadow-lg group-hover:drop-shadow-xl ${
+                  className={`relative z-10 transition-all duration-300 filter brightness-110 drop-shadow-md group-hover:brightness-125 group-hover:drop-shadow-xl ${
                     isCollapsed ? "h-12 w-auto" : "h-20 w-auto"
                   }`}
                 />
