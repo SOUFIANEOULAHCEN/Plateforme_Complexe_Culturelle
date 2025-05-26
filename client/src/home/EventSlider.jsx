@@ -238,7 +238,7 @@ const EventSlider = () => {
                   alt={event.title || event.titre}
                   className="w-full h-[400px] object-cover rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex flex-col items-center justify-center text-white">
+                <div className="absolute inset-0 bg-orange-900 bg-opacity-30 opacity-0 group-hover:opacity-90 transition-opacity duration-300 rounded-lg flex flex-col items-center justify-center text-white">
                   <h3 className="text-xl font-semibold mb-2">{event.title || event.titre}</h3>
                   <p className="mb-4">
                     {event.date ? new Date(event.date).toLocaleDateString(i18n.language === 'ar' ? 'ar-MA' : 'fr-FR') : 

@@ -348,6 +348,33 @@ const resources = {
 
       // Messages de succès/erreur
       reservation_success: 'Votre réservation a été enregistrée avec succès !',
+
+      // Talent Page Translations
+      talent_hero_title: 'Devenez un Talent',
+      talent_hero_subtitle: 'Rejoignez la communauté artistique du Palais de la Culture Mohamed 6 Ouarzazate',
+      talent_discover_benefits: 'Découvrir les avantages',
+      talent_why_join_title: 'Pourquoi nous rejoindre ?',
+      talent_why_join_description: 'Le Palais de la Culture Mohamed 6 Ouarzazate s\'engage à soutenir et promouvoir les talents émergents et établis. Nous offrons une plateforme unique pour développer votre art et le partager avec un public passionné.',
+      talent_benefit_visibility_title: 'Visibilité Accrue',
+      talent_benefit_visibility_desc: 'Bénéficiez d\'une exposition nationale et internationale à travers nos événements et plateformes.',
+      talent_benefit_support_title: 'Soutien Professionnel',
+      talent_benefit_support_desc: 'Accès à des ressources, formations et mentors pour perfectionner votre art.',
+      talent_benefit_networking_title: 'Réseautage',
+      talent_benefit_networking_desc: 'Rencontrez d\'autres artistes et professionnels de l\'industrie culturelle.',
+      talent_benefit_opportunities_title: 'Opportunités de Spectacles',
+      talent_benefit_opportunities_desc: 'Participation privilégiée à nos événements et festivals.',
+      talent_benefit_space_title: 'Espace de Création',
+      talent_benefit_space_desc: 'Accès à nos studios et espaces de travail équipés.',
+      talent_testimonials_title: 'Ils nous ont rejoint',
+      talent_testimonial_1: 'Rejoindre le Palais de la Culture a transformé ma carrière. J\'ai pu exposer mes œuvres à un public international et rencontrer des mentors exceptionnels.',
+      talent_testimonial_2: 'Grâce aux ressources du Palais, j\'ai pu enregistrer mon premier album dans des conditions professionnelles. Une opportunité inestimable !',
+      talent_artist_1_name: 'Leila Benali',
+      talent_artist_1_role: 'Artiste Peintre',
+      talent_artist_2_name: 'Youssef Amrani',
+      talent_artist_2_role: 'Musicien',
+      talent_cta_title: 'Prêt à nous rejoindre ?',
+      talent_cta_description: 'Soumettez votre candidature dès aujourd\'hui et faites partie de notre communauté artistique dynamique.',
+      talent_apply_now: 'Postuler maintenant',
     }
   },
   ar: {
@@ -713,6 +740,33 @@ const resources = {
 
       // Messages de succès/erreur
       reservation_success: 'تم تسجيل حجزك بنجاح!',
+
+      // Talent Page Translations
+      talent_hero_title: 'كن موهبة',
+      talent_hero_subtitle: 'انضم إلى المجتمع الفني في قصر الثقافة محمد السادس ورزازات',
+      talent_discover_benefits: 'اكتشف المزايا',
+      talent_why_join_title: 'لماذا تنضم إلينا؟',
+      talent_why_join_description: 'يتعهد قصر الثقافة محمد السادس ورزازات بدعم وتعزيز المواهب الناشئة والمؤسسة. نقدم منصة فريدة لتطوير فنك ومشاركته مع جمهور شغوف.',
+      talent_benefit_visibility_title: 'رؤية متزايدة',
+      talent_benefit_visibility_desc: 'استفد من العرض الوطني والدولي من خلال فعالياتنا ومنصاتنا.',
+      talent_benefit_support_title: 'دعم احترافي',
+      talent_benefit_support_desc: 'الوصول إلى الموارد والتدريب والمرشدين لصقل فنك.',
+      talent_benefit_networking_title: 'التواصل',
+      talent_benefit_networking_desc: 'التقِ بفنانين آخرين ومهنيين في الصناعة الثقافية.',
+      talent_benefit_opportunities_title: 'فرص العروض',
+      talent_benefit_opportunities_desc: 'مشاركة مميزة في فعالياتنا ومهرجاناتنا.',
+      talent_benefit_space_title: 'مساحة الإبداع',
+      talent_benefit_space_desc: 'الوصول إلى استوديوهاتنا ومساحات العمل المجهزة.',
+      talent_testimonials_title: 'انضموا إلينا',
+      talent_testimonial_1: 'الانضمام إلى قصر الثقافة غير مسيرتي المهنية. تمكنت من عرض أعمالي لجمهور دولي والالتقاء بمرشدين استثنائيين.',
+      talent_testimonial_2: 'بفضل موارد القصر، تمكنت من تسجيل ألبومي الأول في ظروف احترافية. فرصة لا تقدر بثمن!',
+      talent_artist_1_name: 'ليلى بن علي',
+      talent_artist_1_role: 'فنانة تشكيلية',
+      talent_artist_2_name: 'يوسف عمراني',
+      talent_artist_2_role: 'موسيقي',
+      talent_cta_title: 'هل أنت مستعد للانضمام إلينا؟',
+      talent_cta_description: 'قدم طلبك اليوم وكن جزءاً من مجتمعنا الفني الديناميكي.',
+      talent_apply_now: 'تقدم الآن',
     }
   }
 };

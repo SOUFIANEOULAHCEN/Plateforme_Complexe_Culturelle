@@ -3,8 +3,10 @@ import Footer from "../Footer"
 import talentHero from "../../assets/img/IMGCCO/telents-hero.jpg"
 import AuthForms from "../../pages/AuthForms"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 export default function TalentPage() {
+    const { t } = useTranslation()
     const [isConnexionModalOpen, setConnexionModalOpen] = useState(false)
 
     const openConnexionModal = () => {
@@ -18,28 +20,28 @@ export default function TalentPage() {
     const benefits = [
         {
             icon: <FaStar className="h-8 w-8" />,
-            title: "Visibilité Accrue",
-            description: "Bénéficiez d'une exposition nationale et internationale à travers nos événements et plateformes."
+            title: t("talent_benefit_visibility_title"),
+            description: t("talent_benefit_visibility_desc")
         },
         {
             icon: <FaHandsHelping className="h-8 w-8" />,
-            title: "Soutien Professionnel",
-            description: "Accès à des ressources, formations et mentors pour perfectionner votre art."
+            title: t("talent_benefit_support_title"),
+            description: t("talent_benefit_support_desc")
         },
         {
             icon: <FaUsers className="h-8 w-8" />,
-            title: "Réseautage",
-            description: "Rencontrez d'autres artistes et professionnels de l'industrie culturelle."
+            title: t("talent_benefit_networking_title"),
+            description: t("talent_benefit_networking_desc")
         },
         {
             icon: <FaMicrophoneAlt className="h-8 w-8" />,
-            title: "Opportunités de Spectacles",
-            description: "Participation privilégiée à nos événements et festivals."
+            title: t("talent_benefit_opportunities_title"),
+            description: t("talent_benefit_opportunities_desc")
         },
         {
             icon: <FaPalette className="h-8 w-8" />,
-            title: "Espace de Création",
-            description: "Accès à nos studios et espaces de travail équipés."
+            title: t("talent_benefit_space_title"),
+            description: t("talent_benefit_space_desc")
         }
     ];
 
@@ -58,17 +60,17 @@ export default function TalentPage() {
                 <div className="relative z-10 flex h-full items-center justify-center text-center">
                     <div className="px-4">
                         <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl">
-                            Devenez un Talent
+                            {t("talent_hero_title")}
                         </h1>
                         <p className="mx-auto max-w-2xl text-lg text-gray-200">
-                            Rejoignez la communauté artistique du Palais de la Culture Mohamed 6 Ouarzazate
+                            {t("talent_hero_subtitle")}
                         </p>
                         <div className="mt-6">
                             <a
                                 href="#pourquoi"
                                 className="inline-block bg-[#8B4513] text-white font-semibold py-2 px-6 rounded-md hover:bg-[#6e3d20] transition duration-300"
                             >
-                                Découvrir les avantages
+                                {t("talent_discover_benefits")}
                             </a>
                         </div>
                     </div>
@@ -79,10 +81,9 @@ export default function TalentPage() {
             <div id="pourquoi" className="bg-white py-16">
                 <div className="mx-auto max-w-7xl px-4">
                     <div className="text-center mb-12">
-                        <h2 className="mb-4 text-3xl font-bold" style={{ color: '#8B4513' }}>Pourquoi nous rejoindre ?</h2>
+                        <h2 className="mb-4 text-3xl font-bold" style={{ color: '#8B4513' }}>{t("talent_why_join_title")}</h2>
                         <p className="mx-auto max-w-3xl text-gray-600" style={{ color: '#8B4513' }}>
-                            Le Palais de la Culture Mohamed 6 Ouarzazate s'engage à soutenir et promouvoir les talents émergents et établis. 
-                            Nous offrons une plateforme unique pour développer votre art et le partager avec un public passionné.
+                            {t("talent_why_join_description")}
                         </p>
                     </div>
 
@@ -103,12 +104,12 @@ export default function TalentPage() {
             {/* Témoignages */}
             <div className="bg-[#FDF8F5] py-16">
                 <div className="mx-auto max-w-7xl px-4">
-                    <h2 className="mb-12 text-center text-3xl font-bold" style={{ color: '#824B26' }}>Ils nous ont rejoint</h2>
+                    <h2 className="mb-12 text-center text-3xl font-bold" style={{ color: '#824B26' }}>{t("talent_testimonials_title")}</h2>
                     
                     <div className="grid gap-8 md:grid-cols-2">
                         <div className="rounded-xl bg-white p-8 shadow-lg">
                             <p className="mb-6 italic text-gray-600" style={{ color: '#824B26' }}>
-                                "Rejoindre le Palais de la Culture a transformé ma carrière. J'ai pu exposer mes œuvres à un public international et rencontrer des mentors exceptionnels."
+                                {t("talent_testimonial_1")}
                             </p>
                             <div className="flex items-center">
                                 <img 
@@ -117,15 +118,15 @@ export default function TalentPage() {
                                     className="h-12 w-12 rounded-full object-cover mr-4"
                                 />
                                 <div>
-                                    <h4 className="font-semibold" style={{ color: '#824B26' }}>Leila Benali</h4>
-                                    <p className="text-sm text-gray-500">Artiste Peintre</p>
+                                    <h4 className="font-semibold" style={{ color: '#824B26' }}>{t("talent_artist_1_name")}</h4>
+                                    <p className="text-sm text-gray-500">{t("talent_artist_1_role")}</p>
                                 </div>
                             </div>
                         </div>
 
                         <div className="rounded-xl bg-white p-8 shadow-lg">
                             <p className="mb-6 italic text-gray-600" style={{ color: '#824B26' }}>
-                                "Grâce aux ressources du Palais, j'ai pu enregistrer mon premier album dans des conditions professionnelles. Une opportunité inestimable !"
+                                {t("talent_testimonial_2")}
                             </p>
                             <div className="flex items-center">
                                 <img 
@@ -134,8 +135,8 @@ export default function TalentPage() {
                                     className="h-12 w-12 rounded-full object-cover mr-4"
                                 />
                                 <div>
-                                    <h4 className="font-semibold" style={{ color: '#824B26' }}>Youssef Amrani</h4>
-                                    <p className="text-sm text-gray-500">Musicien</p>
+                                    <h4 className="font-semibold" style={{ color: '#824B26' }}>{t("talent_artist_2_name")}</h4>
+                                    <p className="text-sm text-gray-500">{t("talent_artist_2_role")}</p>
                                 </div>
                             </div>
                         </div>
@@ -147,15 +148,15 @@ export default function TalentPage() {
             <div className="bg-white py-16">
                 <div className="mx-auto max-w-7xl px-4">
                     <div className="rounded-xl bg-[#8B4513] p-12 text-center">
-                        <h2 className="mb-6 text-3xl font-bold text-white">Prêt à nous rejoindre ?</h2>
+                        <h2 className="mb-6 text-3xl font-bold text-white">{t("talent_cta_title")}</h2>
                         <p className="mx-auto mb-8 max-w-2xl text-gray-200">
-                            Soumettez votre candidature dès aujourd'hui et faites partie de notre communauté artistique dynamique.
+                            {t("talent_cta_description")}
                         </p>
                         <button
                             onClick={openConnexionModal}
                             className="inline-block bg-white text-[#8B4513] font-semibold py-2 px-8 rounded-md hover:bg-gray-100 transition duration-300"
                         >
-                            Postuler maintenant
+                            {t("talent_apply_now")}
                         </button>
                     </div>
                 </div>
@@ -165,7 +166,6 @@ export default function TalentPage() {
             <AuthForms isOpen={isConnexionModalOpen} onClose={closeConnexionModal} />
 
             <Footer />
-
         </div>
     );
 }
