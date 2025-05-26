@@ -130,18 +130,48 @@ export const resetPassword = async (req, res) => {
 
 /* -------------------------------------------------------------------------- */
 export const register = async (req, res) => {
-  const { nom, email, password } = req.body;
+  const { nom, email, password, is_talent, domaine_artiste, description_talent } = req.body;
   try {
     const utilisateurExiste = await Utilisateur.findOne({ where: { email } });
     if (utilisateurExiste) {
       return res.status(400).json({ message: "L'email existe déjà." });
     }
+
     const utilisateur = await Utilisateur.create({
       nom,
       email,
       password, // The model hooks will handle the hashing
+      is_talent: is_talent || false,
+      domaine_artiste: is_talent ? domaine_artiste : null,
+      description_talent: is_talent ? description_talent : null,
+      status: is_talent ? 'en_validation' : 'actif'
     });
-    res.status(201).json({ message: "Utilisateur créé avec succès." });
+
+    // Envoyer un email de confirmation
+    const mailOptions = {
+      to: utilisateur.email,
+      from: process.env.EMAIL_FROM,
+      subject: is_talent ? 'Votre demande de compte talent a été reçue' : 'Bienvenue sur notre plateforme',
+      html: is_talent ? `
+        <p>Bonjour ${utilisateur.nom},</p>
+        <p>Votre demande de compte talent a été reçue et est en cours d'examen.</p>
+        <p>Nous vous contacterons dès que votre compte sera validé.</p>
+        <p>Cordialement,<br>L'équipe du Complexe Culturel</p>
+      ` : `
+        <p>Bonjour ${utilisateur.nom},</p>
+        <p>Bienvenue sur notre plateforme !</p>
+        <p>Votre compte a été créé avec succès.</p>
+        <p>Cordialement,<br>L'équipe du Complexe Culturel</p>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(201).json({ 
+      message: is_talent ? 
+        "Votre demande de compte talent a été reçue et est en cours d'examen." : 
+        "Compte créé avec succès." 
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Erreur serveur." });

@@ -8,11 +8,12 @@ import Toast from "../components/Toast"
 import backgroundImage from "../assets/background.webp"
 import { useTranslation } from "react-i18next"
 
-export default function AuthForms({ isOpen, onClose }) {
+export default function AuthForms({ isOpen, onClose, initialIsLogin = true, initialIsTalent = false }) {
   const { t } = useTranslation();
-  const [isLogin, setIsLogin] = useState(true)
+  const [isLogin, setIsLogin] = useState(initialIsLogin)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isTalent, setIsTalent] = useState(initialIsTalent)
   const navigate = useNavigate()
 
   // Fonction utilitaire pour vérifier l'expiration du token JWT
@@ -36,6 +37,14 @@ export default function AuthForms({ isOpen, onClose }) {
     }
   }, [navigate])
 
+  // Synchroniser l'état à l'ouverture du modal
+  useEffect(() => {
+    if (isOpen) {
+      setIsLogin(initialIsLogin)
+      setIsTalent(initialIsTalent)
+    }
+  }, [isOpen, initialIsLogin, initialIsTalent])
+
   const handleSuccess = () => {
     onClose()
   }
@@ -45,7 +54,7 @@ export default function AuthForms({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="relative w-full max-w-4xl overflow-hidden rounded-xl bg-white shadow-2xl transition-all">
+      <div className="relative w-full max-w-4xl overflow-y-auto rounded-xl bg-white shadow-2xl transition-all">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-gray-500 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-gray-700"
@@ -63,7 +72,7 @@ export default function AuthForms({ isOpen, onClose }) {
           </svg>
         </button>
 
-        <div className="flex h-[600px] flex-col md:flex-row">
+        <div className="flex min-h-[600px] flex-col md:flex-row">
           {/* Image Section - Will swap sides based on login/register state */}
           <div
             className={`relative flex-1 transition-all duration-500 ${
@@ -131,6 +140,8 @@ export default function AuthForms({ isOpen, onClose }) {
                   setShowConfirmPassword={setShowConfirmPassword}
                   switchToLogin={() => setIsLogin(true)}
                   onSuccess={handleSuccess}
+                  isTalent={isTalent}
+                  setIsTalent={setIsTalent}
                 />
               )}
             </div>
@@ -351,39 +362,43 @@ function RegisterForm({
   setShowConfirmPassword,
   switchToLogin,
   onSuccess,
+  isTalent,
+  setIsTalent,
 }) {
   const { t } = useTranslation();
   const [toast, setToast] = useState(null)
-  const [formData, setFormData] = useState({
-    nom: "",
-    prenom: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    role: "utilisateur",
-  })
+  const [nom, setNom] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [domaineArtiste, setDomaineArtiste] = useState("")
+  const [descriptionTalent, setDescriptionTalent] = useState("")
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
-    setLoading(true)
 
-    if (formData.password !== formData.confirmPassword) {
-      setError(t('auth_password_mismatch'))
-      setLoading(false)
+    if (password !== confirmPassword) {
+      setToast({
+        message: t('auth_password_mismatch'),
+        type: "error",
+      })
       return
     }
 
+    setLoading(true)
+
     try {
       const response = await api.post("/auth/register", {
-        nom: formData.nom,
-        prenom: formData.prenom,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
+        nom,
+        email,
+        password,
+        is_talent: isTalent,
+        domaine_artiste: isTalent ? domaineArtiste : null,
+        description_talent: isTalent ? descriptionTalent : null,
       })
 
       setToast({
@@ -391,11 +406,12 @@ function RegisterForm({
         type: "success",
       })
 
+      // Attendre un peu avant de rediriger pour que l'utilisateur voie le message de succès
       setTimeout(() => {
         switchToLogin()
       }, 2000)
     } catch (err) {
-      console.error("Registration error:", err)
+      console.error("Register error:", err)
       setToast({
         message: err.response?.data?.message || t('auth_register_error'),
         type: "error",
@@ -426,40 +442,25 @@ function RegisterForm({
               type="text"
               placeholder={t('auth_lastname_placeholder')}
               className="mt-1 block w-full rounded-lg border border-[oklch(0.922_0_0)] bg-[oklch(1_0_0)] px-3 py-2 text-[oklch(0.145_0_0)] placeholder-[oklch(0.556_0_0)] focus:border-[oklch(47.3%_0.137_46.201)] focus:outline-none focus:ring-1 focus:ring-[oklch(47.3%_0.137_46.201)]"
-              value={formData.nom}
-              onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
+              value={nom}
+              onChange={(e) => setNom(e.target.value)}
               required
             />
           </div>
           <div>
-            <label htmlFor="prenom" className="block text-sm font-medium text-[oklch(0.145_0_0)]">
-              {t('auth_firstname')}
+            <label htmlFor="email" className="block text-sm font-medium text-[oklch(0.145_0_0)]">
+              {t('auth_email')}
             </label>
             <input
-              id="prenom"
-              type="text"
-              placeholder={t('auth_firstname_placeholder')}
+              id="email"
+              type="email"
+              placeholder={t('auth_email_placeholder')}
               className="mt-1 block w-full rounded-lg border border-[oklch(0.922_0_0)] bg-[oklch(1_0_0)] px-3 py-2 text-[oklch(0.145_0_0)] placeholder-[oklch(0.556_0_0)] focus:border-[oklch(47.3%_0.137_46.201)] focus:outline-none focus:ring-1 focus:ring-[oklch(47.3%_0.137_46.201)]"
-              value={formData.prenom}
-              onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-        </div>
-
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-[oklch(0.145_0_0)]">
-            {t('auth_email')}
-          </label>
-          <input
-            id="email"
-            type="email"
-            placeholder={t('auth_email_placeholder')}
-            className="mt-1 block w-full rounded-lg border border-[oklch(0.922_0_0)] bg-[oklch(1_0_0)] px-3 py-2 text-[oklch(0.145_0_0)] placeholder-[oklch(0.556_0_0)] focus:border-[oklch(47.3%_0.137_46.201)] focus:outline-none focus:ring-1 focus:ring-[oklch(47.3%_0.137_46.201)]"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            required
-          />
         </div>
 
         <div>
@@ -472,8 +473,8 @@ function RegisterForm({
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               className="block w-full rounded-lg border border-[oklch(0.922_0_0)] bg-[oklch(1_0_0)] px-3 py-2 text-[oklch(0.145_0_0)] placeholder-[oklch(0.556_0_0)] focus:border-[oklch(47.3%_0.137_46.201)] focus:outline-none focus:ring-1 focus:ring-[oklch(47.3%_0.137_46.201)]"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
             <button
@@ -517,8 +518,8 @@ function RegisterForm({
               type={showConfirmPassword ? "text" : "password"}
               placeholder="••••••••"
               className="block w-full rounded-lg border border-[oklch(0.922_0_0)] bg-[oklch(1_0_0)] px-3 py-2 text-[oklch(0.145_0_0)] placeholder-[oklch(0.556_0_0)] focus:border-[oklch(47.3%_0.137_46.201)] focus:outline-none focus:ring-1 focus:ring-[oklch(47.3%_0.137_46.201)]"
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
             <button
@@ -552,10 +553,78 @@ function RegisterForm({
           </div>
         </div>
 
+        {/* Sélecteur de type d'inscription */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            {t('auth_register_type')}
+          </label>
+          <div className="mt-2 space-x-4">
+            <button
+              type="button"
+              onClick={() => setIsTalent(false)}
+              className={`px-4 py-2 rounded-md ${
+                !isTalent ? 'bg-[#8B4513] text-white' : 'bg-gray-200'
+              }`}
+            >
+              {t('auth_register_normal')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsTalent(true)}
+              className={`px-4 py-2 rounded-md ${
+                isTalent ? 'bg-[#8B4513] text-white' : 'bg-gray-200'
+              }`}
+            >
+              {t('auth_register_talent')}
+            </button>
+          </div>
+        </div>
+
+        {/* Champs spécifiques aux talents */}
+        {isTalent && (
+          <>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                {t('auth_talent_domain')}
+              </label>
+              <input
+                type="text"
+                value={domaineArtiste}
+                onChange={(e) => setDomaineArtiste(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#8B4513] focus:ring-[#8B4513]"
+                required={isTalent}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                {t('auth_talent_description')}
+              </label>
+              <textarea
+                value={descriptionTalent}
+                onChange={(e) => setDescriptionTalent(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#8B4513] focus:ring-[#8B4513]"
+                rows="4"
+                required={isTalent}
+              />
+            </div>
+          </>
+        )}
+
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={switchToLogin}
+            className="text-sm text-[#8B4513] hover:text-[#6e3d20]"
+          >
+            {t('auth_login')}
+          </button>
+        </div>
+
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-[oklch(47.3%_0.137_46.201)] px-4 py-2 text-white transition-colors hover:bg-[oklch(47.3%_0.137_46.201)]/90 disabled:opacity-50"
+          className="w-full rounded-md bg-[#8B4513] py-2 text-white hover:bg-[#6e3d20] focus:outline-none focus:ring-2 focus:ring-[#8B4513] focus:ring-offset-2 disabled:opacity-50"
         >
           {loading ? t('auth_loading') : t('auth_register_button')}
         </button>

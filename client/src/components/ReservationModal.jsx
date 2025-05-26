@@ -158,6 +158,8 @@ export default function ReservationModal({ isOpen, onClose, onSuccess, type = "e
           onClose={() => setShowAuthModal(false)}
           onSuccess={handleAuthSuccess}
           initialEmail={pendingEmail}
+          initialIsLogin={false}
+          initialIsTalent={false}
         />
       )}
 

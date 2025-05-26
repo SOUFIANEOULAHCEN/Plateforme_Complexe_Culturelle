@@ -198,6 +198,11 @@ const resources = {
       auth_register_success: "Inscription réussie ! Vous pouvez maintenant vous connecter.",
       auth_login_error: "Erreur lors de la connexion",
       auth_register_error: "Erreur lors de l'inscription",
+      auth_register_type: 'Type de compte',
+      auth_register_normal: 'Compte normal',
+      auth_register_talent: 'Compte talent',
+      auth_talent_domain: 'Domaine artistique',
+      auth_talent_description: 'Description de votre talent',
 
       // CCO Page Translations
       cco_title: 'CCO',
@@ -571,6 +576,11 @@ const resources = {
       auth_register_success: "تم التسجيل بنجاح! يمكنك الآن تسجيل الدخول.",
       auth_login_error: "خطأ في تسجيل الدخول",
       auth_register_error: "خطأ في التسجيل",
+      auth_register_type: 'نوع الحساب',
+      auth_register_normal: 'حساب عادي',
+      auth_register_talent: 'حساب موهبة',
+      auth_talent_domain: 'المجال الفني',
+      auth_talent_description: 'وصف موهبتك',
 
       // CCO Page Translations
       cco_title: 'مركز الثقافة',

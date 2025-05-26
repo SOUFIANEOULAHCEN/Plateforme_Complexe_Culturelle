@@ -8,8 +8,10 @@ import { useTranslation } from "react-i18next"
 export default function TalentPage() {
     const { t } = useTranslation()
     const [isConnexionModalOpen, setConnexionModalOpen] = useState(false)
+    const [authFormMode, setAuthFormMode] = useState({ isLogin: true, isTalent: false })
 
     const openConnexionModal = () => {
+        setAuthFormMode({ isLogin: false, isTalent: true })
         setConnexionModalOpen(true)
     }
 
@@ -163,7 +165,12 @@ export default function TalentPage() {
             </div>
 
             {/* Modal de Connexion/Inscription */}
-            <AuthForms isOpen={isConnexionModalOpen} onClose={closeConnexionModal} />
+            <AuthForms
+                isOpen={isConnexionModalOpen}
+                onClose={closeConnexionModal}
+                initialIsLogin={authFormMode.isLogin}
+                initialIsTalent={authFormMode.isTalent}
+            />
 
             <Footer />
         </div>
