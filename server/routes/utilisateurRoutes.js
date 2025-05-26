@@ -2,6 +2,14 @@ import express from "express";
 import Utilisateur from "../models/utilisateur.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
 import { getUtilisateurByEmail } from "../controllers/utilisateurController.js";
+import TracageEvenement from "../models/tracageEvenement.js";
+import Reservation from "../models/reservation.js";
+import Notification from "../models/notification.js";
+import Evenement from "../models/evenement.js";
+import EventProposal from "../models/eventProposal.js";
+import Commentaire from "../models/commentaire.js";
+import path from "path";
+import { unlink } from "fs/promises";
 
 const router = express.Router();
 
@@ -60,10 +68,52 @@ router.delete("/:id", verifyToken, async (req, res) => {
     if (!utilisateur) {
       return res.status(404).json({ message: "Utilisateur non trouvé" });
     }
+
+    // Vérifier si l'utilisateur est un superadmin
+    if (utilisateur.role === 'superadmin') {
+      return res.status(403).json({ message: "Impossible de supprimer un superadmin" });
+    }
+
+    // Vérifier si l'utilisateur essaie de se supprimer lui-même
+    if (req.user.id === parseInt(req.params.id)) {
+      return res.status(403).json({ message: "Vous ne pouvez pas supprimer votre propre compte" });
+    }
+
+    // Supprimer les enregistrements associés
+    await Promise.all([
+      // Supprimer les traçages d'événements
+      TracageEvenement.destroy({ where: { user_id: req.params.id } }),
+      // Supprimer les réservations
+      Reservation.destroy({ where: { utilisateur_id: req.params.id } }),
+      // Supprimer les notifications
+      Notification.destroy({ where: { utilisateurId: req.params.id } }),
+      // Supprimer les événements créés
+      Evenement.destroy({ where: { createur_id: req.params.id } }),
+      // Supprimer les propositions d'événements traitées
+      EventProposal.destroy({ where: { traite_par: req.params.id } }),
+      // Supprimer les commentaires
+      Commentaire.destroy({ where: { utilisateur_id: req.params.id } })
+    ]);
+
+    // Supprimer l'image de profil si elle existe
+    if (utilisateur.image_profil) {
+      try {
+        const imagePath = path.join(process.cwd(), 'public', utilisateur.image_profil);
+        await unlink(imagePath);
+      } catch (err) {
+        console.error("Erreur lors de la suppression de l'image de profil:", err);
+      }
+    }
+
+    // Supprimer l'utilisateur
     await utilisateur.destroy();
     res.json({ message: "Utilisateur supprimé avec succès" });
   } catch (err) {
-    res.status(500).json({ message: "Erreur lors de la suppression de l'utilisateur" });
+    console.error("Erreur lors de la suppression de l'utilisateur:", err);
+    res.status(500).json({ 
+      message: "Erreur lors de la suppression de l'utilisateur",
+      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 });
 

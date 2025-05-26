@@ -73,7 +73,16 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
   };
 
   const handleFileChange = (e) => {
-    setForm({ ...form, affiche: e.target.files[0] });
+    const file = e.target.files[0];
+    if (file) {
+      // Vérifier la taille du fichier (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        showToast(t("event_proposal_error_file_size"), "error");
+        e.target.value = ''; // Réinitialiser l'input
+        return;
+      }
+      setForm({ ...form, affiche: file });
+    }
   };
 
   const validateForm = () => {
@@ -123,10 +132,8 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         headers: { 'Content-Type': 'multipart/form-data' } 
       });
       
-      // Afficher le toast de succès
       showToast(t("event_proposal_success"), "success", 5000);
       
-      // Réinitialiser le formulaire après succès
       setForm({
         titre: "",
         description: "",
@@ -141,11 +148,7 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
         statut: "en_attente"
       });
       
-      // Marquer le formulaire comme soumis avec succès
       setFormSubmitted(true);
-      
-      // Ne PAS fermer le modal immédiatement pour laisser le toast s'afficher
-      // La fermeture sera gérée par le useEffect
       
     } catch (error) {
       let errorMessage = t("event_proposal_error_generic");
@@ -153,6 +156,8 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
       if (error.response) {
         if (error.response.status === 401) {
           errorMessage = t("event_proposal_error_connection");
+        } else if (error.response.status === 413) {
+          errorMessage = t("event_proposal_error_file_size");
         } else if (error.response.data && error.response.data.message) {
           errorMessage = error.response.data.message;
         }

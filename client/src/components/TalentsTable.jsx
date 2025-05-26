@@ -70,17 +70,32 @@ export default function TalentsTable({ limit }) {
       await api.delete(`/utilisateurs/${selectedId}`);
       setTalents(talents.filter((talent) => talent.id !== selectedId));
       setShowConfirmModal(false);
-      // Ajout du toast pour indiquer le succès de la suppression
       setToast({
         message: "Talent supprimé avec succès",
         type: "success",
       });
     } catch (error) {
       console.error("Error deleting talent:", error);
-      setError("Erreur lors de la suppression du talent");
-      // Ajout du toast pour indiquer l'erreur lors de la suppression
+      let errorMessage = "Erreur lors de la suppression du talent";
+      
+      if (error.response) {
+        switch (error.response.status) {
+          case 403:
+            errorMessage = error.response.data.message || "Vous n'avez pas les droits pour effectuer cette action";
+            break;
+          case 404:
+            errorMessage = "Le talent n'existe plus";
+            break;
+          case 500:
+            errorMessage = "Une erreur est survenue lors de la suppression. Veuillez réessayer plus tard.";
+            break;
+          default:
+            errorMessage = error.response.data.message || "Une erreur est survenue";
+        }
+      }
+      
       setToast({
-        message: "Erreur lors de la suppression",
+        message: errorMessage,
         type: "error",
       });
     }
