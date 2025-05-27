@@ -1,4 +1,4 @@
-import { FaEye, FaBullseye, FaBuilding } from "react-icons/fa"
+import { FaEye, FaBullseye, FaBuilding, FaQuoteLeft } from "react-icons/fa"
 import { useTranslation } from "react-i18next"
 import Footer from "../Footer"
 import complexeCulturel from "../../assets/img/IMGCCO/complexeculturel.jpg"
@@ -42,31 +42,35 @@ export default function CCO() {
   ]
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-gradient-to-b from-[#FDF8F5] to-white">
       {/* Hero Section */}
-      <div className="relative h-[70vh] overflow-hidden">
+      <div className="relative h-[80vh] overflow-hidden">
         <div className="absolute inset-0">
           <img
             src={complexeCulturel}
             alt="CCO Ouarzazate"
-            className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-1000 hover:scale-110"
           />
-          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
         </div>
-        <div className="relative z-10 flex h-full items-center justify-center text-center">
-          <div className="px-4">
-            <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl">{t("cco_title")}</h1>
-            <p className="mx-auto max-w-2xl text-lg text-gray-200">{t("cco_subtitle")}</p>
-            <div className="mt-6">
+        <div className="relative z-10 flex h-full items-center justify-center text-center px-4">
+          <div className="max-w-4xl transform transition-all duration-700 hover:scale-[1.02]">
+            <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl lg:text-7xl font-serif">
+              {t("cco_title")}
+            </h1>
+            <p className="text-xl text-white/90 md:text-2xl mb-8">
+              {t("cco_subtitle")}
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
               <a
                 href="/"
-                className="inline-block bg-[#8B4513] text-white font-semibold py-1 px-3 rounded-md hover:bg-[#6e3d20] transition duration-300"
+                className="inline-flex items-center bg-[#8B4513] text-white font-semibold py-3 px-8 rounded-full hover:bg-[#6e3d20] transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
               >
                 {t("home")}
               </a>
               <a
                 href="/cco"
-                className="ml-4 inline-block bg-[#8B4513] text-white font-semibold py-1 px-3 rounded-md hover:bg-[#6e3d20] transition duration-300"
+                className="inline-flex items-center bg-white/20 backdrop-blur-sm text-white font-semibold py-3 px-8 rounded-full hover:bg-white/30 transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
               >
                 {t("cco")}
               </a>
@@ -75,12 +79,11 @@ export default function CCO() {
         </div>
       </div>
 
-      {/* Section Description du Complexe Culturel Ouarzazate */}
-      <div className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="grid items-center gap-8 md:grid-cols-2">
-            {/* Vidéo du Complexe */}
-            <div className="flex justify-center">
+      {/* Complex Description Section */}
+      <div className="py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-12 md:grid-cols-2">
+            <div className="flex justify-center rounded-2xl overflow-hidden shadow-2xl">
               <video
                 src="/src/assets/img/IMGCCO/video5798505470813541954.mp4"
                 width={600}
@@ -89,20 +92,20 @@ export default function CCO() {
                 autoPlay
                 muted
                 loop
-                className="rounded-xl transition-all hover:scale-105"
+                className="w-full h-auto rounded-2xl transition-transform duration-500 hover:scale-[1.02]"
               >
                 {t("video_not_supported")}
               </video>
             </div>
-            {/* Description */}
-            <div className="text-center mx-auto">
-              <h2 className="mb-6 text-3xl font-bold" style={{ color: "#8B4513" }}>
+            <div className="text-center md:text-left">
+              <h2 className="mb-6 text-3xl md:text-4xl font-bold text-[#8B4513] font-serif relative inline-block">
                 {t("cco_complex_title")}
+                <span className="absolute bottom-0 left-0 w-full h-1 bg-[#8B4513] transform translate-y-2"></span>
               </h2>
-              <p className="text-gray-600" style={{ color: "#8B4513" }}>
+              <p className="text-lg text-[#8B4513] mb-4">
                 {t("cco_complex_description")}
               </p>
-              <p className="mt-4 text-gray-600" style={{ color: "#8B4513" }}>
+              <p className="text-lg text-[#8B4513]">
                 {t("cco_complex_description_2")}
               </p>
             </div>
@@ -110,87 +113,88 @@ export default function CCO() {
         </div>
       </div>
 
-      {/* Section Vision et Mission */}
-      <div className="mx-auto max-w-7xl px-4 py-16 bg-[#FDF8F5]">
-        <div className="grid gap-8 md:grid-cols-2">
-          <div className="group rounded-xl bg-white p-8 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl">
-            <div className="mb-4 inline-block rounded-full bg-white border-2 border-[#8B4513] p-3">
-              <FaEye className="h-6 w-6" style={{ color: "#8B4513" }} />
+      {/* Vision & Mission Section */}
+      <div className="py-20 bg-[#FDF8F5]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="group rounded-2xl bg-white p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-[#8B4513]/10">
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#FDF8F5] p-4 text-[#8B4513] transition-all duration-300 group-hover:bg-[#8B4513] group-hover:text-white">
+                <FaEye className="h-8 w-8" />
+              </div>
+              <h2 className="mb-4 text-2xl font-bold text-[#8B4513]">
+                {t("our_vision")}
+              </h2>
+              <p className="text-[#8B4513]/90">
+                {t("vision_description")}
+              </p>
             </div>
-            <h2 className="mb-4 text-2xl font-bold" style={{ color: "#8B4513" }}>
-              {t("our_vision")}
-            </h2>
-            <p className="text-gray-600" style={{ color: "#8B4513" }}>
-              {t("vision_description")}
-            </p>
-          </div>
 
-          <div className="group rounded-xl bg-white p-8 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl">
-            <div className="mb-4 inline-block rounded-full bg-white border-2 border-[#8B4513] p-3">
-              <FaBullseye className="h-6 w-6 text-[#8B4513]" />
+            <div className="group rounded-2xl bg-white p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-[#8B4513]/10">
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#FDF8F5] p-4 text-[#8B4513] transition-all duration-300 group-hover:bg-[#8B4513] group-hover:text-white">
+                <FaBullseye className="h-8 w-8" />
+              </div>
+              <h2 className="mb-4 text-2xl font-bold text-[#8B4513]">
+                {t("our_mission")}
+              </h2>
+              <p className="text-[#8B4513]/90">
+                {t("mission_description")}
+              </p>
             </div>
-            <h2 className="mb-4 text-2xl font-bold" style={{ color: "#8B4513" }}>
-              {t("our_mission")}
-            </h2>
-            <p className="text-gray-600" style={{ color: "#8B4513" }}>
-              {t("mission_description")}
-            </p>
           </div>
         </div>
       </div>
 
-      {/* Section Municipalité */}
-      <div className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="grid items-center gap-8 md:grid-cols-2">
+      {/* Municipality Section */}
+      <div className="py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-12 md:grid-cols-2">
             <div>
-              <div className="mb-4 inline-block rounded-full bg-white border-2 border-[#824B26] p-3">
-                <FaBuilding className="h-6 w-6" style={{ color: "#8B4513" }} />
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#FDF8F5] p-4 text-[#8B4513]">
+                <FaBuilding className="h-8 w-8" />
               </div>
-              <h2 className="mb-6 text-3xl font-bold" style={{ color: "#8B4513" }}>
+              <h2 className="mb-6 text-3xl md:text-4xl font-bold text-[#8B4513] font-serif relative inline-block">
                 {t("municipality_title")}
+                <span className="absolute bottom-0 left-0 w-full h-1 bg-[#8B4513] transform translate-y-2"></span>
               </h2>
-              <p className="text-gray-600" style={{ color: "#8B4513" }}>
+              <p className="text-lg text-[#8B4513]">
                 {t("municipality_description")}
               </p>
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center rounded-2xl overflow-hidden shadow-2xl">
               <img
                 src={ouarzazate}
                 alt="Logo Municipalité"
-                width={500}
-                height={500}
-                className="rounded-lg transition-all hover:scale-105"
+                className="w-full h-auto rounded-2xl transition-transform duration-500 hover:scale-[1.02]"
               />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Section Équipe */}
-      <div className="bg-[#FDF8F5] py-16">
-        <div className="mx-auto max-w-7xl px-4">
-          <h2 className="mb-4 text-center text-3xl font-bold" style={{ color: "#824B26" }}>
-            {t("our_team")}
-          </h2>
-          <p className="mb-12 text-center text-lg text-gray-600" style={{ color: "#824B26" }}>
-            {t("team_description")}
-          </p>
+      {/* Team Section */}
+      <div className="py-20 bg-[#FDF8F5]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-[#8B4513] font-serif relative inline-block">
+              {t("our_team")}
+              <span className="absolute bottom-0 left-0 w-full h-1 bg-[#8B4513] transform translate-y-2"></span>
+            </h2>
+            <p className="text-lg text-[#8B4513] max-w-3xl mx-auto">
+              {t("team_description")}
+            </p>
+          </div>
 
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
             {team.map((member, index) => (
-              <div key={index} className="group relative overflow-hidden rounded-xl bg-white shadow-lg">
+              <div key={index} className="group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500">
                 <img
                   src={member.image}
                   alt={member.name}
-                  width={300}
-                  height={400}
-                  className="h-[400px] w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  className="h-[400px] w-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 transition-opacity group-hover:opacity-100">
-                  <h3 className="text-lg font-semibold">{member.name}</h3>
-                  <p className="text-sm">{member.role}</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                  <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
+                  <p className="text-white/90">{member.role}</p>
                 </div>
               </div>
             ))}
@@ -198,27 +202,27 @@ export default function CCO() {
         </div>
       </div>
 
-      {/* Section Directeur */}
-      <div className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="grid items-center gap-8 md:grid-cols-2">
-            <div className="flex justify-center">
+      {/* Director Section */}
+      <div className="py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-12 md:grid-cols-2">
+            <div className="flex justify-center rounded-2xl overflow-hidden shadow-2xl">
               <img
                 src={director}
                 alt="Directeur du Complexe Culturel Ouarzazate"
-                className="rounded-xl transition-all hover:scale-105"
-                width={300}
-                height={400}
+                className="w-full h-auto rounded-2xl transition-transform duration-500 hover:scale-[1.02]"
               />
             </div>
-            <div>
-              <h2 className="mb-6 text-3xl font-bold" style={{ color: "#824B26" }}>
+            <div className="relative">
+              <FaQuoteLeft className="absolute -top-8 -left-8 h-16 w-16 text-[#8B4513]/10" />
+              <h2 className="mb-6 text-3xl md:text-4xl font-bold text-[#8B4513] font-serif relative inline-block">
                 {t("director_title")}
+                <span className="absolute bottom-0 left-0 w-full h-1 bg-[#8B4513] transform translate-y-2"></span>
               </h2>
-              <p className="text-gray-600" style={{ color: "#824B26" }}>
+              <p className="text-lg text-[#8B4513] mb-4">
                 {t("director_description")}
               </p>
-              <p className="mt-4 text-gray-600" style={{ color: "#824B26" }}>
+              <p className="text-lg text-[#8B4513]">
                 {t("director_description_2")}
               </p>
             </div>

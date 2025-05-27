@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-
 import { Suspense, lazy } from "react"
 import ProtectedRoute from "./components/ProtectedRoute"
 import Header from "./home/Header"
+import Gallery from "./home/Gallery"
 
 // Lazy loading des composants
 const AuthForms = lazy(() => import("./pages/AuthForms"))
@@ -70,6 +71,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/reservations" element={<ReservationsChois />} />
             <Route path="/talent" element={<TalentPage />} />
+            <Route path="/gallery" element={<Gallery />} />
           </Route>
 
           {/* Auth routes */}

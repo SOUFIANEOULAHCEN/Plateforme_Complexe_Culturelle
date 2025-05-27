@@ -100,7 +100,9 @@ const resources = {
       // Gallery Section
       gallery_title: 'Notre Galerie',
       gallery_subtitle: 'Explorez nos moments capturés',
+      gallery_description: 'Découvrez notre collection de photos qui capturent l\'essence de notre complexe culturel. Des espaces aux événements, en passant par nos ateliers, chaque image raconte une histoire unique de notre engagement envers l\'art et la culture.',
       gallery_view_more: 'Voir plus',
+      gallery_all: 'Tout',
       gallery_category_spaces: 'Espaces',
       gallery_category_workshops: 'Ateliers',
       gallery_category_events: 'Événements',
@@ -114,7 +116,8 @@ const resources = {
       gallery_theater_performance: 'Performance théâtrale',
 
       // Contact Section
-      contact_title: 'Contactez-nous',
+      contact_page_title: 'Contact',
+      contact: 'Contact',
       contact_subtitle: 'Nous sommes à votre écoute ! N\'hésitez pas à nous contacter pour toute question ou demande d\'informations.',
       contact_send_message: 'Envoyez-nous un message',
       contact_name: 'Nom',
@@ -133,6 +136,14 @@ const resources = {
       contact_address: 'Adresse',
       contact_address_details: 'Centre Culturel Ouarzazate\nAvenue Mohammed V\nOuarzazate, Maroc',
       contact_phone_number: '+212 5XX-XXXXXX',
+      contact_form_tab: 'Formulaire',
+      contact_info_tab: 'Informations',
+      validation_name_length: 'Le nom doit contenir au moins 2 caractères',
+      validation_email_format: 'Veuillez entrer une adresse email valide',
+      validation_message_length: 'Le message doit contenir au moins 10 caractères',
+      home_link_aria: 'Retour à l\'accueil',
+      contact_link_aria: 'Aller à la page contact',
+      map_location_title: 'Localisation du Complexe Culturel',
 
       // Footer
       footer_about: 'À propos',
@@ -206,7 +217,7 @@ const resources = {
       auth_talent_description: 'Description de votre talent',
 
       // CCO Page Translations
-      cco_title: 'CCO',
+      cco_title: 'Palais de la Culture Mohammed VI',
       cco_subtitle: 'Bienvenue au cœur de la culture à Ouarzazate. Un espace dédié à l\'art, à la créativité et au partage culturel dans notre belle ville.',
       video_not_supported: 'Votre navigateur ne supporte pas la balise vidéo',
       cco_complex_title: 'Le Complexe Culturel Ouarzazate',
@@ -225,6 +236,9 @@ const resources = {
       director_description_2: 'Grâce à son leadership, le complexe continue de jouer un rôle essentiel dans la promotion des arts et de la culture à Ouarzazate, attirant des talents du monde entier et contribuant à la prospérité culturelle de la région.',
 
       // Bibliotheque Page Translations
+      library: 'Bibliothèque',
+      library_subtitle: 'Un espace de savoir et de découverte',
+      library_title: 'Notre Bibliothèque',
       library_description: 'Découvrez notre vaste collection de livres dans divers domaines. Notre bibliothèque offre un espace calme pour la lecture et l\'étude, avec une collection variée de livres en arabe et en français. Des livres religieux à la littérature mondiale, nous vous offrons un monde de connaissances et de culture.',
       read_more: 'Lire plus',
 
@@ -381,6 +395,57 @@ const resources = {
       talent_cta_title: 'Prêt à nous rejoindre ?',
       talent_cta_description: 'Soumettez votre candidature dès aujourd\'hui et faites partie de notre communauté artistique dynamique.',
       talent_apply_now: 'Postuler maintenant',
+
+      // Espaces translations
+      spaces: 'Les Espaces',
+      spaces_subtitle: 'Découvrez nos espaces culturels et créatifs',
+      our_spaces: 'Nos Espaces',
+      spaces_intro: 'Le Complexe Culturel de Ouarzazate propose une variété d\'espaces adaptés à vos besoins culturels et créatifs. Chaque espace est conçu pour offrir un environnement optimal pour l\'expression artistique et l\'apprentissage.',
+      space_theater_hall: 'Salle de Théâtre',
+
+      // Messages d'erreur de réservation
+      reservation_error_saving: 'Une erreur est survenue lors de l\'enregistrement de la réservation',
+      reservation_error_user_id_required: 'L\'ID de l\'utilisateur est requis',
+      reservation_error_space_id_required: 'L\'ID de l\'espace est requis',
+      reservation_error_invalid_organizer: 'Type d\'organisateur invalide',
+      reservation_error_space_not_found: 'Espace non trouvé',
+      reservation_error_min_days: 'La réservation doit être faite au moins 15 jours à l\'avance',
+      reservation_error_required_fields: 'Veuillez remplir tous les champs obligatoires',
+      reservation_error_select_user: 'Veuillez sélectionner un utilisateur',
+
+      // Footer translations
+      footer_about_title: 'Complexe Culturel OUARZAZATE',
+      footer_about_description: 'Un espace dédié à la promotion de la culture et des arts dans la région de Ouarzazate.',
+      footer_quick_links: 'Liens rapides',
+      footer_contact_info: 'Contact',
+      footer_address: 'Hay Elwahda, Ouarzazate, Maroc',
+      footer_phone: '(+212) 528-888-888',
+      footer_email: 'contact@cc-ouarzazate.ma',
+      footer_hours: 'Horaires',
+      footer_weekdays: 'Lundi - Vendredi:',
+      footer_weekdays_hours: '9h - 18h',
+      footer_weekend: 'Samedi - Dimanche:',
+      footer_weekend_hours: 'Fermé',
+      footer_copyright: 'Complexe Culturel OUARZAZATE. Tous droits réservés.',
+      footer_follow_us: 'Suivez-nous',
+      footer_partners: 'Nos Partenaires',
+
+      // Footer translations in Arabic
+      footer_about_title: 'المجمع الثقافي ورزازات',
+      footer_about_description: 'مساحة مخصصة لتعزيز الثقافة والفنون في منطقة ورزازات.',
+      footer_quick_links: 'روابط سريعة',
+      footer_contact_info: 'اتصل بنا',
+      footer_address: 'حي الوحدة، ورزازات، المغرب',
+      footer_phone: '(+212) 528-888-888',
+      footer_email: 'contact@cc-ouarzazate.ma',
+      footer_hours: 'ساعات العمل',
+      footer_weekdays: 'الاثنين - الجمعة:',
+      footer_weekdays_hours: '9 صباحاً - 6 مساءً',
+      footer_weekend: 'السبت - الأحد:',
+      footer_weekend_hours: 'مغلق',
+      footer_copyright: 'المجمع الثقافي ورزازات. جميع الحقوق محفوظة.',
+      footer_follow_us: 'تابعونا',
+      footer_partners: 'شركاؤنا',
     }
   },
   ar: {
@@ -479,7 +544,9 @@ const resources = {
       // Gallery Section
       gallery_title: 'معرضنا',
       gallery_subtitle: 'استكشفوا لحظاتنا المصورة',
+      gallery_description: 'اكتشفوا مجموعتنا من الصور التي تجسد جوهر مجمعنا الثقافي. من المساحات إلى الفعاليات، مروراً بورش عملنا، كل صورة تحكي قصة فريدة عن التزامنا بالفن والثقافة.',
       gallery_view_more: 'عرض المزيد',
+      gallery_all: 'الكل',
       gallery_category_spaces: 'المساحات',
       gallery_category_workshops: 'ورش العمل',
       gallery_category_events: 'الفعاليات',
@@ -493,7 +560,8 @@ const resources = {
       gallery_theater_performance: 'عرض مسرحي',
 
       // Contact Section
-      contact_title: 'اتصلوا بنا',
+      contact_page_title: 'اتصل بنا',
+      contact: 'اتصل بنا',
       contact_subtitle: 'نحن هنا لخدمتكم! لا تترددوا في الاتصال بنا لأي سؤال أو طلب معلومات.',
       contact_send_message: 'أرسلوا لنا رسالة',
       contact_name: 'الاسم',
@@ -512,6 +580,14 @@ const resources = {
       contact_address: 'العنوان',
       contact_address_details: 'المجمع الثقافي ورزازات\nشارع محمد الخامس\nورزازات، المغرب',
       contact_phone_number: '+212 5XX-XXXXXX',
+      contact_form_tab: 'النموذج',
+      contact_info_tab: 'المعلومات',
+      validation_name_length: 'يجب أن يحتوي الاسم على حرفين على الأقل',
+      validation_email_format: 'يرجى إدخال بريد إلكتروني صحيح',
+      validation_message_length: 'يجب أن تحتوي الرسالة على 10 أحرف على الأقل',
+      home_link_aria: 'العودة إلى الصفحة الرئيسية',
+      contact_link_aria: 'الذهاب إلى صفحة الاتصال',
+      map_location_title: 'موقع المجمع الثقافي',
 
       // Footer
       footer_about: 'من نحن',
@@ -585,7 +661,7 @@ const resources = {
       auth_talent_description: 'وصف موهبتك',
 
       // CCO Page Translations
-      cco_title: 'مركز الثقافة',
+      cco_title: 'قصر الثقافة محمد السادس',
       cco_subtitle: 'مرحباً بكم في قلب الثقافة في ورزازات. مساحة مخصصة للفن والإبداع وتبادل الثقافات في مدينتنا الجميلة.',
       video_not_supported: 'متصفحك لا يدعم تشغيل الفيديو',
       cco_complex_title: 'المجمع الثقافي ورزازات',
@@ -605,6 +681,9 @@ const resources = {
 
       // Espaces Page Translations
       spaces: 'المساحات',
+      spaces_subtitle: 'اكتشفوا مساحاتنا الثقافية والإبداعية',
+      our_spaces: 'مساحاتنا',
+      spaces_intro: 'يقدم المجمع الثقافي ورزازات مجموعة متنوعة من المساحات المناسبة لاحتياجاتكم الثقافية والإبداعية. تم تصميم كل مساحة لتوفير بيئة مثالية للتعبير الفني والتعلم.',
       space_theater_hall: 'قاعة المسرح',
       space_theater_description: 'قاعة مسرح حديثة مجهزة بأحدث التقنيات الصوتية والإضاءة، مثالية للعروض المسرحية والحفلات الموسيقية والفعاليات الثقافية.',
       space_exhibition_hall: 'قاعة المعارض',
@@ -623,6 +702,9 @@ const resources = {
       space_painting_description: 'استوديو فني مجهز بجميع المعدات اللازمة للرسم والفنون التشكيلية، مع إضاءة طبيعية مثالية.',
 
       // Bibliotheque Page Translations
+      library: 'المكتبة',
+      library_subtitle: 'مساحة للمعرفة والاكتشاف',
+      library_title: 'مكتبتنا',
       library_description: 'اكتشفوا مجموعتنا الواسعة من الكتب في مختلف المجالات. مكتبتنا توفر مساحة هادئة للقراءة والدراسة، مع مجموعة متنوعة من الكتب باللغتين العربية والفرنسية. من الكتب الدينية إلى الأدب العالمي، نقدم لكم عالماً من المعرفة والثقافة.',
       read_more: 'اقرأ المزيد',
 
@@ -779,6 +861,40 @@ const resources = {
       talent_cta_title: 'هل أنت مستعد للانضمام إلينا؟',
       talent_cta_description: 'قدم طلبك اليوم وكن جزءاً من مجتمعنا الفني الديناميكي.',
       talent_apply_now: 'تقدم الآن',
+
+      // Espaces translations
+      spaces: 'المساحات',
+      spaces_subtitle: 'Découvrez nos espaces culturels et créatifs',
+      our_spaces: 'Nos Espaces',
+      spaces_intro: 'Le Complexe Culturel de Ouarzazate propose une variété d\'espaces adaptés à vos besoins culturels et créatifs. Chaque espace est conçu pour offrir un environnement optimal pour l\'expression artistique et l\'apprentissage.',
+      space_theater_hall: 'Salle de Théâtre',
+
+      // Messages d'erreur de réservation
+      reservation_error_saving: 'حدث خطأ أثناء حفظ الحجز',
+      reservation_error_user_id_required: 'معرف المستخدم مطلوب',
+      reservation_error_space_id_required: 'معرف المساحة مطلوب',
+      reservation_error_invalid_organizer: 'نوع المنظم غير صالح',
+      reservation_error_space_not_found: 'المساحة غير موجودة',
+      reservation_error_min_days: 'يجب إجراء الحجز قبل 15 يوم على الأقل',
+      reservation_error_required_fields: 'يرجى ملء جميع الحقول المطلوبة',
+      reservation_error_select_user: 'يرجى اختيار مستخدم',
+
+      // Footer translations
+      footer_about_title: 'المجمع الثقافي ورزازات',
+      footer_about_description: 'مساحة مخصصة لتعزيز الثقافة والفنون في منطقة ورزازات.',
+      footer_quick_links: 'روابط سريعة',
+      footer_contact_info: 'اتصل بنا',
+      footer_address: 'حي الوحدة، ورزازات، المغرب',
+      footer_phone: '(+212) 528-888-888',
+      footer_email: 'contact@cc-ouarzazate.ma',
+      footer_hours: 'ساعات العمل',
+      footer_weekdays: 'الاثنين - الجمعة:',
+      footer_weekdays_hours: '9 صباحاً - 6 مساءً',
+      footer_weekend: 'السبت - الأحد:',
+      footer_weekend_hours: 'مغلق',
+      footer_copyright: 'المجمع الثقافي ورزازات. جميع الحقوق محفوظة.',
+      footer_follow_us: 'تابعونا',
+      footer_partners: 'شركاؤنا',
     }
   }
 };

@@ -140,7 +140,7 @@ export default function ReservationForm({
 
     if (joursAvantReservation < 15) {
       setToast({
-        message: t("reservation_form_error_date"),
+        message: t("reservation_error_min_days"),
         type: "error"
       });
       return false;
@@ -148,7 +148,7 @@ export default function ReservationForm({
 
     if (!formReservation.titre || !formReservation.date_debut || !formReservation.date_fin || !formReservation.espace_id) {
       setToast({
-        message: t("reservation_form_error_required_fields"),
+        message: t("reservation_error_required_fields"),
         type: "error"
       });
       return false;
@@ -194,9 +194,9 @@ export default function ReservationForm({
       // Le useEffect s'occupera de fermer le modal après que le toast soit fermé
     } catch (error) {
       console.error("Error saving reservation:", error);
-      setError(error.response?.data?.message || t("reservation_form_error_generic"));
+      setError(error.response?.data?.message || t("reservation_error_saving"));
       setToast({
-        message: error.response?.data?.message || t("reservation_form_error_generic"),
+        message: error.response?.data?.message || t("reservation_error_saving"),
         type: "error"
       });
     } finally {

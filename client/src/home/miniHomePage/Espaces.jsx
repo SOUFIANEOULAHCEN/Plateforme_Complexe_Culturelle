@@ -8,6 +8,7 @@ import computer from "../../assets/computer.jpeg"
 import music from "../../assets/music.jpg"
 import meeting from "../../assets/meeting.jpg"
 import creative from "../../assets/creative.jfif"
+import { FaArrowRight } from "react-icons/fa"
 
 const Espaces = () => {
   const { t } = useTranslation()
@@ -64,29 +65,35 @@ const Espaces = () => {
   ]
 
   return (
-    <div className="w-full bg-white">
-      <div className="relative h-[70vh] overflow-hidden">
+    <div className="w-full bg-gradient-to-b from-[#FDF8F5] to-white">
+      {/* Hero Section */}
+      <div className="relative h-[80vh] overflow-hidden">
         <div className="absolute inset-0">
           <img
             src={theater5}
             alt="CCO Ouarzazate"
-            className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-1000 hover:scale-110"
           />
-          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
         </div>
-        <div className="relative z-10 flex h-full items-center justify-center text-center">
-          <div className="px-4">
-            <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl">{t("spaces")}</h1>
-            <div className="mt-6">
+        <div className="relative z-10 flex h-full items-center justify-center text-center px-4">
+          <div className="max-w-4xl transform transition-all duration-700 hover:scale-[1.02]">
+            <h1 className="mb-6 text-5xl font-bold text-white md:text-6xl lg:text-7xl font-serif">
+              {t("spaces")}
+            </h1>
+            <p className="text-xl text-white/90 md:text-2xl mb-8">
+              {t("spaces_subtitle")}
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
               <a
                 href="/"
-                className="inline-block bg-[#8B4513] text-white font-semibold py-1 px-3 rounded-md hover:bg-[#6e3d20] transition duration-300"
+                className="inline-flex items-center bg-[#8B4513] text-white font-semibold py-3 px-8 rounded-full hover:bg-[#6e3d20] transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
               >
                 {t("home")}
               </a>
               <a
                 href="/espaces"
-                className="ml-4 inline-block bg-[#8B4513] text-white font-semibold py-1 px-3 rounded-md hover:bg-[#6e3d20] transition duration-300"
+                className="inline-flex items-center bg-white/20 backdrop-blur-sm text-white font-semibold py-3 px-8 rounded-full hover:bg-white/30 transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
               >
                 {t("spaces")}
               </a>
@@ -95,47 +102,78 @@ const Espaces = () => {
         </div>
       </div>
 
-      <br />
-      <br />
+      {/* Spaces Grid Section */}
+      <div className="py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-[#8B4513] font-serif relative inline-block">
+              {t("our_spaces")}
+              <span className="absolute bottom-0 left-0 w-full h-1 bg-[#8B4513] transform translate-y-2"></span>
+            </h2>
+            <p className="text-lg text-[#8B4513] max-w-3xl mx-auto">
+              {t("spaces_intro")}
+            </p>
+          </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-16 bg-[#FDF8F5]">
-        <div className="space-y-8">
-          {espaces.map((espace, index) => (
-            <div
-              key={espace.id}
-              className={`flex flex-col ${
-                index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-              } items-center gap-6 bg-white rounded-lg shadow-lg overflow-hidden`}
-            >
-              <div className="relative w-96 h-96">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {espaces.map((espace) => (
+              <div 
+                key={espace.id}
+                className="group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 h-[400px]"
+              >
                 <img
-                  src={espace.image || "/placeholder.svg"}
+                  src={espace.image}
                   alt={t(espace.titleKey)}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-              </div>
-              <div className="flex-1 p-6 text-center">
-                <div className="flex justify-center items-center mb-4">
-                  <div className="w-3 h-3 bg-[#824B26] rounded-full mr-2"></div>
-                  <div className="w-full h-0.5 bg-[#824B26]"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                  <h3 className="text-2xl font-bold text-white mb-2">{t(espace.titleKey)}</h3>
+                  <p className="text-white/90 mb-4 line-clamp-3">{t(espace.descriptionKey)}</p>
+                  <button className="flex items-center justify-center gap-2 bg-[#8B4513] text-white font-semibold py-2 px-6 rounded-full hover:bg-[#6e3d20] transition-all duration-300 transform group-hover:translate-x-2 w-max">
+                    {t("reserve")}
+                    <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+                  </button>
                 </div>
-                <h3 className="text-2xl font-bold mb-4" style={{ color: "#824B26" }}>
-                  {t(espace.titleKey)}
-                </h3>
-                <p className="text-gray-700" style={{ color: "#824B26" }}>
-                  {t(espace.descriptionKey)}
-                </p>
-                <button className="bg-[#824B26] text-white font-semibold py-1 px-3 rounded-md hover:bg-[#6e3d20] mt-4">
-                  {t("reserve")}
-                </button>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
-      <br />
-      <br />
+      {/* Alternative View for Smaller Screens */}
+      <div className="py-10 md:hidden">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="space-y-8">
+            {espaces.map((espace) => (
+              <div
+                key={espace.id}
+                className="rounded-2xl bg-white shadow-xl overflow-hidden"
+              >
+                <div className="relative h-48 w-full">
+                  <img
+                    src={espace.image}
+                    alt={t(espace.titleKey)}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2 text-[#8B4513]">
+                    {t(espace.titleKey)}
+                  </h3>
+                  <p className="text-[#8B4513]/90 mb-4">
+                    {t(espace.descriptionKey)}
+                  </p>
+                  <button className="flex items-center justify-center gap-2 bg-[#8B4513] text-white font-semibold py-2 px-6 rounded-full hover:bg-[#6e3d20] transition-all duration-300 w-full">
+                    {t("reserve")}
+                    <FaArrowRight />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <Footer />
     </div>
   )

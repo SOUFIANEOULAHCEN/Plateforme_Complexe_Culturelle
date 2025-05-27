@@ -5,6 +5,7 @@ import Modal from "./Modal";
 import api from "../api";
 import Toast from "./Toast";
 import Cookies from "js-cookie";
+import { useTranslation } from "react-i18next";
 
 export default function AdminReservationForm({
   isOpen,
@@ -37,6 +38,7 @@ export default function AdminReservationForm({
   const [espaces, setEspaces] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
   const [error, setError] = useState(null);
+  const { t } = useTranslation();
 
   // Gérer la fermeture après succès
   useEffect(() => {
@@ -147,7 +149,7 @@ export default function AdminReservationForm({
 
     if (joursAvantReservation < 15) {
       setToast({
-        message: "La réservation doit être faite au moins 15 jours à l'avance",
+        message: t("reservation_error_min_days"),
         type: "error"
       });
       return false;
@@ -155,7 +157,7 @@ export default function AdminReservationForm({
 
     if (!formReservation.titre || !formReservation.date_debut || !formReservation.date_fin || !formReservation.espace_id) {
       setToast({
-        message: "Veuillez remplir tous les champs obligatoires",
+        message: t("reservation_error_required_fields"),
         type: "error"
       });
       return false;
@@ -163,7 +165,7 @@ export default function AdminReservationForm({
 
     if (!selectedUser) {
       setToast({
-        message: "Veuillez sélectionner un utilisateur.",
+        message: t("reservation_error_select_user"),
         type: "error"
       });
       return false;
