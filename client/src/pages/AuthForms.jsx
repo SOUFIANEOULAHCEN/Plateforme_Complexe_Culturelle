@@ -55,34 +55,35 @@ export default function AuthForms({ isOpen, onClose, initialIsLogin = true, init
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="relative w-full max-w-4xl overflow-y-auto rounded-xl bg-white shadow-2xl transition-all">
+        {/* Bouton de fermeture modifié */}
         <button
-          onClick={onClose}
-          className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-gray-500 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-gray-700"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          className="absolute right-4 top-4 z-[100] rounded-full bg-white p-2 text-gray-700 shadow-md transition-colors hover:bg-gray-100 hover:text-gray-900"
           type="button"
           aria-label={t('close')}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className="h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
+            strokeWidth={2}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
         <div className="flex min-h-[600px] flex-col md:flex-row">
-          {/* Image Section - Will swap sides based on login/register state */}
           <div
             className={`relative flex-1 transition-all duration-500 ${
               isLogin ? "order-1 md:order-1" : "order-1 md:order-2"
             }`}
           >
-            {/* Overlay with gradient */}
             <div className="absolute inset-0 bg-gradient-to-b from-[oklch(47.3%_0.137_46.201)]/10 to-[oklch(47.3%_0.137_46.201)]/40 z-10"></div>
-
-            {/* Background image with reduced opacity */}
             <div
               className="absolute inset-0 bg-cover bg-center opacity-90"
               style={{
@@ -91,11 +92,7 @@ export default function AuthForms({ isOpen, onClose, initialIsLogin = true, init
                 backgroundPosition: "center",
               }}
             ></div>
-
-            {/* Dark overlay for better text readability */}
             <div className="absolute inset-0 bg-black/20"></div>
-
-            {/* Content */}
             <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white z-20">
               <h2 className="mb-2 text-3xl font-bold">{isLogin ? t('auth_welcome') : t('auth_join_us')}</h2>
               <p className="mb-6 max-w-md text-white/90">
@@ -111,14 +108,11 @@ export default function AuthForms({ isOpen, onClose, initialIsLogin = true, init
                 {isLogin ? t('auth_create_account') : t('auth_login')}
               </button>
             </div>
-
-            {/* Bottom text - similar to the screenshot */}
             <div className="absolute bottom-4 w-full text-center text-white/80 z-20">
               <p className="text-sm uppercase tracking-wider">OUARZAZATE</p>
             </div>
           </div>
 
-          {/* Form Section */}
           <div
             className={`flex flex-1 items-center justify-center p-8 transition-all duration-500 ${
               isLogin ? "order-2 md:order-2" : "order-2 md:order-1"
