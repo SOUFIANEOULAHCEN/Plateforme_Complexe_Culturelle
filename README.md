@@ -1,6 +1,6 @@
 # Complexe Culturel - Application Web
 
-Cette application est une plateforme de gestion de complexe culturel permettant la réservation d'espaces, la gestion d'événements, et l'interaction entre utilisateurs.
+Cette application est une plateforme complète de gestion de complexe culturel permettant la réservation d'espaces, la gestion d'événements, et l'interaction entre utilisateurs.
 
 ## Architecture du Projet
 
@@ -11,9 +11,15 @@ Le projet est divisé en deux parties principales :
 - Base de données : MySQL (via Sequelize ORM)
 - Structure :
   - `config/` : Configuration de la base de données et autres paramètres
-  - `controllers/` : Logique métier
-  - `models/` : Modèles de données
-  - `routes/` : Définition des routes API
+  - `controllers/` : Logique métier et traitement des requêtes
+  - `models/` : Modèles de données (Utilisateur, Événement, Réservation, Espace, etc.)
+  - `routes/` : API RESTful pour :
+    - Authentification et gestion des utilisateurs
+    - Gestion des événements et propositions
+    - Réservation d'espaces
+    - Tableau de bord et statistiques
+    - Chatbot et support
+    - Notifications et commentaires
   - `middlewares/` : Middlewares d'authentification et validation
   - `utils/` : Fonctions utilitaires
   - `migrations/` : Scripts de migration de la base de données
@@ -23,36 +29,48 @@ Le projet est divisé en deux parties principales :
 - UI : Tailwind CSS
 - Structure :
   - `src/` : Code source React
+    - `components/` : Composants réutilisables
+    - `pages/` : Pages de l'application
+    - `i18n/` : Internationalisation
+    - `assets/` : Ressources statiques
+    - `api.js` : Configuration des appels API
   - `public/` : Assets statiques
-  - `components/` : Composants réutilisables
-  - `pages/` : Pages de l'application
-  - `services/` : Services API
 
 ## Fonctionnalités Principales
 
 1. **Gestion des Utilisateurs**
-   - Authentification
-   - Profils utilisateurs
-   - Rôles et permissions
+   - Authentification sécurisée (JWT)
+   - Profils utilisateurs personnalisés
+   - Système de rôles et permissions
+   - Gestion des contacts et messages
 
 2. **Gestion des Espaces**
-   - Réservation d'espaces
-   - Calendrier des disponibilités
-   - Gestion des tarifs
+   - Réservation d'espaces avec calendrier
+   - Gestion des disponibilités
+   - Système de tarification
+   - Suivi des réservations
 
 3. **Gestion des Événements**
    - Création et modification d'événements
-   - Système de propositions
+   - Système de propositions d'événements
    - Gestion des commentaires
+   - Suivi des événements
 
-4. **Tableau de Bord**
-   - Statistiques
-   - Notifications
-   - Gestion des talents
+4. **Tableau de Bord Administratif**
+   - Statistiques et métriques
+   - Gestion des notifications
+   - Administration des utilisateurs
+   - Configuration du complexe
 
-5. **Chatbot**
+5. **Chatbot et Support**
    - Support utilisateur automatisé
    - Réponses aux questions fréquentes
+   - Système de logs pour le suivi
+
+6. **Fonctionnalités Sociales**
+   - Système de commentaires
+   - Notifications en temps réel
+   - Gestion des talents
 
 ## Installation
 
@@ -109,11 +127,12 @@ npm run build
 
 ## Sécurité
 
-- Les fichiers sensibles (SQL, .env) sont ignorés par Git
+- Protection des données sensibles
 - Authentification JWT
 - Validation des entrées
 - Protection CORS
-- Gestion des sessions
+- Gestion sécurisée des sessions
+- Logs de sécurité
 
 ## Contribution
 
