@@ -23,7 +23,7 @@ const resources = {
       hero_subtitle: 'Un espace culturel unique au cœur de la ville',
 
       // Slider Section
-      slider_title_1: 'Complexe Culturel de Ouarzazate',
+      slider_title_1: 'Palais de la Culture Mohammed VI',
       slider_description_1: 'Un espace dédié à l\'art et la culture',
       slider_title_2: 'Découvrez nos ateliers',
       slider_description_2: 'Des activités pour tous les âges',
@@ -33,7 +33,7 @@ const resources = {
       slider_description_4: 'Des spectacles et expositions toute l\'année',
 
       // About Section
-      about_title: 'Complexe Culturel OUARZAZATE',
+      about_title: 'Palais de la Culture Mohammed VI',
       about_description: 'Le Complexe Culturel de Ouarzazate est bien plus qu\'un simple espace culturel. C\'est un lieu vivant qui valorise la culture et les talents locaux en accueillant divers événements artistiques et culturels tout au long de l\'année. Pour répondre à l\'évolution des besoins de notre communauté, nous avons adopté un système numérique moderne pour améliorer la gestion, accroître notre visibilité et renforcer la participation citoyenne. Notre mission est de devenir un véritable carrefour culturel, un espace de rencontre et d\'échange qui favorise la créativité et l\'engagement communautaire dans notre belle ville.',
       about_read_more: 'En savoir plus',
 
@@ -220,7 +220,7 @@ const resources = {
       cco_title: 'Palais de la Culture Mohammed VI',
       cco_subtitle: 'Bienvenue au cœur de la culture à Ouarzazate. Un espace dédié à l\'art, à la créativité et au partage culturel dans notre belle ville.',
       video_not_supported: 'Votre navigateur ne supporte pas la balise vidéo',
-      cco_complex_title: 'Le Complexe Culturel Ouarzazate',
+      cco_complex_title: 'Palais de la Culture Mohammed VI',
       cco_complex_description: 'Le Complexe Culturel Ouarzazate est un lieu unique qui fusionne l\'art, l\'histoire et la culture de la région. Il offre un espace de rencontre pour les artistes locaux et internationaux, avec des expositions, des ateliers créatifs, des événements culturels et des spectacles. Notre mission est de préserver et de promouvoir les traditions tout en accueillant les innovations culturelles modernes.',
       cco_complex_description_2: 'Situé dans le cœur de la ville, il est facilement accessible à tous, des habitants aux touristes, en passant par les étudiants et les professionnels du domaine artistique. Il incarne l\'âme culturelle de la ville et offre un cadre idéal pour les événements culturels divers, tout en contribuant au développement social et économique de la région.',
       our_vision: 'Notre Vision',

@@ -6,6 +6,7 @@ import Charts from "../components/Charts";
 import SummaryCards from "../components/SummaryCards";
 import jsPDF from "jspdf";
 import api from "../api";
+import ReportsChart from "../components/ReportsChart";
 
 // Styles CSS pour l'impression
 const printStyles = `
@@ -53,49 +54,199 @@ export default function ReportsPage() {
     ]
   });
 
-  const handlePrint = () => {
-    const originalStyles = document.head.innerHTML;
-    const styleEl = document.createElement('style');
-    styleEl.innerHTML = printStyles;
-    document.head.appendChild(styleEl);
-    
-    window.print();
-    
-    setTimeout(() => {
-      document.head.removeChild(styleEl);
-    }, 500);
-  };
+  const exportToPDF = async () => {
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 20;
+      let yPosition = 20;
 
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    
-    // En-tête
-    doc.setFontSize(18);
-    doc.setTextColor(40, 40, 40);
-    doc.text("Rapports et Statistiques", 10, 15);
+      // Couleurs du projet
+      const colors = {
+        primary: [139, 69, 19],    // Brown-700
+        secondary: [180, 83, 9],   // Brown-600
+        accent: [194, 65, 12],     // Brown-500
+        success: [34, 197, 94],    // Green-500
+        warning: [234, 179, 8],    // Yellow-500
+        danger: [239, 68, 68],     // Red-500
+        text: [17, 24, 39],        // Gray-900
+        lightText: [107, 114, 128],// Gray-500
+        background: [254, 242, 242]// Brown-50
+      };
 
-    // Date de génération
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`Généré le: ${new Date().toLocaleDateString()}`, 10, 25);
+      // Fonction pour dessiner un rectangle arrondi
+      const drawRoundedRect = (x, y, width, height, radius) => {
+        doc.setDrawColor(...colors.primary);
+        doc.setFillColor(...colors.background);
+        doc.roundedRect(x, y, width, height, radius, radius, 'FD');
+      };
 
-    // Données principales
-    doc.setFontSize(12);
-    let yPosition = 40;
-    
-    stats.summaryStats.forEach((stat, index) => {
-      const colors = ["#36A2EB", "#FF6384", "#4BC0C0", "#FFCE56"];
-      doc.setFillColor(colors[index]);
-      doc.rect(10, yPosition - 5, 5, 5, 'F');
-      doc.text(`${stat.label}: ${stat.value}`, 20, yPosition);
-      yPosition += 10;
-    });
+      // En-tête moderne
+      drawRoundedRect(margin - 5, yPosition - 15, pageWidth - (margin * 2) + 10, 60, 3);
+      doc.setFontSize(28);
+      doc.setTextColor(...colors.primary);
+      doc.text("Rapports et Statistiques", pageWidth/2, yPosition + 10, { align: 'center' });
+      
+      // Date de génération avec style moderne
+      doc.setFontSize(12);
+      doc.setTextColor(...colors.lightText);
+      doc.text(`Généré le: ${new Date().toLocaleDateString('fr-FR', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })}`, pageWidth/2, yPosition + 25, { align: 'center' });
 
-    // Graphique
-    const chartImage = document.querySelector('.chart-container canvas').toDataURL();
-    doc.addImage(chartImage, 'PNG', 10, yPosition + 10, 180, 100);
+      yPosition += 60;
 
-    doc.save("rapports-statistiques.pdf");
+      // Section Résumé avec style moderne
+      drawRoundedRect(margin - 5, yPosition - 5, pageWidth - (margin * 2) + 10, 80, 3);
+      doc.setFontSize(18);
+      doc.setTextColor(...colors.primary);
+      doc.text("Résumé des Statistiques", margin, yPosition + 10);
+      
+      yPosition += 20;
+      doc.setFontSize(12);
+      stats.summaryStats.forEach((stat, index) => {
+        const statColors = [
+          colors.primary,    // Brown
+          colors.secondary,  // Brown-600
+          colors.accent,     // Brown-500
+          colors.warning     // Yellow
+        ];
+        
+        doc.setFillColor(...statColors[index]);
+        doc.circle(margin + 5, yPosition, 3, 'F');
+        doc.setTextColor(...colors.text);
+        doc.text(`${stat.label}: ${stat.value}`, margin + 15, yPosition + 3);
+        yPosition += 15;
+      });
+
+      yPosition += 20;
+
+      // Section Utilisateurs avec style moderne
+      drawRoundedRect(margin - 5, yPosition - 5, pageWidth - (margin * 2) + 10, 80, 3);
+      doc.setFontSize(18);
+      doc.setTextColor(...colors.primary);
+      doc.text("Répartition des Utilisateurs", margin, yPosition + 10);
+      
+      yPosition += 20;
+      doc.setFontSize(12);
+      Object.entries(stats.userRoles).forEach(([role, count], index) => {
+        const roleColors = [
+          colors.primary,    // Brown
+          colors.secondary,  // Brown-600
+          colors.accent,     // Brown-500
+          colors.warning     // Yellow
+        ];
+        
+        doc.setFillColor(...roleColors[index]);
+        doc.circle(margin + 5, yPosition, 3, 'F');
+        doc.setTextColor(...colors.text);
+        doc.text(`${role}: ${count}`, margin + 15, yPosition + 3);
+        yPosition += 15;
+      });
+
+      yPosition += 20;
+
+      // Section Mensuelle avec style moderne
+      drawRoundedRect(margin - 5, yPosition - 5, pageWidth - (margin * 2) + 10, 120, 3);
+      doc.setFontSize(18);
+      doc.setTextColor(...colors.primary);
+      doc.text("Statistiques Mensuelles", margin, yPosition + 10);
+      
+      yPosition += 20;
+      doc.setFontSize(12);
+      stats.monthlyData.forEach(month => {
+        if (yPosition > doc.internal.pageSize.getHeight() - 60) {
+          doc.addPage();
+          yPosition = 20;
+        }
+        
+        // Ligne de séparation
+        doc.setDrawColor(...colors.lightText);
+        doc.line(margin, yPosition - 5, pageWidth - margin, yPosition - 5);
+        
+        doc.setTextColor(...colors.text);
+        doc.setFontSize(14);
+        doc.text(month.month, margin, yPosition);
+        yPosition += 10;
+        
+        doc.setFontSize(12);
+        doc.setTextColor(...colors.lightText);
+        doc.text(`Réservations: ${month.reservations}`, margin + 10, yPosition);
+        yPosition += 8;
+        doc.text(`Événements: ${month.events}`, margin + 10, yPosition);
+        yPosition += 15;
+      });
+
+      yPosition += 20;
+
+      // Attendre que les graphiques soient chargés
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Fonction pour ajouter un graphique
+      const addChart = async (selector, title) => {
+        const chartHeight = 120; // Hauteur du graphique et de son conteneur arrondi
+        const titleHeight = 20; // Hauteur du titre
+        const spacingAfter = 20; // Espace après le graphique
+        const totalHeightNeeded = chartHeight + titleHeight + spacingAfter;
+
+        // Vérifier si on a besoin d'une nouvelle page (en tenant compte du pied de page)
+        if (yPosition + totalHeightNeeded > doc.internal.pageSize.getHeight() - 30) { // 30 pour le pied de page et sa marge
+          doc.addPage();
+          yPosition = 20; // Commencer un peu plus bas sur la nouvelle page
+        }
+
+        const canvas = document.querySelector(selector);
+        if (canvas) {
+          // Ajouter le titre
+          doc.setFontSize(16);
+          doc.setTextColor(...colors.primary);
+          doc.text(title, margin, yPosition + 10);
+          yPosition += titleHeight;
+
+          // Ajouter le graphique
+          drawRoundedRect(margin - 5, yPosition - 5, pageWidth - (margin * 2) + 10, 120, 3);
+          const chartImage = canvas.toDataURL();
+          doc.addImage(chartImage, 'PNG', margin, yPosition, pageWidth - (margin * 2), 100);
+          yPosition += chartHeight;
+
+          // Ajouter un espace après le graphique
+          yPosition += spacingAfter;
+        }
+      };
+
+      // Ajouter tous les graphiques disponibles en utilisant les sélecteurs mis à jour
+      await addChart('.reports-chart canvas', 'Répartition des Utilisateurs');
+      await addChart('.line-chart-container canvas', 'Statistiques Mensuelles (Ligne)');
+      await addChart('.bar-chart-container canvas', 'Statistiques Mensuelles (Barres)');
+
+      // Pied de page moderne
+      const totalPages = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFontSize(10);
+        doc.setTextColor(...colors.lightText);
+        
+        // Ligne de séparation
+        doc.setDrawColor(...colors.lightText);
+        doc.line(margin, doc.internal.pageSize.getHeight() - 20, pageWidth - margin, doc.internal.pageSize.getHeight() - 20);
+        
+        doc.text(
+          `Page ${i} sur ${totalPages}`,
+          pageWidth/2,
+          doc.internal.pageSize.getHeight() - 10,
+          { align: 'center' }
+        );
+      }
+
+      doc.save("rapports-statistiques-complet.pdf");
+    } catch (error) {
+      console.error("Erreur lors de l'exportation du PDF:", error);
+      alert("Une erreur est survenue lors de l'exportation du PDF. Veuillez réessayer.");
+    }
   };
 
   useEffect(() => {
@@ -141,13 +292,13 @@ export default function ReportsPage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-full mx-auto p-4 print-area">
-        <div className="flex flex-col md:flex-row justify-between mb-8 gap-4 no-print">
+      <div className="max-w-full mx-auto p-4">
+        <div className="flex flex-col md:flex-row justify-between mb-8 gap-4">
           <h1 className="text-2xl font-bold text-gray-800">Rapports et statistiques</h1>
           <div className="flex gap-2">
             <button 
               onClick={exportToPDF}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -165,26 +316,6 @@ export default function ReportsPage() {
               </svg>
               Exporter PDF
             </button>
-            <button 
-              onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-                />
-              </svg>
-              Imprimer
-            </button>
           </div>
         </div>
         
@@ -195,6 +326,11 @@ export default function ReportsPage() {
         <div className="chart-container bg-white p-6 rounded-lg shadow">
           <Charts stats={stats} />
         </div>
+
+        <div className="reports-chart bg-white p-6 rounded-lg shadow mt-8">
+           <ReportsChart />
+        </div>
+
       </div>
     </DashboardLayout>
   );

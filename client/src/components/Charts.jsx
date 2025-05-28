@@ -318,7 +318,7 @@ export default function Charts({ stats }) {
         </div>
 
         {/* Graphique linéaire */}
-        <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+        <div className="line-chart-container bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
           <h3 className="text-lg font-semibold mb-4 text-gray-800">Activité mensuelle</h3>
           <div className="h-80">
             <Line
@@ -330,7 +330,7 @@ export default function Charts({ stats }) {
       </div>
 
       {/* Graphique à barres */}
-      <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+      <div className="bar-chart-container bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
         <h3 className="text-lg font-semibold mb-4 text-gray-800">Comparaison mensuelle</h3>
         <div className="h-96">
           <Bar

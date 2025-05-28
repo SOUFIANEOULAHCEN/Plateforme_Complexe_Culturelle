@@ -240,42 +240,6 @@ export default function EventsTable({ limit }) {
               <option value="rencontre">Rencontre</option>
             </select>
           </div>
-          <div className="relative" ref={sortMenuRef}>
-            <button
-              type="button"
-              className="p-2.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[oklch(47.3%_0.137_46.201)] transition-all duration-200"
-              aria-label="Filtrer et trier"
-              onClick={() => setShowSortMenu((v) => !v)}
-            >
-              <Filter className="w-4 h-4 text-gray-500" />
-            </button>
-            {showSortMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                <button
-                  className={`w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors ${
-                    sortOrder === "desc" ? "font-bold text-[oklch(47.3%_0.137_46.201)]" : ""
-                  }`}
-                  onClick={() => {
-                    setSortOrder("desc")
-                    setShowSortMenu(false)
-                  }}
-                >
-                  Date décroissante
-                </button>
-                <button
-                  className={`w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors ${
-                    sortOrder === "asc" ? "font-bold text-[oklch(47.3%_0.137_46.201)]" : ""
-                  }`}
-                  onClick={() => {
-                    setSortOrder("asc")
-                    setShowSortMenu(false)
-                  }}
-                >
-                  Date croissante
-                </button>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
@@ -300,28 +264,12 @@ export default function EventsTable({ limit }) {
                       Type
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1 cursor-pointer" onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}>
                         Date
-                        <button
-                          type="button"
-                          aria-label="Trier par date croissante"
-                          className={`focus:outline-none p-1 rounded hover:bg-gray-100 transition-colors ${
-                            sortOrder === "asc" ? "text-[oklch(47.3%_0.137_46.201)]" : "text-gray-400"
-                          }`}
-                          onClick={() => setSortOrder("asc")}
-                        >
-                          <ChevronUp className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          aria-label="Trier par date décroissante"
-                          className={`focus:outline-none p-1 rounded hover:bg-gray-100 transition-colors ${
-                            sortOrder === "desc" ? "text-[oklch(47.3%_0.137_46.201)]" : "text-gray-400"
-                          }`}
-                          onClick={() => setSortOrder("desc")}
-                        >
-                          <ChevronDown className="w-4 h-4" />
-                        </button>
+                        <span className="flex flex-col">
+                          <ChevronUp className={`w-3 h-3 ${sortOrder === 'asc' ? 'text-[oklch(47.3%_0.137_46.201)]' : 'text-gray-400'}`} />
+                          <ChevronDown className={`w-3 h-3 -mt-0.5 ${sortOrder === 'desc' ? 'text-[oklch(47.3%_0.137_46.201)]' : 'text-gray-400'}`} />
+                        </span>
                       </span>
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
