@@ -87,11 +87,18 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
 
   const validateForm = () => {
     const requiredFields = [
-      'titre', 'description', 'date_debut', 'date_fin', 
-      'espace_id', 'proposeur_nom', 'proposeur_email'
+      { key: 'titre', label: t('event_proposal_title_label') },
+      { key: 'description', label: t('event_proposal_description_label') },
+      { key: 'date_debut', label: t('event_proposal_start_date') },
+      { key: 'date_fin', label: t('event_proposal_end_date') },
+      { key: 'espace_id', label: t('event_proposal_space') },
+      { key: 'proposeur_nom', label: t('event_proposal_organizer_name') },
+      { key: 'proposeur_email', label: t('event_proposal_organizer_email') }
     ];
     
-    const missingFields = requiredFields.filter(field => !form[field]);
+    const missingFields = requiredFields
+      .filter(field => !form[field.key])
+      .map(field => field.label);
     
     if (missingFields.length > 0) {
       showToast(t("event_proposal_error_missing", { fields: missingFields.join(', ') }), "error");
@@ -154,12 +161,17 @@ export default function EventProposalForm({ isOpen, onClose, onSuccess }) {
       let errorMessage = t("event_proposal_error_generic");
       
       if (error.response) {
-        if (error.response.status === 401) {
-          errorMessage = t("event_proposal_error_connection");
-        } else if (error.response.status === 413) {
-          errorMessage = t("event_proposal_error_file_size");
-        } else if (error.response.data && error.response.data.message) {
-          errorMessage = error.response.data.message;
+        switch (error.response.status) {
+          case 401:
+            errorMessage = t("event_proposal_error_connection");
+            break;
+          case 413:
+            errorMessage = t("event_proposal_error_file_size");
+            break;
+          default:
+            if (error.response.data && error.response.data.message) {
+              errorMessage = error.response.data.message;
+            }
         }
       }
       

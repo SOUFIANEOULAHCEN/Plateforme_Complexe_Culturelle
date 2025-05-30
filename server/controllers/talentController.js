@@ -3,6 +3,7 @@
 import Utilisateur from "../models/utilisateur.js";
 import bcrypt from "bcryptjs";
 import fs from "fs";
+import path from 'path';
 
 export const getTalentByEmail = async (req, res) => {
   try {
@@ -40,8 +41,6 @@ export const getTalentByEmail = async (req, res) => {
 
 export const updateTalent = async (req, res) => {
   try {
-    
-
     const { id } = req.params;
     let updates = { ...req.body };
 
@@ -78,16 +77,30 @@ export const updateTalent = async (req, res) => {
     }
 
     if (req.files?.cv) {
-      updates.cv = `/uploads/${req.files.cv[0].filename}`;
+      // Créer le dossier s'il n'existe pas
+      const cvDir = path.join(process.cwd(), 'public', 'uploads', 'EventAffiche');
+      if (!fs.existsSync(cvDir)) {
+        fs.mkdirSync(cvDir, { recursive: true });
+      }
+      updates.cv = `/uploads/EventAffiche/${req.files.cv[0].filename}`;
     }
 
-    // Mise à jour dans la base de données
-    const [updated] = await Utilisateur.update(updates, { where: { id } });
+    // Vérifier d'abord si le talent existe
+    const talent = await Utilisateur.findOne({
+      where: {
+        id: id,
+        is_talent: true
+      }
+    });
 
-    if (!updated) {
+    if (!talent) {
       return res.status(404).json({ message: "Talent non trouvé" });
     }
 
+    // Mise à jour dans la base de données
+    await talent.update(updates);
+    
+    // Récupérer le talent mis à jour
     const updatedTalent = await Utilisateur.findByPk(id);
     res.json(updatedTalent);
 
@@ -100,7 +113,6 @@ export const updateTalent = async (req, res) => {
   }
 };
 
-
 export const updatePassword = async (req, res) => {
   try {
     const { id } = req.params;
@@ -111,13 +123,16 @@ export const updatePassword = async (req, res) => {
       return res.status(400).json({ message: "Les champs 'currentPassword' et 'newPassword' sont requis" });
     }
 
-    const talent = await Utilisateur.findByPk(id);
-    console.log("Utilisateur récupéré :", talent?.email);
+    const talent = await Utilisateur.findOne({
+      where: {
+        id: id,
+        is_talent: true
+      }
+    });
 
     if (!talent) {
       return res.status(404).json({ message: "Talent non trouvé" });
     }
-
 
     // Corriger le préfixe $2y$ → $2b$ si nécessaire
     let storedPassword = talent.password;
@@ -129,8 +144,6 @@ export const updatePassword = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Mot de passe actuel incorrect" });
     }
-    console.log("Comparaison avec bcrypt :", currentPassword, "vs", storedPassword);
-
 
     // Hacher le nouveau mot de passe
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -140,5 +153,88 @@ export const updatePassword = async (req, res) => {
   } catch (error) {
     console.error("Erreur dans updatePassword:", error);
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const getTalentById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const talent = await Utilisateur.findOne({ 
+      where: { 
+        id: id,
+        is_talent: true 
+      }
+    });
+    
+    if (!talent) {
+      return res.status(404).json({ 
+        message: `Aucun talent trouvé avec l'ID ${id}` 
+      });
+    }
+    
+    res.json(talent);
+  } catch (error) {
+    console.error('Error fetching talent:', error);
+    res.status(500).json({ 
+      message: "Erreur serveur lors de la récupération du talent",
+      error: error.message 
+    });
+  }
+};
+
+export const getTalentCV = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const talent = await Utilisateur.findOne({ 
+      where: { 
+        id: id,
+        is_talent: true 
+      }
+    });
+    
+    if (!talent) {
+      return res.status(404).json({ 
+        message: `Aucun talent trouvé avec l'ID ${id}` 
+      });
+    }
+
+    if (!talent.cv) {
+      return res.status(404).json({ 
+        message: "CV non trouvé pour ce talent" 
+      });
+    }
+
+    // Construire le chemin complet du fichier
+    const cvPath = path.join(process.cwd(), 'public', talent.cv);
+
+    // Vérifier si le fichier existe
+    if (!fs.existsSync(cvPath)) {
+      console.error('CV file not found at path:', cvPath);
+      return res.status(404).json({ 
+        message: "Le fichier CV n'existe pas sur le serveur" 
+      });
+    }
+
+    // Déterminer le type MIME du fichier
+    const ext = path.extname(cvPath).toLowerCase();
+    const mimeTypes = {
+      '.pdf': 'application/pdf',
+      '.doc': 'application/msword',
+      '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    };
+    const contentType = mimeTypes[ext] || 'application/octet-stream';
+
+    // Envoyer le fichier avec le bon type MIME
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="CV_${talent.nom}${ext}"`);
+    res.sendFile(cvPath);
+  } catch (error) {
+    console.error('Error fetching talent CV:', error);
+    res.status(500).json({ 
+      message: "Erreur serveur lors de la récupération du CV",
+      error: error.message 
+    });
   }
 };

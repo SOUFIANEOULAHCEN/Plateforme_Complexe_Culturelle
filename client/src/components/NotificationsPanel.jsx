@@ -12,13 +12,11 @@ const NotificationsPanel = ({ onClose, onUnreadCountChange }) => {
     fetchNotifications();
     updateUnreadCount();
 
-    // Mettre en place le polling
     const pollingInterval = setInterval(() => {
       fetchNotifications();
       updateUnreadCount();
     }, POLLING_INTERVAL);
 
-    // Nettoyer l'intervalle quand le composant est démonté
     return () => clearInterval(pollingInterval);
   }, [activeTab]);
 
@@ -60,7 +58,6 @@ const NotificationsPanel = ({ onClose, onUnreadCountChange }) => {
           notif.id === id ? { ...notif, is_read: true } : notif
         )
       );
-      // Mettre à jour le compteur après avoir marqué comme lu
       updateUnreadCount();
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -73,7 +70,6 @@ const NotificationsPanel = ({ onClose, onUnreadCountChange }) => {
       setNotifications(
         notifications.map((notif) => ({ ...notif, is_read: true }))
       );
-      // Mettre à jour le compteur après avoir tout marqué comme lu
       updateUnreadCount();
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
@@ -81,17 +77,13 @@ const NotificationsPanel = ({ onClose, onUnreadCountChange }) => {
   };
 
   const handleNotificationClick = async (notification) => {
-    // Mark as read if not already read
     if (!notification.is_read) {
       await markAsRead(notification.id);
     }
 
-    // Navigation basée sur le type et les métadonnées
     if (notification.type === "event_proposal" && notification.reference_id) {
       const metadata = notification.metadata ? JSON.parse(notification.metadata) : {};
-      // Fermer le panneau avant la redirection
       onClose();
-      // Rediriger vers la page des propositions d'événements
       window.location.href = `/dashboard/event-proposals/${notification.reference_id}`;
     }
   };
@@ -190,100 +182,146 @@ const NotificationsPanel = ({ onClose, onUnreadCountChange }) => {
         aria-hidden="true"
       />
 
-      <div className="relative bg-white rounded-2xl shadow-2xl w-[60vw] max-w-4xl max-h-[80vh] flex flex-col transform transition-all overflow-hidden border-2 border-[#8B4513]">
-        <div className="flex items-center justify-between p-6 border-b border-[#8B4513] bg-[#8B4513]">
-          <h2 className="text-2xl font-bold text-white">Notifications</h2>
-          <button
-            onClick={onClose}
-            className="text-white hover:text-[#d2b48c] transition-colors"
-          >
-            <svg
-              className="h-7 w-7"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-1/3 max-h-[90vh] flex flex-col transform transition-all overflow-hidden border border-[#8B4513] mx-4">
+        <div className="flex items-center justify-between p-4 bg-[#8B4513]">
+          <h2 className="text-xl font-bold text-white">Notifications</h2>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={markAllAsRead}
+              className="text-xs text-white hover:text-[#d2b48c] transition-colors px-2 py-1 rounded border border-white"
+              title="Tout marquer comme lu"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              Tout lire
+            </button>
+            <button
+              onClick={onClose}
+              className="text-white hover:text-[#d2b48c] transition-colors"
+            >
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
 
-        <div className="flex border-b border-[#8B4513] bg-[#f7f3ef]">
+        <div className="flex border-b border-[#d2b48c] bg-[#f5f5f5]">
           <button
             onClick={() => setActiveTab("all")}
-            className={`flex-1 py-3 text-center ${
+            className={`flex-1 py-2 px-1 text-sm text-center ${
               activeTab === "all"
-                ? "border-b-4 border-[#8B4513] text-[#8B4513] font-semibold bg-[#fbeee0]"
-                : "text-gray-500"
+                ? "text-[#8B4513] font-semibold border-b-2 border-[#8B4513]"
+                : "text-gray-600 hover:text-[#8B4513]"
             }`}
           >
             Toutes
           </button>
           <button
             onClick={() => setActiveTab("unread")}
-            className={`flex-1 py-3 text-center ${
+            className={`flex-1 py-2 px-1 text-sm text-center ${
               activeTab === "unread"
-                ? "border-b-4 border-[#8B4513] text-[#8B4513] font-semibold bg-[#fbeee0]"
-                : "text-gray-500"
+                ? "text-[#8B4513] font-semibold border-b-2 border-[#8B4513]"
+                : "text-gray-600 hover:text-[#8B4513]"
             }`}
           >
             Non lues
           </button>
           <button
             onClick={() => setActiveTab("events")}
-            className={`flex-1 py-3 text-center ${
+            className={`flex-1 py-2 px-1 text-sm text-center ${
               activeTab === "events"
-                ? "border-b-4 border-[#8B4513] text-[#8B4513] font-semibold bg-[#fbeee0]"
-                : "text-gray-500"
+                ? "text-[#8B4513] font-semibold border-b-2 border-[#8B4513]"
+                : "text-gray-600 hover:text-[#8B4513]"
             }`}
           >
             Événements
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto bg-[#f7f3ef] p-4">
+        <div className="flex-1 overflow-y-auto bg-white p-2">
           {loading ? (
-            <div className="text-center text-[#8B4513]">Chargement...</div>
+            <div className="flex justify-center items-center h-32">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#8B4513]"></div>
+            </div>
           ) : notifications.length === 0 ? (
-            <div className="text-center text-gray-400">Aucune notification</div>
+            <div className="text-center py-8 text-gray-500">
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1}
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p className="mt-2 text-sm">Aucune notification</p>
+            </div>
           ) : (
-            <ul className="space-y-3">
+            <ul className="divide-y divide-[#f0e6d2]">
               {notifications.map((notification) => (
                 <li
                   key={notification.id}
-                  className={`flex items-start gap-3 p-4 rounded-xl shadow-sm cursor-pointer transition ${notification.is_read ? "bg-white" : "bg-[#fbeee0] border-l-4 border-[#8B4513]"} hover:bg-[#fbeee0]`}
+                  className={`p-3 hover:bg-[#f9f5f0] cursor-pointer transition-colors ${
+                    notification.is_read ? "bg-white" : "bg-[#fff8ee]"
+                  }`}
                   onClick={() => handleNotificationClick(notification)}
                 >
-                  <div className="mt-1">{getNotificationIcon(notification.type)}</div>
-                  <div className="flex-1">
-                    <div className="font-medium text-[#8B4513]">{notification.message}</div>
-                    <div className="text-xs text-gray-500 mt-1 flex gap-2 items-center">
-                      <span>{notification.type === "contact_message" ? "Message de contact" : notification.type === "event_proposal" ? "Proposition d'événement" : notification.type}</span>
-                      <span>•</span>
-                      <span>{new Date(notification.createdAt || notification.created_at).toLocaleString()}</span>
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 mt-1">
+                      {getNotificationIcon(notification.type)}
                     </div>
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-sm font-medium ${
+                        notification.is_read ? "text-gray-700" : "text-[#8B4513]"
+                      }`}>
+                        {notification.message}
+                      </div>
+                      <div className="flex items-center mt-1 text-xs text-gray-500 space-x-2">
+                        <span className="capitalize">
+                          {notification.type === "contact_message" 
+                            ? "Message" 
+                            : notification.type === "event_proposal" 
+                              ? "Événement" 
+                              : notification.type}
+                        </span>
+                        <span>•</span>
+                        <span>
+                          {new Date(notification.createdAt || notification.created_at).toLocaleString('fr-FR', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                    {!notification.is_read && (
+                      <span className="flex-shrink-0 w-2 h-2 mt-2 rounded-full bg-[#8B4513]"></span>
+                    )}
                   </div>
-                  {!notification.is_read && (
-                    <span className="ml-2 w-2 h-2 rounded-full bg-[#8B4513] inline-block mt-2" title="Non lu"></span>
-                  )}
                 </li>
               ))}
             </ul>
           )}
         </div>
 
-        <div className="p-4 border-t border-[#8B4513] bg-[#f7f3ef] flex justify-end">
-          <button
-            onClick={markAllAsRead}
-            className="bg-[#8B4513] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#6e3d20] transition"
-          >
-            Tout marquer comme lu
-          </button>
+        <div className="p-3 border-t border-[#d2b48c] bg-[#f9f9f9] text-center text-xs text-gray-500">
+          {notifications.length > 0 && (
+            <p>{notifications.length} notification{notifications.length > 1 ? 's' : ''}</p>
+          )}
         </div>
       </div>
     </div>

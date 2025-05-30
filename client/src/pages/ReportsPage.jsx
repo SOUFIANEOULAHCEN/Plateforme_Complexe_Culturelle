@@ -127,7 +127,7 @@ export default function ReportsPage() {
 
       // Section Utilisateurs avec style moderne
       drawRoundedRect(margin - 5, yPosition - 5, pageWidth - (margin * 2) + 10, 80, 3);
-      doc.setFontSize(18);
+    doc.setFontSize(18);
       doc.setTextColor(...colors.primary);
       doc.text("Répartition des Utilisateurs", margin, yPosition + 10);
       
@@ -157,7 +157,7 @@ export default function ReportsPage() {
       doc.text("Statistiques Mensuelles", margin, yPosition + 10);
       
       yPosition += 20;
-      doc.setFontSize(12);
+    doc.setFontSize(12);
       stats.monthlyData.forEach(month => {
         if (yPosition > doc.internal.pageSize.getHeight() - 60) {
           doc.addPage();
@@ -171,7 +171,7 @@ export default function ReportsPage() {
         doc.setTextColor(...colors.text);
         doc.setFontSize(14);
         doc.text(month.month, margin, yPosition);
-        yPosition += 10;
+      yPosition += 10;
         
         doc.setFontSize(12);
         doc.setTextColor(...colors.lightText);
@@ -327,9 +327,9 @@ export default function ReportsPage() {
           <Charts stats={stats} />
         </div>
 
-        <div className="reports-chart bg-white p-6 rounded-lg shadow mt-8">
+        {/* <div className="reports-chart bg-white p-6 rounded-lg shadow mt-8">
            <ReportsChart />
-        </div>
+        </div> */}
 
       </div>
     </DashboardLayout>

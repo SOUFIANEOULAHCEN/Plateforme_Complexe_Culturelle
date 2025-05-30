@@ -3,7 +3,9 @@ import upload from '../middlewares/upload.js';
 import { 
   getTalentByEmail, 
   updateTalent, 
-  updatePassword 
+  updatePassword,
+  getTalentById,
+  getTalentCV
 } from '../controllers/talentController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
 
@@ -12,10 +14,13 @@ const router = express.Router();
 // Récupérer un talent par email
 router.get('/', verifyToken, getTalentByEmail);
 
+// Récupérer le CV d'un talent (doit être avant /:id)
+router.get('/:id/cv', verifyToken, getTalentCV);
 
+// Récupérer un talent par ID
+router.get('/:id', verifyToken, getTalentById);
 
 // Mettre à jour un talent
-
 router.put('/:id',
   verifyToken, 
   upload.fields([

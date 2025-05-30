@@ -55,6 +55,7 @@ const resources = {
       events_calendar_description: 'Consultez notre calendrier pour planifier votre participation aux prochains événements culturels et artistiques',
       previous: 'Précédent',
       next: 'Suivant',
+       view_all_events: "Voir tous les événements",
 
       // Workshops Section
       workshops_title: 'Nos Ateliers',
@@ -317,6 +318,7 @@ const resources = {
       event_proposal_title: 'Proposer un événement',
       event_proposal_success: 'Proposition envoyée avec succès',
       event_proposal_error: 'Une erreur est survenue lors de l\'envoi de la proposition',
+      event_proposal_error_missing: 'Veuillez remplir les champs suivants : {{fields}}',
       event_proposal_login_required: 'Vous devez être connecté pour proposer un événement',
       event_proposal_spaces_error: 'Erreur lors du chargement des espaces',
       event_proposal_title_label: 'Titre de l\'événement',
@@ -482,6 +484,7 @@ const resources = {
       events_calendar_description: 'راجعوا تقويمنا لجدولة مشاركتكم في الفعاليات الثقافية والفنية القادمة',
       previous: 'السابق',
       next: 'التالي',
+       view_all_events: "عرض جميع الأحداث",
 
       // Workshops Section
       workshops_title: 'ورش عملنا',
@@ -766,6 +769,13 @@ const resources = {
       event_proposal_title: 'اقتراح فعالية',
       event_proposal_success: 'تم إرسال الاقتراح بنجاح',
       event_proposal_error: 'حدث خطأ أثناء إرسال الاقتراح',
+      event_proposal_error_missing: 'يرجى ملء الحقول الإلزامية التالية: {{fields}}',
+      event_proposal_error_date: 'يجب أن يكون تاريخ النهاية بعد تاريخ البداية',
+      event_proposal_error_email: 'يرجى إدخال بريد إلكتروني صحيح',
+      event_proposal_error_generic: 'حدث خطأ أثناء إرسال اقتراحك',
+      event_proposal_error_connection: 'يرجى تسجيل الدخول لاقتراح فعالية',
+      event_proposal_error_file_size: 'يجب ألا يتجاوز حجم الصورة 5 ميجابايت',
+      event_proposal_error_loading: 'تعذر تحميل المساحات المتاحة',
       event_proposal_login_required: 'يجب تسجيل الدخول لاقتراح فعالية',
       event_proposal_spaces_error: 'خطأ أثناء تحميل المساحات',
       event_proposal_title_label: 'عنوان الفعالية',
